@@ -91,7 +91,7 @@ export default function Home() {
           >
             <LocationMarkerIcon className="w-8 self-center py-3" />
             <p>אפשר להזמין</p>
-            <p className="text-yellow-col font-bold">אנשים מחו"ל</p>
+            <p className="text-yellow-col font-bold">אנשים מחול</p>
             <p>בלחיצת כפתור</p>
           </motion.div>
           <motion.div
