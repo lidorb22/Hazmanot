@@ -316,7 +316,7 @@ function Profile() {
             </p>
             <div className="shadow-xl border-b-2 border-t-2 border-yellow-col justify-self-center self-start row-start-3 col-start-1 w-5/6 h-full flex flex-row items-center justify-center rounded-xl">
               <p className="break-all p-4 text-center">
-                https://hazmanot-il.herokuapp.com/Invite/
+                https://hazmanot.netlify.app/Invite/
                 {invInfo[cardIndex]._id}
               </p>
             </div>
