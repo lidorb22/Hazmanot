@@ -1,8 +1,8 @@
 import axios from "axios";
 
-const loginUrl = 'http://localhost:5000/auth/login';
-const registerUrl = 'http://localhost:5000/auth/register';
-const userUrl = 'http://localhost:5000/user/';
+const loginUrl = 'https://hazmanot-il.herokuapp.com/auth/login';
+const registerUrl = 'https://hazmanot-il.herokuapp.com/auth/register';
+const userUrl = 'https://hazmanot-il.herokuapp.com/user/';
 
 export const userLogin = FrmData =>{
     return new Promise(async(resolve, reject) =>{

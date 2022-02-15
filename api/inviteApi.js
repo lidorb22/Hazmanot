@@ -1,9 +1,9 @@
 import axios from "axios";
 
-const inviteUrl = 'http://localhost:5000/invite/create';
-const allINVUrl = 'http://localhost:5000/invite/allItems';
-const iNVUrl = 'http://localhost:5000/invite/item';
-const delInvUrl = 'http://localhost:5000/invite/delItem';
+const inviteUrl = 'https://hazmanot-il.herokuapp.com/invite/create';
+const allINVUrl = 'https://hazmanot-il.herokuapp.com/invite/allItems';
+const iNVUrl = 'https://hazmanot-il.herokuapp.com/invite/item';
+const delInvUrl = 'https://hazmanot-il.herokuapp.com/invite/delItem';
 
 export const newInvite = FrmData =>{
     return new Promise(async(resolve, reject) =>{
