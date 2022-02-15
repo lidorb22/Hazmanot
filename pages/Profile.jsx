@@ -257,7 +257,7 @@ function Profile() {
             duration: 2,
           }}
           variants={lookingCard}
-          className="opacity-0 pointer-events-none bg-black bg-opacity-70 w-full h-full absolute top-0 right-0 z-50 flex flex-col items-center justify-center"
+          className="opacity-0 pointer-events-none bg-black bg-opacity-70 w-full h-full absolute top-0 right-0 z-50 flex flex-col items-center justify-center xl:bg-opacity-20"
         >
           <motion.div
             animate={isLookingCard ? "cardIn" : "cardOut"}
@@ -267,7 +267,7 @@ function Profile() {
               duration: 2,
             }}
             variants={lookingCard}
-            className="bg-white w-5/6 h-4/6 rounded-2xl grid grid-rows-6"
+            className="bg-white w-5/6 h-4/6 rounded-2xl grid grid-rows-6 xl:w-96 xl:h-2/4 xl:mr-96 xl:mt-32"
           >
             <p className="justify-self-center mt-2 row-start-1 col-start-1 text-xl font-bold tracking-widest">
               {invInfo[cardIndex].invRison === "Bday" && "יום ההולדת של"}
@@ -316,7 +316,8 @@ function Profile() {
             </p>
             <div className="shadow-xl border-b-2 border-t-2 border-yellow-col justify-self-center self-start row-start-3 col-start-1 w-5/6 h-full flex flex-row items-center justify-center rounded-xl">
               <p className="break-all p-4 text-center">
-                localhost:3000/Invite/{invInfo[cardIndex]._id}
+                https://hazmanot-il.herokuapp.com/Invite/
+                {invInfo[cardIndex]._id}
               </p>
             </div>
             <Link href={`/Invite/${invInfo[cardIndex]._id}`}>
@@ -325,7 +326,7 @@ function Profile() {
               </div>
             </Link>
             <div className="justify-self-center self-center row-start-4 row-span-3 col-start-1 w-full h-4/6 grid grid-cols-6">
-              <p className="font-bold border-b-2 border-yellow-col self-start justify-self-center row-start-1 col-start-1 ml-3 mt-6">
+              <p className="font-bold border-b-2 border-yellow-col self-start justify-self-center row-start-1 col-start-1 ml-3 mt-6 xl:mt-2">
                 מגיעים
               </p>
               <div className="font-bold shadow-xl border-b-2 border-t-2 border-yellow-col self-center justify-self-center row-start-1 ml-3 col-start-1 bg-white w-10 h-16 rounded-2xl flex items-center justify-center">
