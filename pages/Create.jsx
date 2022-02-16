@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
 import { newInvite } from "../api/inviteApi";
 import { invitePending, inviteLink, inviteFail } from "../Slices/inviteSlice";
+import { PlusIcon } from "@heroicons/react/solid";
 
 function Create() {
   const { isAuth } = useSelector((state) => state.auth);
@@ -22,7 +23,7 @@ function Create() {
   const [date, setDate] = useState("");
 
   const selectionAction = {
-    open: { y: -180 },
+    open: { y: -200 },
     closed: { y: 0 },
   };
 
@@ -33,6 +34,41 @@ function Create() {
 
   const variants = {
     firstLoad: { opacity: 1, scale: 1 },
+  };
+
+  const submitButtHandler = (e) => {
+    switch (invRison) {
+      case "Bday":
+        if (
+          names !== "" &&
+          age !== "" &&
+          place !== "" &&
+          time !== "" &&
+          date !== ""
+        ) {
+        } else {
+          e.preventDefault();
+        }
+        break;
+      case "Hatona":
+      case "Hina":
+      case "Bar":
+      case "Bat":
+        if (names !== "" && place !== "" && time !== "" && date !== "") {
+        } else {
+          e.preventDefault();
+        }
+        break;
+      case "Brit":
+        if (place !== "" && time !== "" && date !== "") {
+        } else {
+          e.preventDefault();
+        }
+        break;
+      default:
+        e.preventDefault();
+        break;
+    }
   };
 
   function selectionE(e) {
@@ -213,7 +249,7 @@ function Create() {
           <p className="">!למה הם מצפים</p>
         </motion.div>
       </div>
-      <div className="h-full grid grid-cols-1 grid-rows-1 text-center bg-red-200">
+      <div className="h-full grid grid-cols-1 grid-rows-1 text-center">
         <div className="h-full w-full row-start-1 col-start-1 grid grid-rows-6 grid-cols-1">
           {/* event selection */}
           <motion.p
@@ -322,7 +358,8 @@ function Create() {
             </motion.div>
             <button
               type="submit"
-              className="absolute bottom-12 right-0 text-lg font-bold w-full text-center h-10 bg-yellow-col border-t-2 border-b-2 border-black md:bottom-40"
+              onClick={submitButtHandler}
+              className="absolute bottom-8 right-0 text-lg font-bold w-full text-center h-10 bg-yellow-col border-t-2 border-b-2 border-black md:bottom-40"
             >
               המשך
             </button>

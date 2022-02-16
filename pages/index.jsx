@@ -29,9 +29,7 @@ export default function Home() {
           <div className="col-start-1 row-start-1 w-max justify-self-center self-start text-4xl space-y-2 pt-5">
             <p className="font-bold">ברוכים הבאים</p>
             <p className="font-bold">לאתר</p>
-            <p className="font-logo tracking-widest ">
-              הזמנות<span className="text-base">.com</span>
-            </p>
+            <p className="font-logo tracking-widest ">הזמנות</p>
           </div>
           <p className="col-start-1 row-start-1 text-lg self-end pb-12 lg:text-2xl lg:pb-14">
             האתר שמציע לכם ליצור הזמנה דיגיטלית
@@ -50,12 +48,14 @@ export default function Home() {
         </p>
         <div className="h-80 flex flex-wrap text-lg md:w-4/6 md:col-start-1 md:col-span-2 md:row-start-1 md:row-span-2 md:self-start md:text-xl md:mt-5 md:justify-self-center xl:text-4xl xl:w-2/3 xl:h-96 xl:mr-20 2xl:w-2/4 2xl:justify-self-center 2xl:mr-0">
           <motion.div
-            initial={{ scale: 0.5, opacity: 0, filter: "blur(4px)" }}
-            animate={{ scale: 1, opacity: 1, filter: "blur(0px)" }}
+            initial={{ scale: 0.5, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
             transition={{
-              type: "spring",
-              bounce: 1,
-              stiffness: 70,
+              scale: {
+                type: "spring",
+                bounce: 1,
+                stiffness: 70,
+              },
             }}
             className="h-1/2 w-1/2 flex flex-col text-center"
           >
@@ -65,12 +65,14 @@ export default function Home() {
             <p>לכל אדם</p>
           </motion.div>
           <motion.div
-            initial={{ scale: 0.5, opacity: 0, filter: "blur(4px)" }}
-            animate={{ scale: 1, opacity: 1, filter: "blur(0px)" }}
+            initial={{ scale: 0.5, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
             transition={{
-              type: "spring",
-              bounce: 1,
-              stiffness: 70,
+              scale: {
+                type: "spring",
+                bounce: 1,
+                stiffness: 70,
+              },
             }}
             className="h-1/2 w-1/2 flex flex-col text-center"
           >
@@ -80,12 +82,14 @@ export default function Home() {
             <p>נסיעות ודלק</p>
           </motion.div>
           <motion.div
-            initial={{ scale: 0.5, opacity: 0, filter: "blur(4px)" }}
-            animate={{ scale: 1, opacity: 1, filter: "blur(0px)" }}
+            initial={{ scale: 0.5, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
             transition={{
-              type: "spring",
-              bounce: 1,
-              stiffness: 40,
+              scale: {
+                type: "spring",
+                bounce: 1,
+                stiffness: 40,
+              },
             }}
             className="h-1/2 w-1/2 flex flex-col text-center"
           >
@@ -95,12 +99,14 @@ export default function Home() {
             <p>בלחיצת כפתור</p>
           </motion.div>
           <motion.div
-            initial={{ scale: 0.5, opacity: 0, filter: "blur(4px)" }}
-            animate={{ scale: 1, opacity: 1, filter: "blur(0px)" }}
+            initial={{ scale: 0.5, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
             transition={{
-              type: "spring",
-              bounce: 1,
-              stiffness: 40,
+              scale: {
+                type: "spring",
+                bounce: 1,
+                stiffness: 40,
+              },
             }}
             className="h-1/2 w-1/2 flex flex-col text-center"
           >

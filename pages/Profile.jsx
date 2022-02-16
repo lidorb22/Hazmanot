@@ -57,21 +57,16 @@ function Profile() {
 
   async function listHandle() {
     dispatch(invitePending());
-    console.log("clicking");
     try {
       const list = await allInvList({ _id });
-      console.log("try");
       if (list.length > invInfo.length) {
-        console.log("new item");
         if (invInfo.length === 0) {
-          console.log("first time");
           list.forEach(async (item) => {
             const newList = await InvObj({ _id: item });
             dispatch(inviteInfo(newList));
           });
           return;
         } else {
-          console.log("else");
           let arr = [];
           invInfo.forEach((item) => {
             arr.push(item._id);
@@ -106,10 +101,7 @@ function Profile() {
         invId: invInfo[cardIndex]._id,
         userId: invInfo[cardIndex].inviter,
       });
-      let arr = [];
-      invInfo.forEach((item) => {
-        arr.push(item);
-      });
+      let arr = [...invInfo];
       arr.splice(cardIndex, 1);
       dispatch(inviteResetList(arr));
       setIsLookingCard(false);
@@ -123,12 +115,7 @@ function Profile() {
     if (!isAuth) {
       return router.push("/");
     }
-  });
-
-  useEffect(() => {
-    if (isAuth) {
-      listHandle();
-    }
+    listHandle();
   }, []);
 
   return (
@@ -215,11 +202,12 @@ function Profile() {
                   id={item._id}
                   onClick={() => cardHandle(index)}
                   className={`
-                                ${item.invRison === "Brit" && "bg-yellow-300"} 
-                                ${item.invRison === "Bday" && "bg-orange-300"} 
-                                ${item.invRison === "Bat" && "bg-pink-300"}
-                                ${item.invRison === "Hatona" && "bg-rose-300"}
-                                ${item.invRison === "Hina" && "bg-cyne-300"}
+                                ${item.invRison === "Brit" && "bg-yellow-400"} 
+                                ${item.invRison === "Bday" && "bg-orange-400"} 
+                                ${item.invRison === "Bat" && "bg-pink-400"}
+                                ${item.invRison === "Bar" && "bg-green-400"}
+                                ${item.invRison === "Hatona" && "bg-rose-400"}
+                                ${item.invRison === "Hina" && "bg-blue-400"}
                                 h-20 w-full flex flex-col items-center justify-center bg-white rounded-xl`}
                 >
                   <p>{item.invRison === "Bday" && "יום ההולדת של"}</p>
@@ -270,57 +258,77 @@ function Profile() {
             className="bg-white w-5/6 h-4/6 rounded-2xl grid grid-rows-6 xl:w-96 xl:h-2/4 xl:mr-96 xl:mt-32"
           >
             <p className="justify-self-center mt-2 row-start-1 col-start-1 text-xl font-bold tracking-widest">
-              {invInfo[cardIndex].invRison === "Bday" && "יום ההולדת של"}
+              {invInfo[cardIndex] !== undefined &&
+                invInfo[cardIndex].invRison === "Bday" &&
+                "יום ההולדת של"}
             </p>
             <p className="justify-self-center mt-2 row-start-1 col-start-1 text-xl font-bold tracking-widest">
-              {invInfo[cardIndex].invRison === "Hatona" && "החתונה של"}
+              {invInfo[cardIndex] !== undefined &&
+                invInfo[cardIndex].invRison === "Hatona" &&
+                "החתונה של"}
             </p>
             <p className="justify-self-center mt-2 row-start-1 col-start-1 text-xl font-bold tracking-widest">
-              {invInfo[cardIndex].invRison === "Hina" && "החינה של"}
+              {invInfo[cardIndex] !== undefined &&
+                invInfo[cardIndex].invRison === "Hina" &&
+                "החינה של"}
             </p>
             <p className="justify-self-center mt-2 row-start-1 col-start-1 text-xl font-bold tracking-widest">
-              {invInfo[cardIndex].invRison === "Bar" && "הבר מצווה של"}
+              {invInfo[cardIndex] !== undefined &&
+                invInfo[cardIndex].invRison === "Bar" &&
+                "הבר מצווה של"}
             </p>
             <p className="justify-self-center mt-2 row-start-1 col-start-1 text-xl font-bold tracking-widest">
-              {invInfo[cardIndex].invRison === "Bat" && "הבת מצווה של"}
+              {invInfo[cardIndex] !== undefined &&
+                invInfo[cardIndex].invRison === "Bat" &&
+                "הבת מצווה של"}
             </p>
             <p className="justify-self-center self-center row-start-1 col-start-1 text-xl font-bold tracking-widest">
-              {invInfo[cardIndex].invRison === "Brit" && "ברית"}
+              {invInfo[cardIndex] !== undefined &&
+                invInfo[cardIndex].invRison === "Brit" &&
+                "ברית"}
             </p>
             <p
               className={`${
+                invInfo[cardIndex] !== undefined &&
                 invInfo[cardIndex].invRison === "Bday"
                   ? "justify-self-end mr-16"
                   : "justify-self-center"
               } self-center mt-5 row-start-1 col-start-1 border-b-2 border-yellow-col`}
             >
-              {invInfo[cardIndex].names}
+              {invInfo[cardIndex] !== undefined && invInfo[cardIndex].names}
             </p>
-            {invInfo[cardIndex].age !== "" && (
+            {invInfo[cardIndex] !== undefined && invInfo[cardIndex].age !== "" && (
               <div className="flex flex-col items-center justify-center ml-16 justify-self-start self-center row-start-1 col-start-1 w-10 text-center h-10 border-yellow-col border-2 rounded-full mt-5">
                 <p className="">{invInfo[cardIndex].age}</p>
               </div>
             )}
             <p
               className={`${
-                invInfo[cardIndex].invRison === "Brit" ? "mb-3" : ""
+                invInfo[cardIndex] !== undefined &&
+                invInfo[cardIndex].invRison === "Brit"
+                  ? "mb-3"
+                  : ""
               } text-xl  self-center justify-self-center row-start-1 row-span-2 col-start-1 tracking-widest`}
             >
-              {invInfo[cardIndex].place}
+              {invInfo[cardIndex] !== undefined && invInfo[cardIndex].place}
             </p>
             <p className="mr-5 justify-self-end self-center row-start-2 col-start-1">
-              {invInfo[cardIndex].date}
+              {invInfo[cardIndex] !== undefined && invInfo[cardIndex].date}
             </p>
             <p className="ml-5 justify-self-start self-center row-start-2 col-start-1">
-              {invInfo[cardIndex].time}
+              {invInfo[cardIndex] !== undefined && invInfo[cardIndex].time}
             </p>
             <div className="shadow-xl border-b-2 border-t-2 border-yellow-col justify-self-center self-start row-start-3 col-start-1 w-5/6 h-full flex flex-row items-center justify-center rounded-xl">
               <p className="break-all p-4 text-center">
                 https://hazmanot.netlify.app/Invite/
-                {invInfo[cardIndex]._id}
+                {invInfo[cardIndex] !== undefined && invInfo[cardIndex]._id}
               </p>
             </div>
-            <Link href={`/Invite/${invInfo[cardIndex]._id}`}>
+            <Link
+              href={`/Invite/${
+                invInfo[cardIndex] !== undefined && invInfo[cardIndex]._id
+              }`}
+            >
               <div className="row-start-3 row-span-2 self-center justify-self-center col-start-1 bg-white border-2 border-yellow-col rounded-full p-2">
                 <ClipboardCopyIcon className="w-6" />
               </div>

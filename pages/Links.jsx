@@ -18,31 +18,35 @@ function Links() {
     if (!isAuth) {
       router.push("/");
     }
-  });
+  }, []);
   return (
     <div className="w-full h-screen grid grid-rows-6">
-      <div className="z-10 flex flex-row items-center justify-center w-full h-5/6 row-start-1 row-span-2 col-start-1 bg-yellow-col">
+      <div className="shadow-try flex flex-row items-center justify-center w-5/6 h-36 mt-5 row-start-1 row-span-2 col-start-1 bg-yellow-col justify-self-center rounded-2xl">
         <div className="text-center space-y-2">
           <p className="font-bold tracking-widest text-xl">קישורים</p>
           <p>זה השלב האחרון מקווים שהסתדרתם</p>
           <p>ואהבתם את חווית היצירה</p>
         </div>
       </div>
-      <div className="space-y-2 z-10 col-start-1 w-full h-full row-start-3 row-span-2 flex flex-col items-center justify-center">
-        <div className="overflow-hidden bg-white w-3/4 h-2/6 rounded-xl shadow-2xl flex flex-col justify-center items-center ">
-          <p className="break-all p-2">
-            {link ? `localhost:3000/invite/${link}` : "תקלה לא נמצא לינק"}
+      <div className="col-start-1 w-full h-full row-start-3 row-span-2 flex flex-col items-center justify-center">
+        <div className="overflow-hidden bg-gray-100 text-sm font-bold w-3/4 h-2/6 rounded-xl shadow-try2 flex flex-col justify-center items-center ">
+          <p className="break-all p-2 text-center">
+            {link
+              ? `https://hazmanot.netlify.app/Invite/${link}`
+              : "תקלה לא נמצא לינק"}
           </p>
         </div>
-        <p>זה הקישור שאתם שולחים למוזמנים שלכם</p>
-        <p>תהנו</p>
+        <div className="text-center pt-6">
+          <p>זה הקישור שאתם שולחים למוזמנים שלכם</p>
+          <p>תהנו</p>
+        </div>
       </div>
-      <div className="shadow-lg absolute bottom-20 right-0 w-full h-10 bg-yellow-col border-t-2 border-b-2 border-black flex flex-col items-center justify-center">
-        <p onClick={() => backToMain()} className="font-bold">
-          !העתקתי ושלחתי
-        </p>
+      <div
+        onClick={() => backToMain()}
+        className="shadow-lg absolute bottom-20 right-0 w-full h-10 bg-yellow-col border-t-2 border-b-2 border-black flex flex-col items-center justify-center cursor-pointer"
+      >
+        <p className="font-bold pointer-events-none">!העתקתי ושלחתי</p>
       </div>
-      <div className="shadow-lg absolute top-0 right-9 w-10 h-full bg-yellow-col border-l-2 border-r-2 border-black"></div>
     </div>
   );
 }
