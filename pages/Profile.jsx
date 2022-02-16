@@ -257,7 +257,7 @@ function Profile() {
             duration: 2,
           }}
           variants={lookingCard}
-          className="opacity-0 pointer-events-none bg-black bg-opacity-70 w-full h-full absolute top-0 right-0 z-50 flex flex-col items-center justify-center xl:bg-opacity-20"
+          className="opacity-0 pointer-events-none bg-black bg-opacity-70 w-full h-screen absolute top-0 right-0 z-50 flex flex-col items-center justify-center xl:bg-opacity-20"
         >
           <motion.div
             animate={isLookingCard ? "cardIn" : "cardOut"}

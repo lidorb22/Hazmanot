@@ -213,7 +213,7 @@ function Create() {
           <p className="">!למה הם מצפים</p>
         </motion.div>
       </div>
-      <div className="h-full grid grid-cols-1 grid-rows-1 text-center">
+      <div className="h-full grid grid-cols-1 grid-rows-1 text-center bg-red-200">
         <div className="h-full w-full row-start-1 col-start-1 grid grid-rows-6 grid-cols-1">
           {/* event selection */}
           <motion.p
@@ -329,7 +329,6 @@ function Create() {
           </form>
         </div>
       </div>
-      <div className="shadow-lg absolute top-0 right-5 w-10 h-full bg-yellow-col border-l-2 border-r-2 border-black md:right-32 lg:right-52"></div>
     </div>
   );
 }
