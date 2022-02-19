@@ -102,7 +102,6 @@ function Create() {
         date,
         _id,
       });
-      console.log(invite);
       dispatch(inviteLink(invite));
       router.push("/Links");
     } catch (error) {
