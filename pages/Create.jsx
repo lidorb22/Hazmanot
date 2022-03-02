@@ -6,7 +6,9 @@ import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
 import { newInvite } from "../api/inviteApi";
 import { invitePending, inviteLink, inviteFail } from "../Slices/inviteSlice";
-import { PlusIcon } from "@heroicons/react/solid";
+import { EyeIcon } from "@heroicons/react/solid";
+import Template from "../components/Template";
+import Head from "next/head";
 
 function Create() {
   const { isAuth } = useSelector((state) => state.auth);
@@ -15,12 +17,23 @@ function Create() {
 
   const [isSelected, setIsSelected] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [showTemplate, setShowTemplate] = useState(false);
+  const [isTamplateWatched, setTamplateWatched] = useState(false);
+  const [errorTrigger, setErrorTrigger] = useState(false);
+  const [errorWas, setErrorWas] = useState(false);
+  const [errorMessege, setErrorMessege] = useState("");
   const [invRison, setQName] = useState("default");
   const [names, setName] = useState("");
   const [age, setAge] = useState("");
   const [place, setPlace] = useState("");
   const [time, setTime] = useState("");
   const [date, setDate] = useState("");
+  const [backgroundCol, setBackgroundCol] = useState("#FFA800");
+  const [textCol, setTextCol] = useState("rgb(0 0 0)");
+  const [fillsCol, setFillsCol] = useState("rgb(255 255 255)");
+  const [titleText, setTitleText] = useState(
+    "הנכם מוזמנים לחגוג אימנו את אירוע"
+  );
 
   const selectionAction = {
     open: { y: -200 },
@@ -46,6 +59,20 @@ function Create() {
           time !== "" &&
           date !== ""
         ) {
+          if (e.target.id === "tamplateButt") {
+            setShowTemplate(true);
+            setTamplateWatched(true);
+            return;
+          }
+          if (isTamplateWatched === false && errorWas === false) {
+            e.preventDefault();
+            setErrorTrigger(true);
+            setErrorWas(true);
+            setErrorMessege(
+              "אתה בטוח שברצונך להמשיך בלי לראות איך ההזמנה נראת"
+            );
+            return;
+          }
         } else {
           e.preventDefault();
         }
@@ -55,12 +82,40 @@ function Create() {
       case "Bar":
       case "Bat":
         if (names !== "" && place !== "" && time !== "" && date !== "") {
+          if (e.target.id === "tamplateButt") {
+            setShowTemplate(true);
+            setTamplateWatched(true);
+            return;
+          }
+          if (isTamplateWatched === false && errorWas === false) {
+            e.preventDefault();
+            setErrorTrigger(true);
+            setErrorWas(true);
+            setErrorMessege(
+              "אתה בטוח שברצונך להמשיך בלי לראות איך ההזמנה נראת"
+            );
+            return;
+          }
         } else {
           e.preventDefault();
         }
         break;
       case "Brit":
         if (place !== "" && time !== "" && date !== "") {
+          if (e.target.id === "tamplateButt") {
+            setShowTemplate(true);
+            setTamplateWatched(true);
+            return;
+          }
+          if (isTamplateWatched === false && errorWas === false) {
+            e.preventDefault();
+            setErrorTrigger(true);
+            setErrorWas(true);
+            setErrorMessege(
+              "אתה בטוח שברצונך להמשיך בלי לראות איך ההזמנה נראת"
+            );
+            return;
+          }
         } else {
           e.preventDefault();
         }
@@ -73,6 +128,11 @@ function Create() {
 
   function selectionE(e) {
     setQName(e.target.value);
+    setName("");
+    setAge("");
+    setDate("");
+    setPlace("");
+    setTime("");
     if (e.target.value !== "default") {
       setIsSelected(true);
       setIsRefreshing(false);
@@ -101,6 +161,10 @@ function Create() {
         time,
         date,
         _id,
+        background: backgroundCol,
+        text: textCol,
+        fills: fillsCol,
+        title: titleText,
       });
       dispatch(inviteLink(invite));
       router.push("/Links");
@@ -109,6 +173,16 @@ function Create() {
       dispatch(inviteFail("תקלה ביצירת המודעה"));
     }
   }
+
+  const errorHandler = (e) => {
+    if (e.target.id === "accept") {
+      setErrorTrigger(false);
+      setShowTemplate(true);
+      setTamplateWatched(true);
+    } else if (e.target.id === "exit") {
+      setErrorTrigger(false);
+    }
+  };
 
   const qnaOBJ = {
     default: "",
@@ -230,6 +304,14 @@ function Create() {
 
   return (
     <div className="h-screen flex flex-col font-sans overflow-hidden">
+      <Head>
+        <title>יצירת ההזמנה</title>
+        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+        <meta
+          name="description"
+          content={`פה תצרו את ההזמנה שלכם ותעצבו אותה על פי טעמכם`}
+        />
+      </Head>
       <Menu Page="Invite" />
       <div
         className="h-2/6 flex flex-col 
@@ -301,6 +383,7 @@ function Create() {
                         ? (e) => setPlace(e.target.value)
                         : (e) => setName(e.target.value)
                     }
+                    value={invRison === "Brit" ? place : names}
                     type={qnaOBJ[invRison].type.f}
                     className="w-2/3 bg-transparent border-b-2 border-black focus:outline-none md:w-2/6 text-center focus:text-center"
                   />
@@ -312,6 +395,7 @@ function Create() {
                         ? (e) => setTime(e.target.value)
                         : (e) => setPlace(e.target.value)
                     }
+                    value={invRison === "Brit" ? time : place}
                     type={qnaOBJ[invRison].type.s}
                     className="w-2/3 bg-transparent border-b-2 border-black focus:outline-none md:w-2/6 text-center focus:text-center"
                   />
@@ -323,6 +407,7 @@ function Create() {
                         ? (e) => setDate(e.target.value)
                         : (e) => setTime(e.target.value)
                     }
+                    value={invRison === "Brit" ? date : time}
                     type={qnaOBJ[invRison].type.t}
                     className="w-2/3 bg-transparent border-b-2 border-black focus:outline-none md:w-2/6 text-center focus:text-center"
                   />
@@ -338,6 +423,7 @@ function Create() {
                         ? (e) => setAge(e.target.value)
                         : (e) => setDate(e.target.value)
                     }
+                    value={invRison === "Bday" ? age : date}
                     type={qnaOBJ[invRison].type.fo}
                     className="w-2/3 bg-transparent border-b-2 border-black focus:outline-none md:w-2/6 text-center focus:text-center"
                   />
@@ -349,20 +435,162 @@ function Create() {
                   <input
                     name={qnaOBJ[invRison].names.fiv}
                     onChange={(e) => setDate(e.target.value)}
+                    value={date}
                     type={qnaOBJ[invRison].type.fiv}
                     className="w-2/3 bg-transparent border-b-2 border-black focus:outline-none md:w-2/6 text-center focus:text-center"
                   />
                 </>
               )}
             </motion.div>
-            <button
+            <motion.button
+              animate={
+                invRison === "Bday" &&
+                names !== "" &&
+                age !== "" &&
+                time !== "" &&
+                date !== "" &&
+                place !== ""
+                  ? { backgroundColor: "#FFA800" }
+                  : invRison === "Hatona" &&
+                    names !== "" &&
+                    time !== "" &&
+                    date !== "" &&
+                    place !== ""
+                  ? { backgroundColor: "#FFA800" }
+                  : invRison === "Hina" &&
+                    names !== "" &&
+                    time !== "" &&
+                    date !== "" &&
+                    place !== ""
+                  ? { backgroundColor: "#FFA800" }
+                  : invRison === "Bar" &&
+                    names !== "" &&
+                    time !== "" &&
+                    date !== "" &&
+                    place !== ""
+                  ? { backgroundColor: "#FFA800" }
+                  : invRison === "Bat" &&
+                    names !== "" &&
+                    time !== "" &&
+                    date !== "" &&
+                    place !== ""
+                  ? { backgroundColor: "#FFA800" }
+                  : invRison === "Brit" &&
+                    time !== "" &&
+                    date !== "" &&
+                    place !== ""
+                  ? { backgroundColor: "#FFA800" }
+                  : { backgroundColor: "rgb(209 213 219)" }
+              }
               type="submit"
               onClick={submitButtHandler}
               className="absolute bottom-8 right-0 text-lg font-bold w-full text-center h-10 bg-yellow-col border-t-2 border-b-2 border-black md:bottom-40"
             >
               המשך
-            </button>
+            </motion.button>
           </form>
+          <motion.div
+            animate={
+              invRison === "default"
+                ? { width: 0, height: 0, opacity: 0 }
+                : invRison === "Bday" &&
+                  names !== "" &&
+                  age !== "" &&
+                  time !== "" &&
+                  date !== "" &&
+                  place !== ""
+                ? { backgroundColor: "#FFA800", width: "5rem", height: "5rem" }
+                : invRison === "Hatona" &&
+                  names !== "" &&
+                  time !== "" &&
+                  date !== "" &&
+                  place !== ""
+                ? { backgroundColor: "#FFA800", width: "5rem", height: "5rem" }
+                : invRison === "Hina" &&
+                  names !== "" &&
+                  time !== "" &&
+                  date !== "" &&
+                  place !== ""
+                ? { backgroundColor: "#FFA800", width: "5rem", height: "5rem" }
+                : invRison === "Bar" &&
+                  names !== "" &&
+                  time !== "" &&
+                  date !== "" &&
+                  place !== ""
+                ? { backgroundColor: "#FFA800", width: "5rem", height: "5rem" }
+                : invRison === "Bat" &&
+                  names !== "" &&
+                  time !== "" &&
+                  date !== "" &&
+                  place !== ""
+                ? { backgroundColor: "#FFA800", width: "5rem", height: "5rem" }
+                : invRison === "Brit" &&
+                  time !== "" &&
+                  date !== "" &&
+                  place !== ""
+                ? { backgroundColor: "#FFA800", width: "5rem", height: "5rem" }
+                : {
+                    backgroundColor: "rgb(209 213 219)",
+                    width: "5rem",
+                    height: "5rem",
+                  }
+            }
+            id="tamplateButt"
+            onClick={submitButtHandler}
+            className="absolute bottom-4 left-0 rounded-r-xl shadow-1 bg-gray-300 w-20 h-20 flex flex-col justify-center items-center z-20"
+          >
+            <EyeIcon className="w-6 pointer-events-none" />
+            <p className="pointer-events-none">צפייה בהזמנה</p>
+          </motion.div>
+          <Template
+            closeEvent={setShowTemplate}
+            eventBool={showTemplate}
+            pName={names}
+            age={age}
+            place={place}
+            date={date}
+            time={time}
+            eventName={invRison}
+            setBackgroundCol={setBackgroundCol}
+            setTextCol={setTextCol}
+            setFillsCol={setFillsCol}
+            setTitleText={setTitleText}
+          />
+
+          <motion.div
+            animate={
+              errorTrigger
+                ? { opacity: 1, pointerEvents: "auto" }
+                : { opacity: 0, pointerEvents: "none" }
+            }
+            className="opacity-0 absolute top-0 left-0 w-full h-screen bg-black bg-opacity-50 flex flex-col justify-center items-center z-50 space-y-3"
+          >
+            <motion.div
+              animate={errorTrigger ? { scale: 1 } : { scale: 0.7 }}
+              className="w-4/6 h-max p-3 bg-gray-200 shadow-1 rounded-xl font-bold"
+            >
+              <p>{errorMessege}</p>
+            </motion.div>
+            <motion.div
+              animate={errorTrigger ? { scale: 1 } : { scale: 0.7 }}
+              className="flex flex-wrap space-x-7"
+            >
+              <div
+                onClick={(e) => errorHandler(e)}
+                id="exit"
+                className="bg-red-700  shadow-1 w-24 px-2 rounded-md text-white"
+              >
+                <p className="pointer-events-none">אני בטוח</p>
+              </div>
+              <div
+                onClick={(e) => errorHandler(e)}
+                id="accept"
+                className="bg-green-600 shadow-1 w-24 px-2 rounded-md text-white"
+              >
+                <p className="pointer-events-none">אני לא בטוח</p>
+              </div>
+            </motion.div>
+          </motion.div>
         </div>
       </div>
     </div>

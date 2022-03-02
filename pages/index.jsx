@@ -6,6 +6,7 @@ import {
   PresentationChartLineIcon,
 } from "@heroicons/react/solid";
 import Menu from "../components/Menu";
+import Head from "next/head";
 
 export default function Home() {
   const variants = {
@@ -14,6 +15,14 @@ export default function Home() {
 
   return (
     <div className="h-screen flex flex-col font-sans overflow-hidden">
+      <Head>
+        <title>הזמנות</title>
+        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+        <meta
+          name="description"
+          content={`אתר הזמנות מציע לכם ליצור ולעצב הזמנה בדרך הכי פשוטה שיש`}
+        />
+      </Head>
       <Menu Page="Main" />
       <div
         className="h-4/6 flex flex-col 

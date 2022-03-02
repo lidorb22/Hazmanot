@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from "next/router";
 import { inviteReset } from "../Slices/inviteSlice";
+import Head from "next/head";
 
 function Links() {
   const { isAuth } = useSelector((state) => state.auth);
@@ -21,6 +22,14 @@ function Links() {
   }, []);
   return (
     <div className="w-full h-screen grid grid-rows-6">
+      <Head>
+        <title>קישורים</title>
+        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+        <meta
+          name="description"
+          content={`כאן תקבלו את הקישור להזמנה האישית שלכם`}
+        />
+      </Head>
       <div className="shadow-try flex flex-row items-center justify-center w-5/6 h-36 mt-5 row-start-1 row-span-2 col-start-1 bg-yellow-col justify-self-center rounded-2xl">
         <div className="text-center space-y-2">
           <p className="font-bold tracking-widest text-xl">קישורים</p>

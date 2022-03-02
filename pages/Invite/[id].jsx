@@ -1,287 +1,259 @@
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import { InvObj } from "../../api/inviteApi";
+import { addComming } from "../../Slices/inviteAction";
+import { HomeIcon, XIcon, CheckCircleIcon } from "@heroicons/react/solid";
+import { useDispatch } from "react-redux";
 import { motion } from "framer-motion";
-import { ChevronDownIcon } from "@heroicons/react/outline";
+import Head from "next/head";
 
 function Invite() {
-  const [menuOpen, isMenuOpen] = useState(false);
-  const [drawElements, setElements] = useState([]);
-  const [selectedElement, setSelectedElement] = useState(null);
-  const [action, setAction] = useState("none");
-  const [windowCord, setWindowCords] = useState({
-    width: 200,
-    height: 200,
-  });
-  const menuAnim = {
-    open: { height: "300px", width: "350px" },
-    closed: { height: "1.5rem", width: "13rem" },
-  };
+  const [change, setData] = useState(null);
+  const [errorOrNull, setErrorOrNull] = useState(true);
+  const [inviteInputs, setInviteInputs] = useState(false);
+  const [commingInf, setCommingInf] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [commingNum, setCommingNum] = useState();
+  const dispatch = useDispatch();
   const router = useRouter();
-  const { id } = router.query;
 
-  let canvas;
-  let ctx;
-
-  useLayoutEffect(() => {
-    canvas = document.getElementById("myCanvas");
-    ctx = canvas.getContext("2d");
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawElements.forEach((element) => draw(element));
-  }, [drawElements]);
-
-  const draw = (element) => {
-    switch (element.shapeType) {
-      case "rectangle":
-        ctx.fillStyle = element.shapeColor;
-        ctx.fillRect(
-          element.x1,
-          element.y1,
-          element.x2 - element.x1,
-          element.y2 - element.y1
-        );
-        break;
+  async function fetchData() {
+    try {
+      const newList = await InvObj({ _id: router.query.id });
+      setData(newList);
+      if (newList === null || newList.error) {
+        return;
+      } else {
+        setErrorOrNull(false);
+        setTimeout(() => setInviteInputs(true), 2800);
+        return;
+      }
+    } catch (error) {
+      console.log(error);
     }
-  };
-
-  const colorAndDeploy = (event) => {
-    CreateElement(event.target.id);
-    setAction("none");
-    isMenuOpen(false);
-  };
-
-  const CreateElement = (color, x1, y1, x2, y2, id, shape) => {
-    switch (action) {
-      case "text":
-        console.log("this is a text");
-        break;
-      case "rectangle":
-        let itemId = drawElements.length;
-        const newElement = {
-          x1: 87,
-          y1: 162,
-          x2: 262,
-          y2: 487,
-          shapeType: "rectangle",
-          shapeColor: color,
-          id: itemId,
-        };
-        setElements([...drawElements, newElement]);
-        break;
-      case "Moving":
-        const movingElement = {
-          x1,
-          y1,
-          x2,
-          y2,
-          shapeType: shape,
-          shapeColor: color,
-          id,
-        };
-        return { ...movingElement };
-    }
-  };
-
-  const updateElements = (id, x1, y1, x2, y2, shape, color) => {
-    const updateElement = CreateElement(color, x1, y1, x2, y2, id, shape);
-    const elementsCopy = [...drawElements];
-    elementsCopy[id] = updateElement;
-    setElements(elementsCopy);
-  };
-
-  const isWithInElement = (element, x, y) => {
-    const { x1, x2, y1, y2 } = element;
-    const minX = Math.min(x1, x2);
-    const maxX = Math.max(x1, x2);
-    const minY = Math.min(y1, y2);
-    const maxY = Math.max(y1, y2);
-    return x >= minX && x <= maxX && y >= minY && y <= maxY;
-  };
-
-  const getElementAtPosition = (x, y, elements) => {
-    return elements.find((item) => isWithInElement(item, x, y));
-  };
-
-  const clickDown = (event) => {
-    let xPoint;
-    let yPoint;
-    if (event._reactName === "onMouseDown") {
-      const { clientX, clientY } = event;
-      xPoint = Math.floor((windowCord.width / 2 - 350 / 2 - clientX) * -1);
-      yPoint = Math.floor((windowCord.height / 2 - 650 / 2 - clientY) * -1);
-    } else if (event._reactName === "onTouchStart") {
-      const { screenX, screenY } = event.touches[0];
-      xPoint = Math.floor((windowCord.width / 2 - 350 / 2 - screenX) * -1);
-      yPoint = Math.floor((windowCord.height / 2 - 650 / 2 - screenY) * -1);
-    }
-    const element = getElementAtPosition(xPoint, yPoint, drawElements);
-    element && console.log(element);
-    console.log(xPoint + " " + yPoint);
-    if (element) {
-      const offsetX = xPoint - element.x1;
-      const offsetY = yPoint - element.y1;
-      setSelectedElement({ ...element, offsetX, offsetY });
-      setAction("Moving");
-    }
-  };
-
-  const clickMove = (event) => {
-    let xPoint;
-    let yPoint;
-    if (event._reactName === "onMouseMove") {
-      const { clientX, clientY } = event;
-      xPoint = Math.floor((windowCord.width / 2 - 350 / 2 - clientX) * -1);
-      yPoint = Math.floor((windowCord.height / 2 - 650 / 2 - clientY) * -1);
-    } else if (event._reactName === "onTouchMove") {
-      const { screenX, screenY } = event.touches[0];
-      xPoint = Math.floor((windowCord.width / 2 - 350 / 2 - screenX) * -1);
-      yPoint = Math.floor((windowCord.height / 2 - 650 / 2 - screenY) * -1);
-    }
-    if (action === "none") {
-      event.target.style.cursor = getElementAtPosition(
-        xPoint,
-        yPoint,
-        drawElements
-      )
-        ? "move"
-        : "default";
-    }
-    if (action === "Moving") {
-      const { id, x1, y1, x2, y2, shapeType, shapeColor, offsetX, offsetY } =
-        selectedElement;
-      const width = x2 - x1;
-      const height = y2 - y1;
-      const newX = xPoint - offsetX;
-      const newY = yPoint - offsetY;
-      updateElements(
-        id,
-        newX,
-        newY,
-        newX + width,
-        newY + height,
-        shapeType,
-        shapeColor
-      );
-    }
-  };
-
-  const clickUp = () => {
-    setAction("none");
-    setSelectedElement(null);
-  };
-
-  const resizeHandle = () => {
-    setWindowCords({ width: window.innerWidth, height: window.innerHeight });
-    console.log("resizeHandle");
-  };
+  }
 
   useEffect(() => {
-    resizeHandle();
-    window.addEventListener("resize", resizeHandle, false);
-  }, []);
+    fetchData();
+  }, [router.query.id]);
+
+  const submitHandler = async (e) => {
+    e.preventDefault();
+    try {
+      dispatch(
+        addComming(commingInf + "Form", router.query.id, fullName, commingNum)
+      );
+      setFullName("");
+      setCommingNum("");
+      setCommingInf("");
+      setInviteInputs(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
-    <div className="absolute top-0 left-0 w-full h-screen bg-blue-200 flex items-center justify-center">
-      <div>
-        <canvas
-          id="myCanvas"
-          className="bg-gray-200 shadow-try"
-          width={"350px"}
-          height={"650px"}
-          onMouseDown={clickDown}
-          onTouchStart={clickDown}
-          onMouseUp={clickUp}
-          onTouchEnd={clickUp}
-          onMouseMove={clickMove}
-          onTouchMove={clickMove}
-        />
-      </div>
+    <div className="w-full h-screen bg-gray-200 flex flex-row items-center justify-center">
       <motion.div
-        animate={menuOpen ? "open" : "closed"}
-        variants={menuAnim}
-        transition={{
-          height: {
-            type: "spring",
-            bounce: 0,
-            stiffness: 40,
-            mass: 0.6,
-          },
-        }}
-        className="fixed bottom-12 w-52 h-6 bg-black bg-opacity-70 rounded-md flex"
+        animate={
+          errorOrNull
+            ? { opacity: 1, pointerEvents: "auto", scale: 1 }
+            : { opacity: 0, pointerEvents: "none", scale: 0 }
+        }
+        className="opacity-0 absolute bg-gray-600 shadow-try2 text-white font-bold h-[100px] w-[300px] rounded-xl flex flex-col items-center justify-center text-center braek-all p-2"
       >
-        {!menuOpen ? (
-          <p
-            onClick={() => isMenuOpen(true)}
-            className="text-md w-full text-center font-bold tracking-widest text-white"
+        <p>
+          סליחה אבל לא הצלחנו לטעון את ההזמנה כנראה שהיא נמחקה או שטעיתם בקישור
+        </p>
+        <div className="absolute bottom-0 w-full h-10 flex items-center justify-center">
+          <div
+            onClick={() => router.push("/")}
+            className="relative top-6 w-14 h-14 rounded-full bg-white shadow-try2 flex items-center justify-center z-10"
           >
-            עיצוב
-          </p>
-        ) : (
-          <div className="w-full h-full text-white mx-2 p-2 flex flex-row space-x-3 text-3xl">
-            <div className="absolute bottom-2 left-0 w-full flex flex-col z-10">
-              <div
-                onClick={() => isMenuOpen(false)}
-                className="bg-blue-300 rounded-lg h-10 w-10 self-center flex justify-center"
+            <HomeIcon className="w-8 text-gray-600 pointer-events-none" />
+          </div>
+        </div>
+      </motion.div>
+      <motion.div
+        animate={
+          inviteInputs
+            ? { opacity: 1, pointerEvents: "auto" }
+            : { opacity: 0, pointerEvents: "none" }
+        }
+        className="opacity-0 absolute top-0 left-0 h-screen w-full bg-black bg-opacity-50 flex items-center justify-center z-10"
+      >
+        <motion.div
+          animate={inviteInputs ? { bottom: 0 } : { bottom: -300 }}
+          className="relative w-[300px] h-[100px] bg-gray-300 rounded-lg flex flex-col items-center justify-center space-y-4 text-lg font-bold shadow-try"
+        >
+          <motion.p
+            animate={
+              commingInf !== ""
+                ? { opacity: 0, y: -3, pointerEvents: "none", zIndex: 0 }
+                : { opacity: 1, y: 0, pointerEvents: "auto", zIndex: 10 }
+            }
+            onClick={() => setCommingInf("solo")}
+            className="bg-green-500 px-3 rounded-md shadow-1"
+          >
+            !אני מתכוון/ת להגיע
+          </motion.p>
+          <motion.p
+            animate={
+              commingInf !== ""
+                ? { opacity: 0, y: 3, pointerEvents: "none", zIndex: 0 }
+                : { opacity: 1, y: 0, pointerEvents: "auto", zIndex: 10 }
+            }
+            onClick={() => setCommingInf("multi")}
+            className="bg-amber-500 px-3 rounded-md shadow-1"
+          >
+            !אנחנו מתכוונים להגיע
+          </motion.p>
+          <motion.form
+            animate={
+              commingInf !== ""
+                ? { opacity: 1, scale: 1, pointerEvents: "auto" }
+                : { opacity: 0, scale: 0.7, pointerEvents: "none" }
+            }
+            action="post"
+            onSubmit={(e) => submitHandler(e)}
+            className="absolute flex flex-col items-center justify-center space-y-2"
+          >
+            <motion.input
+              animate={commingInf === "solo" ? { y: 10 } : { y: -10 }}
+              type="text"
+              placeholder="הכנס את שמך המלא"
+              className="rounded-md text-center"
+              onChange={(e) => setFullName(e.target.value)}
+              value={fullName}
+            />
+            <motion.input
+              animate={
+                commingInf === "solo"
+                  ? { opacity: 0, pointerEvents: "none" }
+                  : { opacity: 1, pointerEvents: "auto", y: -10 }
+              }
+              type="number"
+              placeholder="מספר אנשים שבאים"
+              className="rounded-md text-center"
+              onChange={(e) => setCommingNum(e.target.value)}
+              value={commingNum}
+            />
+            <button className="absolute -bottom-6 bg-green-500 px-3 rounded-lg shadow-1 font-bold">
+              !מאשר/ת את הגעתי
+            </button>
+          </motion.form>
+          <div
+            onClick={() =>
+              commingInf !== "" ? setCommingInf("") : setInviteInputs(false)
+            }
+            className={`absolute -top-8 left-2 bg-white shadow-1 w-10 h-10 rounded-full flex items-center justify-center`}
+          >
+            <XIcon className="w-5 pointer-events-none" />
+          </div>
+        </motion.div>
+      </motion.div>
+      {!errorOrNull && (
+        <div
+          style={{
+            color: !errorOrNull && change.template.color.text,
+            backgroundColor: !errorOrNull && change.template.color.background,
+          }}
+          className={`relative shadow-try h-[650px] w-[300px] rounded-xl flex flex-col items-center justify-center space-y-4`}
+        >
+          <Head>
+            <title>הוזמנתם לאירוע!</title>
+            <meta
+              name="viewport"
+              content="initial-scale=1.0, width=device-width"
+            />
+            <meta
+              name="description"
+              content={`הזמינו אתכם לאירוע ולא כדי לכם לפספס היכנסו לאתר ושריינו את מקומכם`}
+            />
+          </Head>
+          <div className="text-md tracking-widest w-5/6 text-center">
+            <p>{!errorOrNull && change.template.text.title}</p>
+          </div>
+
+          <div className="flex flex-col space-y-3">
+            <h1 className="text-4xl font-bold tracking-widest">
+              {errorOrNull
+                ? null
+                : change.invRison === "Brit"
+                ? "הברית"
+                : change.invRison === "Bday"
+                ? "יום ההולדת"
+                : change.invRison === "Hatona"
+                ? "חתונה"
+                : change.invRison === "Hina"
+                ? "חינה"
+                : change.invRison === "Bar"
+                ? "הבר מצווה"
+                : change.invRison === "Bat"
+                ? "הבת מצווה"
+                : null}
+            </h1>
+            {!errorOrNull && change.names !== "" && (
+              <p
+                style={{
+                  backgroundColor: change.template.color.fills,
+                }}
+                className={`tracking-widest w-max px-2 rounded-md shadow-1 self-center text-md`}
               >
-                <ChevronDownIcon className="w-6 text-black pointer-events-none" />
-              </div>
-            </div>
-            <p id="text" onClick={(e) => setAction(e.target.id)}>
-              Text
-            </p>
-            <p id="rectangle" onClick={(e) => setAction(e.target.id)}>
-              rectangle
-            </p>
-            {action !== "none" && (
-              <div className="absolute top-0 right-0 w-full h-full bg-black bg-opacity-80">
-                <div className="w-full h-full p-5 grid grid-rows-3 grid-cols-2 text-lg text-black items-center justify-items-center">
-                  <div
-                    id="red"
-                    onClick={(e) => colorAndDeploy(e)}
-                    className="bg-red-600 w-14 h-14 rounded-full flex justify-center items-center "
-                  >
-                    <p className="pointer-events-none">Red</p>
-                  </div>
-                  <div
-                    id="blue"
-                    onClick={(e) => colorAndDeploy(e)}
-                    className="bg-blue-500 w-14 h-14 rounded-full flex justify-center items-center"
-                  >
-                    <p className="pointer-events-none">blue</p>
-                  </div>
-                  <div
-                    id="pink"
-                    onClick={(e) => colorAndDeploy(e)}
-                    className="bg-pink-400 w-14 h-14 rounded-full flex justify-center items-center"
-                  >
-                    <p className="pointer-events-none">pink</p>
-                  </div>
-                  <div
-                    id="green"
-                    onClick={(e) => colorAndDeploy(e)}
-                    className="bg-green-600 w-14 h-14 rounded-full flex justify-center items-center"
-                  >
-                    <p className="pointer-events-none">green</p>
-                  </div>
-                  <div
-                    id="orange"
-                    onClick={(e) => colorAndDeploy(e)}
-                    className="bg-orange-400 w-14 h-14 rounded-full flex justify-center items-center"
-                  >
-                    <p className="pointer-events-none">orange</p>
-                  </div>
-                  <div
-                    id="white"
-                    onClick={(e) => colorAndDeploy(e)}
-                    className="bg-white w-14 h-14 rounded-full flex justify-center items-center"
-                  >
-                    <p className="pointer-events-none">white</p>
-                  </div>
-                </div>
-              </div>
+                של <span className="underline">{change.names}</span>
+              </p>
             )}
           </div>
-        )}
-      </motion.div>
+          {!errorOrNull && change.age !== "" && (
+            <div className="flex flex-col space-y-3">
+              <h1 className="text-4xl font-bold tracking-widest">שחוגג</h1>
+              <div
+                style={{
+                  backgroundColor: change.template.color.fills,
+                }}
+                className={`flex items-center justify-center tracking-widest w-[40px] h-[40px] rounded-full shadow-1 self-center text-md`}
+              >
+                <p>{change.age}</p>
+              </div>
+            </div>
+          )}
+          {!errorOrNull && (
+            <div className="flex flex-col space-y-3">
+              <h1 className="text-4xl font-bold tracking-widest">בתאריך</h1>
+              <p className="tracking-widest w-max self-center text-md">
+                {change.date}
+              </p>
+            </div>
+          )}
+          {!errorOrNull && (
+            <div className="flex flex-col space-y-3">
+              <h1 className="text-4xl font-bold tracking-widest">בשעה</h1>
+              <p className="tracking-widest w-max self-center text-md">
+                {change.time}
+              </p>
+            </div>
+          )}
+          {!errorOrNull && (
+            <div className="flex flex-col space-y-3 text-center">
+              <h1 className="text-4xl font-bold tracking-widest">יש להגיע</h1>
+              <p className="tracking-widest w-[260px] self-center text-md">
+                ל{change.place}
+              </p>
+            </div>
+          )}
+          <motion.div
+            animate={
+              errorOrNull
+                ? { opacity: 0, y: 8, pointerEvents: "none" }
+                : { opacity: 1, y: 0, pointerEvents: "auto" }
+            }
+            onClick={() => setInviteInputs(true)}
+            className="absolute -bottom-8 bg-white shadow-1 w-14 h-14 rounded-2xl flex items-center justify-center z-10"
+          >
+            <CheckCircleIcon className="w-7 text-green-500 pointer-events-none" />
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 }

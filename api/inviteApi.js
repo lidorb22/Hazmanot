@@ -5,11 +5,23 @@ const inviteUrl = 'https://hazmanot-il.herokuapp.com/invite/create';
 const allINVUrl = 'https://hazmanot-il.herokuapp.com/invite/allItems';
 const iNVUrl = 'https://hazmanot-il.herokuapp.com/invite/item';
 const delInvUrl = 'https://hazmanot-il.herokuapp.com/invite/delItem';
+const commingUrl = 'https://hazmanot-il.herokuapp.com/invite/comming';
 
 export const newInvite = FrmData =>{
     return new Promise(async(resolve, reject) =>{
         try {
             const res = await axios.post(inviteUrl, FrmData)
+            resolve(res.data);
+        } catch (error) {
+            reject(error);
+        }
+    })
+};
+
+export const commingCount = FrmData =>{
+    return new Promise(async(resolve, reject) =>{
+        try {
+            const res = await axios.post(commingUrl, FrmData)
             resolve(res.data);
         } catch (error) {
             reject(error);

@@ -174,7 +174,7 @@ function Auth({ acces }) {
             </div>
             <form
               action="post"
-              className="pt-4 row-start-1 row-span-2 col-start-1 self-center flex flex-col w-full items-center my-5"
+              className="row-start-1 row-span-2 col-start-1 self-center flex flex-col w-full items-center my-5"
             >
               <input
                 type="number"
@@ -196,7 +196,7 @@ function Auth({ acces }) {
                 כניסה
               </motion.button>
             </form>
-            <p className="row-start-2 col-start-1 self-center pb-16 text-sm text-yellow-col">
+            <p className="row-start-2 col-start-1 self-center pb-20 text-sm text-yellow-col">
               הקוד לא עובד או שלא קיבלת?{" "}
               <span className="underline font-bold">שלח שוב</span>
             </p>
