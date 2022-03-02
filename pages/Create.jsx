@@ -305,11 +305,35 @@ function Create() {
   return (
     <div className="h-screen flex flex-col font-sans overflow-hidden">
       <Head>
-        <title>יצירת ההזמנה</title>
-        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+        <title>יצירת הזמנה</title>
+        <meta name="title" content="יצירת הזמנה" />
         <meta
           name="description"
-          content={`פה תצרו את ההזמנה שלכם ותעצבו אותה על פי טעמכם`}
+          content="יצירת הזמנה יחודית ומעוצבת משלכם ואתם היחידים ששולטים בעיצוב"
+        />
+
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://hazmanot.netlify.app/" />
+        <meta property="og:title" content="יצירת הזמנה" />
+        <meta
+          property="og:description"
+          content="יצירת הזמנה יחודית ומעוצבת משלכם ואתם היחידים ששולטים בעיצוב"
+        />
+        <meta
+          property="og:image"
+          content="https://i.ibb.co/hgJQfWq/Untitled-1.jpg"
+        />
+
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:url" content="https://hazmanot.netlify.app/" />
+        <meta property="twitter:title" content="יצירת הזמנה" />
+        <meta
+          property="twitter:description"
+          content="יצירת הזמנה יחודית ומעוצבת משלכם ואתם היחידים ששולטים בעיצוב"
+        />
+        <meta
+          property="twitter:image"
+          content="https://i.ibb.co/hgJQfWq/Untitled-1.jpg"
         />
       </Head>
       <Menu Page="Invite" />

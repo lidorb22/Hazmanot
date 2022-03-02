@@ -24,10 +24,34 @@ function Links() {
     <div className="w-full h-screen grid grid-rows-6">
       <Head>
         <title>קישורים</title>
-        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+        <meta name="title" content="קישורים" />
         <meta
           name="description"
-          content={`כאן תקבלו את הקישור להזמנה האישית שלכם`}
+          content="דף הקישורים נותן לכם את הקישור האישי שלכם שאותו אתם שולחים למוזמנים"
+        />
+
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://hazmanot.netlify.app/" />
+        <meta property="og:title" content="קישורים" />
+        <meta
+          property="og:description"
+          content="דף הקישורים נותן לכם את הקישור האישי שלכם שאותו אתם שולחים למוזמנים"
+        />
+        <meta
+          property="og:image"
+          content="https://i.ibb.co/hgJQfWq/Untitled-1.jpg"
+        />
+
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:url" content="https://hazmanot.netlify.app/" />
+        <meta property="twitter:title" content="קישורים" />
+        <meta
+          property="twitter:description"
+          content="דף הקישורים נותן לכם את הקישור האישי שלכם שאותו אתם שולחים למוזמנים"
+        />
+        <meta
+          property="twitter:image"
+          content="https://i.ibb.co/hgJQfWq/Untitled-1.jpg"
         />
       </Head>
       <div className="shadow-try flex flex-row items-center justify-center w-5/6 h-36 mt-5 row-start-1 row-span-2 col-start-1 bg-yellow-col justify-self-center rounded-2xl">

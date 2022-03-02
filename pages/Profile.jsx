@@ -97,10 +97,34 @@ function Profile() {
     <div className="w-full h-screen">
       <Head>
         <title>האזור האישי</title>
-        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+        <meta name="title" content="האזור האישי" />
         <meta
           name="description"
-          content={`האיזור האישי בו אתה יכול לראות ולשלוט במי שיגיע לאירוע שלך`}
+          content="האזור האישי - כאן תוכל לגשת לכל ההזמנות ולדעת מי מגיע אלייך לאירוע"
+        />
+
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://hazmanot.netlify.app/" />
+        <meta property="og:title" content="האזור האישי" />
+        <meta
+          property="og:description"
+          content="האזור האישי - כאן תוכל לגשת לכל ההזמנות ולדעת מי מגיע אלייך לאירוע"
+        />
+        <meta
+          property="og:image"
+          content="https://i.ibb.co/hgJQfWq/Untitled-1.jpg"
+        />
+
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:url" content="https://hazmanot.netlify.app/" />
+        <meta property="twitter:title" content="האזור האישי" />
+        <meta
+          property="twitter:description"
+          content="האזור האישי - כאן תוכל לגשת לכל ההזמנות ולדעת מי מגיע אלייך לאירוע"
+        />
+        <meta
+          property="twitter:image"
+          content="https://i.ibb.co/hgJQfWq/Untitled-1.jpg"
         />
       </Head>
       <Menu Page="Profile" />

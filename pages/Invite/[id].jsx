@@ -161,14 +161,41 @@ function Invite() {
           className={`relative shadow-try h-[650px] w-[300px] rounded-xl flex flex-col items-center justify-center space-y-4`}
         >
           <Head>
-            <title>הוזמנתם לאירוע!</title>
-            <meta
-              name="viewport"
-              content="initial-scale=1.0, width=device-width"
-            />
+            <title>{`האירוע של ${change.names}`}</title>
+            <meta name="title" content={`האירוע של ${change.names}`} />
             <meta
               name="description"
-              content={`הזמינו אתכם לאירוע ולא כדי לכם לפספס היכנסו לאתר ושריינו את מקומכם`}
+              content="הזמינו אותך לאירוע עכשיו רק נותר לך להיכנס ולבצע אישור הגעה"
+            />
+
+            <meta property="og:type" content="website" />
+            <meta property="og:url" content="https://hazmanot.netlify.app/" />
+            <meta property="og:title" content={`האירוע של ${change.names}`} />
+            <meta
+              property="og:description"
+              content="הזמינו אותך לאירוע עכשיו רק נותר לך להיכנס ולבצע אישור הגעה"
+            />
+            <meta
+              property="og:image"
+              content="https://i.ibb.co/hgJQfWq/Untitled-1.jpg"
+            />
+
+            <meta property="twitter:card" content="summary_large_image" />
+            <meta
+              property="twitter:url"
+              content="https://hazmanot.netlify.app/"
+            />
+            <meta
+              property="twitter:title"
+              content={`האירוע של ${change.names}`}
+            />
+            <meta
+              property="twitter:description"
+              content="הזמינו אותך לאירוע עכשיו רק נותר לך להיכנס ולבצע אישור הגעה"
+            />
+            <meta
+              property="twitter:image"
+              content="https://i.ibb.co/hgJQfWq/Untitled-1.jpg"
             />
           </Head>
           <div className="text-md tracking-widest w-5/6 text-center">

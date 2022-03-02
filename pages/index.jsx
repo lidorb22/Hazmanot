@@ -30,7 +30,10 @@ export default function Home() {
           property="og:description"
           content="אתר הזמנות מציע לכם ליצור ולעצב הזמנה בדרך הכי פשוטה שיש"
         />
-        <meta property="og:image" content="https://ibb.co/hgJQfWq" />
+        <meta
+          property="og:image"
+          content="https://i.ibb.co/hgJQfWq/Untitled-1.jpg"
+        />
 
         <meta property="twitter:card" content="summary_large_image" />
         <meta property="twitter:url" content="https://hazmanot.netlify.app/" />
@@ -39,7 +42,10 @@ export default function Home() {
           property="twitter:description"
           content="אתר הזמנות מציע לכם ליצור ולעצב הזמנה בדרך הכי פשוטה שיש"
         />
-        <meta property="twitter:image" content="https://ibb.co/hgJQfWq" />
+        <meta
+          property="twitter:image"
+          content="https://i.ibb.co/hgJQfWq/Untitled-1.jpg"
+        />
       </Head>
       <Menu Page="Main" />
       <div
