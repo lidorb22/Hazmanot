@@ -17,11 +17,29 @@ export default function Home() {
     <div className="h-screen flex flex-col font-sans overflow-hidden">
       <Head>
         <title>הזמנות</title>
-        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+        <meta name="title" content="הזמנות" />
         <meta
           name="description"
-          content={`אתר הזמנות מציע לכם ליצור ולעצב הזמנה בדרך הכי פשוטה שיש`}
+          content="אתר הזמנות מציע לכם ליצור ולעצב הזמנה בדרך הכי פשוטה שיש"
         />
+
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://hazmanot.netlify.app/" />
+        <meta property="og:title" content="הזמנות" />
+        <meta
+          property="og:description"
+          content="אתר הזמנות מציע לכם ליצור ולעצב הזמנה בדרך הכי פשוטה שיש"
+        />
+        <meta property="og:image" content="https://ibb.co/hgJQfWq" />
+
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:url" content="https://hazmanot.netlify.app/" />
+        <meta property="twitter:title" content="הזמנות" />
+        <meta
+          property="twitter:description"
+          content="אתר הזמנות מציע לכם ליצור ולעצב הזמנה בדרך הכי פשוטה שיש"
+        />
+        <meta property="twitter:image" content="https://ibb.co/hgJQfWq" />
       </Head>
       <Menu Page="Main" />
       <div
