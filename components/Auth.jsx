@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { authPending, authSuccess, authFail } from "../Slices/authSlice";
-import { getUserProfile, getUserVerified } from "../Slices/userAction";
+import { authPending, authFail } from "../Slices/authSlice";
+import { getUserVerified } from "../Slices/userAction";
 import { userLogin, userRegister } from "../api/userApi";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -11,9 +11,9 @@ function Auth({ acces }) {
   const [userTFO, setUserTFO] = useState("");
   const [login, setLogin] = useState(true);
   const [authP, setAuthP] = useState(false);
+  const [errorMass, setErrorMass] = useState(false);
 
   const { error, isAuth } = useSelector((state) => state.auth);
-
   const dispatch = useDispatch();
 
   const handleSumbit = async (e) => {
@@ -23,34 +23,46 @@ function Auth({ acces }) {
       try {
         await userLogin({ fullName: userFullName, email: userEmail });
         setAuthP(true);
-        //
-        /*acces(false);*/
+        if (errorMass) {
+          setErrorMass(false);
+        }
       } catch (error) {
-        console.log(error);
         dispatch(authFail("הפרטים המזהים אינם נכונים"));
+        setErrorMass(true);
       }
       return;
     } else {
       try {
         await userRegister({ fullName: userFullName, email: userEmail });
         setAuthP(true);
+        if (errorMass) {
+          setErrorMass(false);
+        }
       } catch (error) {
-        console.log(error);
         dispatch(authFail("האימייל כבר קיים במערכת"));
+        setErrorMass(true);
       }
       return;
     }
   };
 
-  const verification = (event) => {
-    event.preventDefault();
+  const verification = (e) => {
+    e.preventDefault();
     if (userTFO.length === 6) {
       try {
         dispatch(getUserVerified(userEmail, userTFO));
       } catch (error) {
         console.log(error);
         dispatch(authFail("תקלה עם הנתונים"));
+        setErrorMass(true);
       }
+    }
+  };
+
+  const logOrReg = () => {
+    setLogin(!login);
+    if (errorMass) {
+      setErrorMass(false);
     }
   };
 
@@ -116,7 +128,7 @@ function Auth({ acces }) {
           {login ? "התחבר" : "הרשם"}
         </button>
         <p
-          onClick={() => setLogin(!login)}
+          onClick={() => logOrReg()}
           className={`${
             login ? "bg-yellow-col text-black" : "bg-cyan-600 text-white"
           } col-start-1 row-start-4 self-end text-sm text-white cursor-pointer w-max px-5 rounded-lg justify-self-center`}
@@ -126,7 +138,7 @@ function Auth({ acces }) {
             : "יש לי כבר משתמש. לחץ כאן להתחברות"}
         </p>
       </form>
-      {error && (
+      {errorMass && (
         <motion.div
           initial={{ opacity: 0, y: 0 }}
           animate={{ opacity: 1, y: 90 }}
@@ -190,7 +202,7 @@ function Auth({ acces }) {
                     ? { backgroundColor: "#FFA800" }
                     : { backgroundColor: "rgb(209 213 219)" }
                 }
-                onClick={verification}
+                onClick={(e) => verification(e)}
                 className="shadow-1 absolute bottom-10 rounded-2 w-[150px] h-[30px] bg-gray-300 text-lg text-white tracking-widest"
               >
                 כניסה

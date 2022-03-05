@@ -16,10 +16,25 @@ import {
 import { RefreshIcon, XCircleIcon } from "@heroicons/react/solid";
 import Card from "../components/Card";
 import Head from "next/head";
+import { getUserProfile } from "../Slices/userAction";
 
 function Profile() {
-  const { isAuth } = useSelector((state) => state.auth);
+  const { isAuth, error } = useSelector((state) => state.auth);
   const router = useRouter();
+
+  useEffect(() => {
+    if (isAuth) {
+      return;
+    }
+    if (error === "invalid token") {
+      return router.push("/");
+    }
+    try {
+      dispatch(getUserProfile());
+    } catch (error) {
+      console.log(error);
+    }
+  }, [error]);
 
   const [isLookingCard, setIsLookingCard] = useState(false);
   const [cardIndex, setCardIndex] = useState(0);
@@ -27,6 +42,12 @@ function Profile() {
   const { fullName, _id } = useSelector((state) => state.user.user);
   const { invInfo, isLoading } = useSelector((state) => state.invite);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (isAuth) {
+      listHandle();
+    }
+  }, [isAuth]);
 
   const refresh = {
     open: { rotate: -720 },
@@ -39,8 +60,8 @@ function Profile() {
   };
 
   function logOut() {
-    sessionStorage.removeItem("accessToken");
-    sessionStorage.removeItem("userID");
+    localStorage.removeItem("token");
+    localStorage.removeItem("userID");
     router.push("/");
     dispatch(getUserLogout());
     dispatch(authLogout());
@@ -86,12 +107,12 @@ function Profile() {
     setCardIndex(index);
   }
 
-  useEffect(() => {
+  /*useEffect(() => {
     if (!isAuth) {
       return router.push("/");
     }
     listHandle();
-  }, []);
+  }, []);*/
 
   return (
     <div className="w-full h-screen">
@@ -170,8 +191,8 @@ function Profile() {
           transition={{
             scale: { type: "spring", bounce: 1, stiffness: 100 },
           }}
-          className={`${invInfo.length > 0 ? "flex-col " : "flex-row"}
-                    space-y-2 overflow-auto flex bg-white shadow-2xl w-5/6 rounded-2xl h-5/6 row-start-1 row-span-5 self-end col-start-1 justify-self-center z-10 md:w-1/2 xl:col-start-2`}
+          className={`${invInfo.length > 0 ? "flex-col p-2 " : "flex-row"}
+                    space-y-2 overflow-auto flex bg-gray-200 shadow-1 w-5/6 rounded-lg h-5/6 row-start-1 row-span-5 self-end col-start-1 justify-self-center z-10 md:w-1/2 xl:col-start-2`}
         >
           {invInfo.length === 0 && (
             <motion.div
@@ -215,7 +236,7 @@ function Profile() {
                                 ${item.invRison === "Bar" && "bg-green-400"}
                                 ${item.invRison === "Hatona" && "bg-rose-400"}
                                 ${item.invRison === "Hina" && "bg-blue-400"}
-                                h-20 w-full flex flex-col items-center justify-center bg-white rounded-xl`}
+                                h-20 w-full shadow-lg flex flex-col items-center justify-center bg-white rounded-xl`}
                 >
                   <p>{item.invRison === "Bday" && "יום ההולדת של"}</p>
                   <p>{item.invRison === "Hatona" && "החתונה של"}</p>
@@ -243,7 +264,7 @@ function Profile() {
           </div>
         </div>
       </div>
-      {invInfo.length > 0 && isLookingCard && (
+      {invInfo.length > 0 && (
         <Card
           setIsLookingCard={setIsLookingCard}
           isLookingCard={isLookingCard}

@@ -3,23 +3,33 @@ import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from "next/router";
 import { inviteReset } from "../Slices/inviteSlice";
 import Head from "next/head";
+import { getUserProfile } from "../Slices/userAction";
 
 function Links() {
-  const { isAuth } = useSelector((state) => state.auth);
+  const { isAuth, error } = useSelector((state) => state.auth);
   const { link } = useSelector((state) => state.invite);
   const router = useRouter();
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (isAuth) {
+      return;
+    }
+    if (error === "invalid token" || Object.entries(link).length === 0) {
+      return router.push("/");
+    }
+    try {
+      dispatch(getUserProfile());
+    } catch (error) {
+      console.log(error);
+    }
+  }, [error]);
 
   function backToMain() {
     router.push("/");
     dispatch(inviteReset());
   }
 
-  useEffect(() => {
-    if (!isAuth) {
-      router.push("/");
-    }
-  }, []);
   return (
     <div className="w-full h-screen grid grid-rows-6">
       <Head>

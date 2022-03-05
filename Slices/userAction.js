@@ -8,12 +8,14 @@ export const getUserProfile= () => async (dispatch) =>{
         dispatch(getUserPending());
         const user = await fetchUser()
         if(user && user._id){
-            return dispatch(getUserSuccess(user));
+            dispatch(getUserSuccess(user));
+            dispatch(authSuccess());
+            return;
         }
         dispatch(getUserFail('user not found'));
     } catch (error) {
-        dispatch(getUserFail(error))
-        dispatch(authFail(error))
+        dispatch(getUserFail("invalid token"))
+        dispatch(authFail("invalid token"))
     }
 }
 
@@ -30,11 +32,10 @@ export const getUserVerified = (email,token) => async (dispatch) =>{
         if(verify.isValid === false){
             return dispatch(authFail('הקוד שגוי או שפג תוקפו'));
         }
-        sessionStorage.setItem("accessToken", verify.accessToken);
-        sessionStorage.setItem("userID", verify._id);
+        localStorage.setItem("token", verify.accessToken);
+        localStorage.setItem("userID", verify._id);
         dispatch(getUserProfile());
-        dispatch(authSuccess());
     } catch (error) {
-        dispatch(authFail(error))
+        dispatch(authFail("token is not valid"));
     }
 }

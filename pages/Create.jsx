@@ -7,13 +7,28 @@ import { useDispatch } from "react-redux";
 import { newInvite } from "../api/inviteApi";
 import { invitePending, inviteLink, inviteFail } from "../Slices/inviteSlice";
 import { EyeIcon } from "@heroicons/react/solid";
+import { getUserProfile } from "../Slices/userAction";
 import Template from "../components/Template";
 import Head from "next/head";
 
 function Create() {
-  const { isAuth } = useSelector((state) => state.auth);
+  const { isAuth, error } = useSelector((state) => state.auth);
   const { _id } = useSelector((state) => state.user.user);
   const router = useRouter();
+
+  useEffect(() => {
+    if (isAuth) {
+      return;
+    }
+    if (error === "invalid token") {
+      return router.push("/");
+    }
+    try {
+      dispatch(getUserProfile());
+    } catch (error) {
+      console.log(error);
+    }
+  }, [error]);
 
   const [isSelected, setIsSelected] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -295,12 +310,6 @@ function Create() {
       },
     },
   };
-
-  useEffect(() => {
-    if (!isAuth) {
-      router.push("/");
-    }
-  });
 
   return (
     <div className="h-screen flex flex-col font-sans overflow-hidden">

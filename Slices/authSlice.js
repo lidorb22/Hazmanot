@@ -12,7 +12,6 @@ const authSlice = createSlice({
     reducers:{
         authPending:(state) => {
             state.isLoading = true;
-            state.error ="";
         },
         authSuccess:(state) => {
             state.isLoading = false;

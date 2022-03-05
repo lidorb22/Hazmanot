@@ -47,9 +47,8 @@ function Card({ setIsLookingCard, isLookingCard, invId, userId, cardIndex }) {
         invInfo[cardIndex] !== undefined && invInfo[cardIndex]._id
       }`
     );
-    setTimeout(() => setIsCopyed(false), 800);
+    setTimeout(() => setIsCopyed(false), 1200);
   };
-  console.log(isCopyed);
   useEffect(async () => {
     const invInfo = await InvObj({ _id: invId });
     setComming(invInfo.comming);
@@ -137,35 +136,26 @@ function Card({ setIsLookingCard, isLookingCard, invId, userId, cardIndex }) {
         <p className="ml-5 justify-self-start self-center row-start-2 col-start-1">
           {invInfo[cardIndex] !== undefined && invInfo[cardIndex].time}
         </p>
-        <motion.div
-          animate={
-            isCopyed
-              ? {
-                  backgroundColor: "rgba(209 213 219 0.5)",
-                  color: "rgb(209 213 219)",
-                }
-              : null
-          }
-          className="relative shadow-xl border-b-2 border-t-2 border-yellow-col justify-self-center self-start row-start-3 col-start-1 w-5/6 h-full flex flex-row items-center justify-center rounded-xl"
-        >
+        <div className="relative shadow-xl border-b-2 border-t-2 border-yellow-col justify-self-center self-start row-start-3 col-start-1 w-5/6 h-full flex flex-row items-center justify-center rounded-xl">
           <p className="break-all p-4 text-center">
             https://hazmanot.netlify.app/Invite/
             {invInfo[cardIndex] !== undefined && invInfo[cardIndex]._id}
           </p>
-          <motion.p
+          <motion.div
             animate={
               isCopyed
                 ? {
                     opacity: 1,
-                    scaleX: 1,
                   }
-                : { opacity: 0, scaleX: 0 }
+                : { opacity: 0 }
             }
-            className="absolute text-black font-bold bg-yellow-col/75 rounded-md w-5/6 text-center shadow-1"
+            className="absolute text-white font-bold bg-black/80 rounded-md w-full h-full flex items-center justify-center"
           >
-            הקישור הועתק
-          </motion.p>
-        </motion.div>
+            <motion.p animate={isCopyed ? { scale: 1 } : { scale: 0 }}>
+              הקישור הועתק בהצלחה
+            </motion.p>
+          </motion.div>
+        </div>
         <Link
           href={`/Invite/${
             invInfo[cardIndex] !== undefined && invInfo[cardIndex]._id

@@ -7,8 +7,27 @@ import {
 } from "@heroicons/react/solid";
 import Menu from "../components/Menu";
 import Head from "next/head";
+import { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { getUserProfile } from "../Slices/userAction";
 
 export default function Home() {
+  const dispatch = useDispatch();
+  const { isAuth, error, isLoading } = useSelector((state) => state.auth);
+  useEffect(() => {
+    if (isAuth) {
+      return;
+    }
+    if (error !== "") {
+      return;
+    }
+    try {
+      dispatch(getUserProfile());
+    } catch (error) {
+      console.log(error);
+    }
+  }, [error]);
+
   const variants = {
     firstLoad: { opacity: 1, scale: 1 },
   };

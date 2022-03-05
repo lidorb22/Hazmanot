@@ -30,11 +30,11 @@ export const userRegister = FrmData =>{
 export const fetchUser = () =>{
     return new Promise(async(resolve, reject) =>{
         try {
-            const accessToken = sessionStorage.getItem('accessToken')
+            const accessToken = localStorage.getItem('token')
             if(!accessToken){
                 reject("Token not found!")
             }
-            const root = sessionStorage.getItem('userID')
+            const root = localStorage.getItem('userID')
 
             const res = await axios.get(userUrl + root, { 
                 headers: {

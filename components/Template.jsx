@@ -33,7 +33,7 @@ function Template({
       fills: "rgb(255 255 255)",
     },
     text: {
-      title: "הנכם מוזמנים לחגוג אימנו את אירוע",
+      title: "הנכם מוזמנים לחגוג עימנו את אירוע",
       gender: "man",
     },
   };
@@ -258,7 +258,7 @@ function Template({
         </div>
         <motion.div
           animate={menuOpen ? { opacity: 1 } : { opacity: 0 }}
-          className="absolute bottom-0 w-full h-20 rounded-b-xl z-10"
+          className="absolute bottom-0 w-full h-12 rounded-b-xl z-10"
         >
           <motion.div
             animate={
@@ -451,8 +451,56 @@ function Template({
                 ? { opacity: 0, pointerEvents: "none" }
                 : { opacity: 1, pointerEvents: "auto" }
             }
-            className="absolute top-0 right-0 p-4 opacity-0 pointer-events-none space-x-5 w-full h-full rounded-xl flex flex-row flex-wrap overflow-hidden justify-center"
+            className="absolute top-0 right-0 px-4 pt-16 opacity-0 pointer-events-none space-x-5 w-full h-full rounded-xl flex flex-row flex-wrap overflow-hidden justify-center"
           >
+            <div className="w-full h-14 absolute space-x-5 bg-gray-200 top-0 flex items-center justify-center text-3xl font-bold">
+              {selectedOptions === "bgColor" ? (
+                <div
+                  style={{ backgroundColor: change.color.background }}
+                  className="w-10 h-10 rounded-full shadow-1"
+                ></div>
+              ) : selectedOptions === "bgFill" ? (
+                <div
+                  style={{
+                    backgroundColor: change.color.fills,
+                    color: change.color.text,
+                  }}
+                  className="w-20 h-10 rounded-md shadow-1 text-lg flex items-center justify-center"
+                >
+                  <p
+                    className={`${
+                      change.color.fills === "rgb(255 255 255)"
+                        ? "text-black"
+                        : "text-white"
+                    }`}
+                  >
+                    Aa
+                  </p>
+                </div>
+              ) : selectedOptions === "textColor" ? (
+                <div
+                  style={{
+                    color: change.color.text,
+                  }}
+                  className={`${
+                    change.color.text === "rgb(255 255 255)"
+                      ? "bg-black"
+                      : "bg-white"
+                  } w-10 h-10 rounded-md shadow-1 text-lg flex items-center justify-center`}
+                >
+                  <p>Aa</p>
+                </div>
+              ) : null}
+              <p className="text-black">
+                {selectedOptions === "bgColor"
+                  ? "צבע הרקע"
+                  : selectedOptions === "bgFill"
+                  ? "צבע המילוי"
+                  : selectedOptions === "textColor"
+                  ? "צבע הטסקט"
+                  : null}
+              </p>
+            </div>
             <div
               id="rgb(96 165 250)"
               onClick={(e) => optionMenusHandler(e)}
