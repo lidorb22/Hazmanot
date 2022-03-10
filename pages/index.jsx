@@ -31,21 +31,12 @@ export default function Home() {
     }
   }, [error]);
 
-  let vh;
-
-  useEffect(() => {
-    window.addEventListener("resize", () => {
-      vh = window.innerHeight * 0.01;
-      document.documentElement.style.setProperty("--vh", `${vh}px`);
-    });
-  }, []);
-
   const variants = {
     firstLoad: { opacity: 1, scale: 1 },
   };
 
   return (
-    <div className="screenReSize w-full flex flex-col font-sans overflow-hidden">
+    <div className="h-screen w-full flex flex-col font-sans overflow-hidden">
       <Head>
         <title>הזמנות</title>
         <meta name="title" content="הזמנות" />
