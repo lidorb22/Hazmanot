@@ -17,10 +17,12 @@ function Create() {
   const router = useRouter();
 
   useEffect(() => {
+    var localUser = localStorage.getItem("userID");
+    var localToken = localStorage.getItem("token");
     if (isAuth) {
       return;
     }
-    if (error === "invalid token") {
+    if (error === "invalid token" || (!localUser && !localToken)) {
       return router.push("/");
     }
     try {
@@ -51,13 +53,13 @@ function Create() {
   );
 
   const selectionAction = {
-    open: { y: -200 },
+    open: { y: -180 },
     closed: { y: 0 },
   };
 
   const qnaAction = {
     open: { opacity: 1, scale: 1, pointerEvents: "auto" },
-    closed: { opacity: 0, scale: 0, pointerEvents: "none" },
+    closed: { opacity: 0, scale: 0.7, pointerEvents: "none" },
   };
 
   const variants = {
@@ -330,7 +332,7 @@ function Create() {
         />
         <meta
           property="og:image"
-          content="https://i.ibb.co/hgJQfWq/Untitled-1.jpg"
+          content="https://i.ibb.co/G2LyfBm/Untitled-1.jpg"
         />
 
         <meta property="twitter:card" content="summary_large_image" />
@@ -342,7 +344,7 @@ function Create() {
         />
         <meta
           property="twitter:image"
-          content="https://i.ibb.co/hgJQfWq/Untitled-1.jpg"
+          content="https://i.ibb.co/G2LyfBm/Untitled-1.jpg"
         />
       </Head>
       <Menu Page="Invite" />
@@ -368,7 +370,16 @@ function Create() {
           {/* event selection */}
           <motion.p
             animate={
-              isSelected ? { opacity: 0, scale: 0 } : { opacity: 1, scale: 1 }
+              isSelected ? { opacity: 0, scale: 0.7 } : { opacity: 1, scale: 1 }
+            }
+            transition={
+              isSelected
+                ? {
+                    duration: 0.8,
+                  }
+                : {
+                    duration: 1.2,
+                  }
             }
             className="text-lg tracking-widest text-yellow-col font-bold col-start-1 row-start-2 self-center md:self-start"
           >
@@ -377,11 +388,14 @@ function Create() {
           <form
             method="post"
             onSubmit={(e) => handleSubmit(e)}
-            className=" z-20 row-start-1 row-span-6 col-start-1 w-full h-full grid grid-rows-6"
+            className="z-20 row-start-1 row-span-6 col-start-1 w-full h-full grid grid-rows-6"
           >
             <motion.select
               animate={isSelected ? "open" : "closed"}
               variants={selectionAction}
+              transition={{
+                duration: 1,
+              }}
               onChange={(e) => selectionE(e)}
               className="text-center text-lg font-bold row-start-3 col-start-1 focus:outline-none shadow-lg bg-gray-100 rounded-t-2xl border-b-4 border-yellow-col w-2/3 h-2/3 justify-self-center md:w-80 md:row-start-2 md:self-end"
             >
@@ -404,7 +418,7 @@ function Create() {
                 repeatType: "reverse",
                 duration: 2,
               }}
-              className="pointer-events-none space-y-2 row-start-2 row-span-4 col-start-1 flex flex-col items-center"
+              className="pointer-events-none row-start-2 row-span-4 col-start-1 flex flex-col items-center justify-evenly self-center h-5/6"
             >
               {invRison != "default" && (
                 <>
@@ -525,7 +539,7 @@ function Create() {
           <motion.div
             animate={
               invRison === "default"
-                ? { width: 0, height: 0, opacity: 0 }
+                ? { width: "5rem", height: "5rem", opacity: 0 }
                 : invRison === "Bday" &&
                   names !== "" &&
                   age !== "" &&

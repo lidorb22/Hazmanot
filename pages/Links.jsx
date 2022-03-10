@@ -49,7 +49,7 @@ function Links() {
         />
         <meta
           property="og:image"
-          content="https://i.ibb.co/hgJQfWq/Untitled-1.jpg"
+          content="https://i.ibb.co/G2LyfBm/Untitled-1.jpg"
         />
 
         <meta property="twitter:card" content="summary_large_image" />
@@ -61,7 +61,7 @@ function Links() {
         />
         <meta
           property="twitter:image"
-          content="https://i.ibb.co/hgJQfWq/Untitled-1.jpg"
+          content="https://i.ibb.co/G2LyfBm/Untitled-1.jpg"
         />
       </Head>
       <div className="shadow-try flex flex-row items-center justify-center w-5/6 h-36 mt-5 row-start-1 row-span-2 col-start-1 bg-yellow-col justify-self-center rounded-2xl">

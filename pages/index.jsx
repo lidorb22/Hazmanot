@@ -13,12 +13,15 @@ import { getUserProfile } from "../Slices/userAction";
 
 export default function Home() {
   const dispatch = useDispatch();
-  const { isAuth, error, isLoading } = useSelector((state) => state.auth);
+  const { isAuth, error } = useSelector((state) => state.auth);
+
   useEffect(() => {
+    var localUser = localStorage.getItem("userID");
+    var localToken = localStorage.getItem("token");
     if (isAuth) {
       return;
     }
-    if (error !== "") {
+    if (error !== "" || (!localUser && !localToken)) {
       return;
     }
     try {
@@ -28,12 +31,21 @@ export default function Home() {
     }
   }, [error]);
 
+  let vh;
+
+  useEffect(() => {
+    window.addEventListener("resize", () => {
+      vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty("--vh", `${vh}px`);
+    });
+  }, []);
+
   const variants = {
     firstLoad: { opacity: 1, scale: 1 },
   };
 
   return (
-    <div className="h-screen flex flex-col font-sans overflow-hidden">
+    <div className="screenReSize w-full flex flex-col font-sans overflow-hidden">
       <Head>
         <title>הזמנות</title>
         <meta name="title" content="הזמנות" />
@@ -51,7 +63,7 @@ export default function Home() {
         />
         <meta
           property="og:image"
-          content="https://i.ibb.co/hgJQfWq/Untitled-1.jpg"
+          content="https://i.ibb.co/G2LyfBm/Untitled-1.jpg"
         />
 
         <meta property="twitter:card" content="summary_large_image" />
@@ -63,7 +75,7 @@ export default function Home() {
         />
         <meta
           property="twitter:image"
-          content="https://i.ibb.co/hgJQfWq/Untitled-1.jpg"
+          content="https://i.ibb.co/G2LyfBm/Untitled-1.jpg"
         />
       </Head>
       <Menu Page="Main" />

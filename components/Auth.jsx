@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { authPending, authFail } from "../Slices/authSlice";
 import { getUserVerified } from "../Slices/userAction";
-import { userLogin, userRegister } from "../api/userApi";
+import { userLogin, userRegister, sendMassageAgain } from "../api/userApi";
 import { useSelector, useDispatch } from "react-redux";
 
 function Auth({ acces }) {
@@ -44,6 +44,10 @@ function Auth({ acces }) {
       }
       return;
     }
+  };
+
+  const reSendMessage = async () => {
+    await sendMassageAgain({ email: userEmail });
   };
 
   const verification = (e) => {
@@ -98,22 +102,22 @@ function Auth({ acces }) {
         onSubmit={(e) => handleSumbit(e)}
         className="row-start-4 row-span-2 col-start-1 w-full h-full grid grid-rows-4"
       >
-        <div className="row-start-1 row-span-2 col-start-1 flex flex-col text-black bg-white w-2/3 sm:w-72 justify-self-center h-3/4 rounded-3xl z-10">
-          <div className="w-full h-1/2 flex">
+        <div className="row-start-1 row-span-2 col-start-1 flex flex-row flex-wrap text-black bg-white w-2/3 sm:w-72 justify-self-center h-3/4 rounded-3xl z-10">
+          <div className="w-full h-1/2 flex justify-evenly px-5">
             <input
               value={userFullName}
               onChange={(e) => setFullName(e.target.value)}
               type="text"
-              className="focus:outline-none text-right ml-4 sm:ml-7 bg-transparent h-7 self-center w-40 border-b border-black"
+              className="focus:outline-none text-right sm:ml-7 bg-transparent h-7 self-center w-36 border-b border-black"
             />
             <label className="self-center pl-2">:שם מלא</label>
           </div>
-          <div className="w-full h-1/2 flex">
+          <div className="w-full h-1/2 flex justify-evenly px-5">
             <input
               value={userEmail}
               onChange={(e) => setEmail(e.target.value)}
               type="email"
-              className="focus:outline-none ml-4 sm:ml-7 bg-transparent h-7 self-center w-40 border-b border-black"
+              className="focus:outline-none  sm:ml-7 bg-transparent h-7 self-center w-36 border-b border-black"
             />
             <label className="self-center pl-3">:אימייל</label>
           </div>
@@ -131,7 +135,7 @@ function Auth({ acces }) {
           onClick={() => logOrReg()}
           className={`${
             login ? "bg-yellow-col text-black" : "bg-cyan-600 text-white"
-          } col-start-1 row-start-4 self-end text-sm text-white cursor-pointer w-max px-5 rounded-lg justify-self-center`}
+          }  col-start-1 row-start-4 self-end text-sm text-white cursor-pointer w-max px-5 rounded-lg justify-self-center`}
         >
           {login
             ? "אין לך משתמש? לחץ כאן להרשמה"
@@ -208,15 +212,17 @@ function Auth({ acces }) {
                 כניסה
               </motion.button>
             </form>
-            <p className="row-start-2 col-start-1 self-center pb-20 text-sm text-yellow-col">
-              הקוד לא עובד או שלא קיבלת?{" "}
-              <span className="underline font-bold">שלח שוב</span>
-            </p>
+            <div className="row-start-2 col-start-1 self-center pb-16 text-sm text-yellow-col">
+              <p onClick={() => reSendMessage()} className="cursor-pointer">
+                הקוד לא עובד או שלא קיבלת?{" "}
+                <span className="underline font-bold">שלח שוב</span>
+              </p>
+            </div>
             <div className="text-lg row-start-2 row-span-2 col-start-1 self-center pb-4">
               <p>ברגע זה נשלח אלייך</p>
               <p>לאימייל הודעה עם קוד לצורך</p>
               <p>אימות המשתמש שלך באתר</p>
-              <p>יש לך בערך שלוש דקות</p>
+              <p>יש לך מספר דקות</p>
               <p>עד שהקוד כבר לא יהיה ניתן לשימוש</p>
             </div>
           </motion.div>

@@ -50,9 +50,11 @@ function Card({ setIsLookingCard, isLookingCard, invId, userId, cardIndex }) {
     setTimeout(() => setIsCopyed(false), 1200);
   };
   useEffect(async () => {
-    const invInfo = await InvObj({ _id: invId });
-    setComming(invInfo.comming);
-  }, [invId]);
+    if (isLookingCard) {
+      const invInfo = await InvObj({ _id: invId });
+      setComming(invInfo.comming);
+    }
+  }, [isLookingCard]);
 
   return (
     <motion.div
@@ -205,7 +207,7 @@ function Card({ setIsLookingCard, isLookingCard, invId, userId, cardIndex }) {
               comming.names.map((name, index) => (
                 <div
                   key={index}
-                  className="w-full h-10 bg-yellow-col rounded-md text-center"
+                  className="w-full h-10 bg-yellow-col rounded-md flex items-center justify-center"
                 >
                   {name}
                 </div>

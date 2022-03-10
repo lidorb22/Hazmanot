@@ -23,10 +23,12 @@ function Profile() {
   const router = useRouter();
 
   useEffect(() => {
+    var localUser = localStorage.getItem("userID");
+    var localToken = localStorage.getItem("token");
     if (isAuth) {
       return;
     }
-    if (error === "invalid token") {
+    if (error === "invalid token" || (!localUser && !localToken)) {
       return router.push("/");
     }
     try {
@@ -133,7 +135,7 @@ function Profile() {
         />
         <meta
           property="og:image"
-          content="https://i.ibb.co/hgJQfWq/Untitled-1.jpg"
+          content="https://i.ibb.co/G2LyfBm/Untitled-1.jpg"
         />
 
         <meta property="twitter:card" content="summary_large_image" />
@@ -145,7 +147,7 @@ function Profile() {
         />
         <meta
           property="twitter:image"
-          content="https://i.ibb.co/hgJQfWq/Untitled-1.jpg"
+          content="https://i.ibb.co/G2LyfBm/Untitled-1.jpg"
         />
       </Head>
       <Menu Page="Profile" />
