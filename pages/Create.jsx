@@ -169,6 +169,7 @@ function Create() {
   async function handleSubmit(e) {
     e.preventDefault();
     dispatch(invitePending());
+    var fixedDate = date.split("-").reverse().join("-");
     try {
       const invite = await newInvite({
         invRison,
@@ -176,7 +177,7 @@ function Create() {
         age,
         place,
         time,
-        date,
+        date: fixedDate,
         _id,
         background: backgroundCol,
         text: textCol,
@@ -198,6 +199,7 @@ function Create() {
       setTamplateWatched(true);
     } else if (e.target.id === "exit") {
       setErrorTrigger(false);
+      handleSubmit(e);
     }
   };
 
@@ -349,7 +351,7 @@ function Create() {
       </Head>
       <Menu Page="Invite" />
       <div
-        className="h-2/6 flex flex-col 
+        className="pt-8 flex flex-col 
             justify-center align-center text-center z-10
             "
       >
@@ -357,7 +359,7 @@ function Create() {
           initial={{ scale: 0.5, opacity: 0 }}
           animate={"firstLoad"}
           variants={variants}
-          className="shadow-try space-y-2 w-5/6 px-10 h-max grid bg-yellow-col self-center rounded-2xl mb-3 md:py-8"
+          className="shadow-try space-y-2 w-5/6 h-max grid bg-yellow-col self-center rounded-2xl mb-3 md:py-8"
         >
           <p className="tracking-widest font-bold text-2xl">יצירת האירוע</p>
           <p className="">כעת תצרו את המודעה שלכם אל תשכחו</p>
@@ -418,7 +420,7 @@ function Create() {
                 repeatType: "reverse",
                 duration: 2,
               }}
-              className="pointer-events-none row-start-2 row-span-4 col-start-1 flex flex-col items-center justify-evenly self-center h-5/6"
+              className="pointer-events-none relative row-start-2 row-span-4 col-start-1 flex flex-col items-center justify-evenly self-center h-5/6"
             >
               {invRison != "default" && (
                 <>
@@ -488,53 +490,53 @@ function Create() {
                   />
                 </>
               )}
+              <motion.button
+                animate={
+                  invRison === "Bday" &&
+                  names !== "" &&
+                  age !== "" &&
+                  time !== "" &&
+                  date !== "" &&
+                  place !== ""
+                    ? { backgroundColor: "#FFA800" }
+                    : invRison === "Hatona" &&
+                      names !== "" &&
+                      time !== "" &&
+                      date !== "" &&
+                      place !== ""
+                    ? { backgroundColor: "#FFA800" }
+                    : invRison === "Hina" &&
+                      names !== "" &&
+                      time !== "" &&
+                      date !== "" &&
+                      place !== ""
+                    ? { backgroundColor: "#FFA800" }
+                    : invRison === "Bar" &&
+                      names !== "" &&
+                      time !== "" &&
+                      date !== "" &&
+                      place !== ""
+                    ? { backgroundColor: "#FFA800" }
+                    : invRison === "Bat" &&
+                      names !== "" &&
+                      time !== "" &&
+                      date !== "" &&
+                      place !== ""
+                    ? { backgroundColor: "#FFA800" }
+                    : invRison === "Brit" &&
+                      time !== "" &&
+                      date !== "" &&
+                      place !== ""
+                    ? { backgroundColor: "#FFA800" }
+                    : { backgroundColor: "rgb(209 213 219)" }
+                }
+                type="submit"
+                onClick={submitButtHandler}
+                className="absolute -bottom-20 right-0 text-lg font-bold w-full text-center h-10 bg-yellow-col border-t-2 border-b-2 border-black md:bottom-40"
+              >
+                המשך
+              </motion.button>
             </motion.div>
-            <motion.button
-              animate={
-                invRison === "Bday" &&
-                names !== "" &&
-                age !== "" &&
-                time !== "" &&
-                date !== "" &&
-                place !== ""
-                  ? { backgroundColor: "#FFA800" }
-                  : invRison === "Hatona" &&
-                    names !== "" &&
-                    time !== "" &&
-                    date !== "" &&
-                    place !== ""
-                  ? { backgroundColor: "#FFA800" }
-                  : invRison === "Hina" &&
-                    names !== "" &&
-                    time !== "" &&
-                    date !== "" &&
-                    place !== ""
-                  ? { backgroundColor: "#FFA800" }
-                  : invRison === "Bar" &&
-                    names !== "" &&
-                    time !== "" &&
-                    date !== "" &&
-                    place !== ""
-                  ? { backgroundColor: "#FFA800" }
-                  : invRison === "Bat" &&
-                    names !== "" &&
-                    time !== "" &&
-                    date !== "" &&
-                    place !== ""
-                  ? { backgroundColor: "#FFA800" }
-                  : invRison === "Brit" &&
-                    time !== "" &&
-                    date !== "" &&
-                    place !== ""
-                  ? { backgroundColor: "#FFA800" }
-                  : { backgroundColor: "rgb(209 213 219)" }
-              }
-              type="submit"
-              onClick={submitButtHandler}
-              className="absolute bottom-8 right-0 text-lg font-bold w-full text-center h-10 bg-yellow-col border-t-2 border-b-2 border-black md:bottom-40"
-            >
-              המשך
-            </motion.button>
           </form>
           <motion.div
             animate={

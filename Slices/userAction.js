@@ -26,16 +26,15 @@ export const getUserVerified = (email,token) => async (dispatch) =>{
             email: email,
             key: token,
         })
-        if(verify.massage){
-            return dispatch(authFail('הקוד שגוי או שפג תוקפו'));
+        if(verify.isValid === true){
+            localStorage.setItem("token", verify.accessToken);
+            localStorage.setItem("userID", verify._id);
+            dispatch(getUserProfile());
+        }else{
+            dispatch(authFail('הקוד שגוי או שפג תוקפו'));
         }
-        if(verify.isValid === false){
-            return dispatch(authFail('הקוד שגוי או שפג תוקפו'));
-        }
-        localStorage.setItem("token", verify.accessToken);
-        localStorage.setItem("userID", verify._id);
-        dispatch(getUserProfile());
+        
     } catch (error) {
-        dispatch(authFail("token is not valid"));
+        dispatch(authFail("הקוד שגוי או שפג תוקפו"));
     }
 }

@@ -4,6 +4,7 @@ import { authPending, authFail } from "../Slices/authSlice";
 import { getUserVerified } from "../Slices/userAction";
 import { userLogin, userRegister, sendMassageAgain } from "../api/userApi";
 import { useSelector, useDispatch } from "react-redux";
+import { XIcon } from "@heroicons/react/solid";
 
 function Auth({ acces }) {
   const [userFullName, setFullName] = useState("");
@@ -18,29 +19,26 @@ function Auth({ acces }) {
 
   const handleSumbit = async (e) => {
     e.preventDefault();
+    setErrorMass(false);
     dispatch(authPending());
+    if (userFullName === "" || userEmail === "") {
+      dispatch(authFail("חסרים פרטים בדוק את השדות"));
+      return;
+    }
     if (login) {
       try {
         await userLogin({ fullName: userFullName, email: userEmail });
         setAuthP(true);
-        if (errorMass) {
-          setErrorMass(false);
-        }
       } catch (error) {
         dispatch(authFail("הפרטים המזהים אינם נכונים"));
-        setErrorMass(true);
       }
       return;
     } else {
       try {
         await userRegister({ fullName: userFullName, email: userEmail });
         setAuthP(true);
-        if (errorMass) {
-          setErrorMass(false);
-        }
       } catch (error) {
         dispatch(authFail("האימייל כבר קיים במערכת"));
-        setErrorMass(true);
       }
       return;
     }
@@ -57,18 +55,18 @@ function Auth({ acces }) {
         dispatch(getUserVerified(userEmail, userTFO));
       } catch (error) {
         console.log(error);
-        dispatch(authFail("תקלה עם הנתונים"));
-        setErrorMass(true);
       }
     }
   };
 
-  const logOrReg = () => {
-    setLogin(!login);
-    if (errorMass) {
-      setErrorMass(false);
+  useEffect(() => {
+    if (error) {
+      setErrorMass(true);
+      setTimeout(() => {
+        setErrorMass(false);
+      }, 5000);
     }
-  };
+  }, [error]);
 
   useEffect(() => {
     if (isAuth) {
@@ -132,7 +130,7 @@ function Auth({ acces }) {
           {login ? "התחבר" : "הרשם"}
         </button>
         <p
-          onClick={() => logOrReg()}
+          onClick={() => setLogin(!login)}
           className={`${
             login ? "bg-yellow-col text-black" : "bg-cyan-600 text-white"
           }  col-start-1 row-start-4 self-end text-sm text-white cursor-pointer w-max px-5 rounded-lg justify-self-center`}
@@ -142,27 +140,24 @@ function Auth({ acces }) {
             : "יש לי כבר משתמש. לחץ כאן להתחברות"}
         </p>
       </form>
-      {errorMass && (
-        <motion.div
-          initial={{ opacity: 0, y: 0 }}
-          animate={{ opacity: 1, y: 90 }}
+      <motion.div
+        animate={errorMass ? { opacity: 1, y: 90 } : { opacity: 0, y: 0 }}
+        transition={{
+          y: { type: "spring", stiffness: 60 },
+        }}
+        className="pointer-events-none opacity-0 flex flex-row items-center justify-center col-start-1 row-start-4 w-72 rounded-lg justify-self-center h-10 self-end mb-14 border-2 border-black bg-red-600 z-20 shadow-try2"
+      >
+        <motion.p
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
           transition={{
-            y: { type: "spring", stiffness: 60 },
+            scale: { type: "spring", stiffness: 30 },
           }}
-          className="flex flex-row items-center justify-center col-start-1 row-start-4 w-72 rounded-lg justify-self-center h-10 self-end mb-14 border-2 border-black bg-red-600 z-20 shadow-try2"
+          className="font-bold tracking-widest text-black"
         >
-          <motion.p
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{
-              scale: { type: "spring", stiffness: 30 },
-            }}
-            className="font-bold tracking-widest text-black"
-          >
-            {error}
-          </motion.p>
-        </motion.div>
-      )}
+          {error}
+        </motion.p>
+      </motion.div>
       <div
         className={`${
           login
@@ -228,6 +223,14 @@ function Auth({ acces }) {
           </motion.div>
         </motion.div>
       )}
+      <div className="absolute bottom-10 w-full h-10 flex items-center justify-center">
+        <div
+          onClick={() => acces(false)}
+          className="bg-yellow-col shadow-try w-10 h-10 rounded-full flex items-center justify-center"
+        >
+          <XIcon className="pointer-events-none w-6 text-black" />
+        </div>
+      </div>
     </motion.div>
   );
 }

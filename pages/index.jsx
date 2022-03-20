@@ -21,13 +21,21 @@ export default function Home() {
     if (isAuth) {
       return;
     }
-    if (error !== "" || (!localUser && !localToken)) {
+    if (error === "invalid token") {
+      if (localUser && localToken) {
+        localStorage.removeItem("userID");
+        localStorage.removeItem("token");
+      }
       return;
     }
-    try {
-      dispatch(getUserProfile());
-    } catch (error) {
-      console.log(error);
+    if (localUser && localToken) {
+      try {
+        dispatch(getUserProfile());
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      return;
     }
   }, [error]);
 
@@ -71,7 +79,7 @@ export default function Home() {
       </Head>
       <Menu Page="Main" />
       <div
-        className="h-4/6 flex flex-col 
+        className="pt-8 flex flex-col 
             justify-center align-center text-center bg-transparent
             "
       >
@@ -79,7 +87,7 @@ export default function Home() {
           initial={{ scale: 0.5, opacity: 0 }}
           animate={"firstLoad"}
           variants={variants}
-          className="shadow-try space-y-2 w-5/6 h-5/6 grid bg-yellow-col self-center rounded-2xl"
+          className="shadow-try2 space-y-2 w-5/6 h-[250px] grid bg-yellow-col self-center rounded-2xl"
         >
           <div className="col-start-1 row-start-1 w-max justify-self-center self-start text-4xl space-y-2 pt-5">
             <p className="font-bold">ברוכים הבאים</p>
@@ -94,7 +102,7 @@ export default function Home() {
           </p>
         </motion.div>
       </div>
-      <div className="h-full flex flex-col text-center pt-5 md:grid md:grid-rows-2 md:grid-cols-3">
+      <div className="h-full flex flex-col text-center justify-center md:grid md:grid-rows-2 md:grid-cols-3">
         <p className="text-2xl text-yellow-col font-bold md:col-start-2 md:col-span-2 md:row-start-1 md:row-span-2 md:self-center md:text-5xl md:justify-self-end md:pb-64 md:pr-20 lg:justify-self-center lg:pl-52 xl:justify-self-end xl:text-7xl xl:self-center xl:pb-72 2xl:pl-36 2xl:justify-self-center">
           כמה סיבות
         </p>
