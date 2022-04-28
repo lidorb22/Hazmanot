@@ -274,11 +274,14 @@ function Card({ setIsLookingCard, isLookingCard, invId, userId, cardIndex }) {
             </div>
           )}
           {!showInfo && (
-            <div className="cursor-pointer w-full flex flex-col items-center 2xl:w-max 2xl:flex-row-reverse 2xl:justify-center 2xl:text-[24px]">
+            <div className="relative cursor-pointer w-full flex flex-col items-center 2xl:w-max 2xl:flex-row-reverse 2xl:justify-center 2xl:text-[24px]">
               <AdjustmentsIcon className="pointer-events-none w-[20px] 2xl:w-[24px] 2xl:ml-2" />
               <p className="pointer-events-none opacity-0 absolute md:opacity-100 md:static md:text-center">
                 סינון מוזמנים
               </p>
+              <div className="absolute w-full h-full bg-black/70 backdrop-blur-[1.5px] rounded-xl flex items-center justify-center">
+                <p className="font-bold rotate-[5deg] text-white">בקרוב</p>
+              </div>
             </div>
           )}
           {!showInfo && (
