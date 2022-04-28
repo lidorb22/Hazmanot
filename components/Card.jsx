@@ -1,16 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import Link from "next/link";
-import { ClipboardCopyIcon } from "@heroicons/react/outline";
 import {
   XIcon,
-  CogIcon,
   TrashIcon,
   LinkIcon,
-  ChevronLeftIcon,
   DotsVerticalIcon,
-  EyeIcon,
-  InformationCircleIcon,
   AdjustmentsIcon,
 } from "@heroicons/react/solid";
 import { useDispatch } from "react-redux";
@@ -30,7 +24,7 @@ function Card({ setIsLookingCard, isLookingCard, invId, userId, cardIndex }) {
   const [showInfo, setShowInfo] = useState(false);
   const [infoIndex, setInfoIndex] = useState(null);
   const dispatch = useDispatch();
-  const { invInfo, isLoading } = useSelector((state) => state.invite);
+  const { invInfo } = useSelector((state) => state.invite);
   const lookingCard = {
     open: { filter: "blur(0px)", opacity: 1, pointerEvents: "auto" },
     closed: { filter: "blur(4px)", opacity: 0, pointerEvents: "none" },

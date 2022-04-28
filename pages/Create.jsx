@@ -211,7 +211,7 @@ function Create() {
   }
 
   const errorHandler = (e) => {
-    if (e.target.id === "accept") {
+    if (e.target.id === "accept" || e.target.id === "accept2") {
       setErrorTrigger(false);
       setShowTemplate(true);
       setTamplateWatched(true);
@@ -624,8 +624,12 @@ function Create() {
                 >
                   <EyeIcon className="w-[30px] pointer-events-none" />
                 </div>
-                <div className="w-[157px] h-[26px] text-[20px] bg-[#AC0000] rounded-r-md bottom-0 left-9 absolute">
-                  <p>צפייה בהזמנה</p>
+                <div
+                  onClick={(e) => errorHandler(e)}
+                  id="accept2"
+                  className="w-[157px] h-[26px] text-[20px] bg-[#AC0000] rounded-r-md bottom-0 left-9 absolute"
+                >
+                  <p className="pointer-events-none">צפייה בהזמנה</p>
                 </div>
               </div>
             </motion.div>

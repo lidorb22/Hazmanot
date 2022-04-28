@@ -19,13 +19,20 @@ import { userProblem } from "../api/userApi";
 export default function Home() {
   const dispatch = useDispatch();
   const [isLogginShow, setIsLogginShow] = useState(false);
+  const [innerHeight, setInnerHeight] = useState(5);
   const [pSubject, setPSubject] = useState("");
   const [pMassage, setPMassage] = useState("");
   const [pError, setPError] = useState(false);
   const { isAuth, error } = useSelector((state) => state.auth);
   const { fullName, _id } = useSelector((state) => state.user.user);
 
+  const vh = () => {
+    setInnerHeight(window.innerHeight * 0.01);
+  };
+  console.log(innerHeight);
+
   useEffect(() => {
+    vh();
     var localUser = localStorage.getItem("userID");
     var localToken = localStorage.getItem("token");
     if (isAuth) {
@@ -62,7 +69,11 @@ export default function Home() {
   };
 
   return (
-    <div className="h-screen w-full relative flex flex-col font-sans overflow-hidden 2xl:grid 2xl:grid-cols-2 ">
+    <div
+      className={`${
+        innerHeight && "h-[innerHeightpx]"
+      } w-full relative flex flex-col font-sans overflow-hidden 2xl:grid 2xl:grid-cols-2 `}
+    >
       <Head>
         <title>הזמנות</title>
         <meta name="title" content="הזמנות" />
