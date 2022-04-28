@@ -17,13 +17,16 @@ export const getInviteLink= () => async (dispatch) =>{
     }
 }
 
-export const addComming= (formType, id, fullName, numberOfPeople) => async (dispatch) =>{
+export const addComming= (id,option,fullName,number,relation,side, massage) => async (dispatch) =>{
     try {
         await commingCount({
-            formType: formType,
             id: id,
+            option: option,
             fullName: fullName,
-            numberOfPeople: numberOfPeople,
+            number: number,
+            relation: relation,
+            side: side,
+            massage: massage,
           })
     } catch (error) {
         dispatch(inviteFail(error))

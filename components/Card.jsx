@@ -8,6 +8,10 @@ import {
   TrashIcon,
   LinkIcon,
   ChevronLeftIcon,
+  DotsVerticalIcon,
+  EyeIcon,
+  InformationCircleIcon,
+  AdjustmentsIcon,
 } from "@heroicons/react/solid";
 import { useDispatch } from "react-redux";
 import { InvDelete, InvObj } from "../api/inviteApi";
@@ -20,8 +24,11 @@ import { useSelector } from "react-redux";
 
 function Card({ setIsLookingCard, isLookingCard, invId, userId, cardIndex }) {
   const [comming, setComming] = useState(null);
-  const [option, setOption] = useState("");
   const [isCopyed, setIsCopyed] = useState(false);
+  const [commingNum, setCommingNum] = useState(0);
+  const [delWarning, setDelWarning] = useState(false);
+  const [showInfo, setShowInfo] = useState(false);
+  const [infoIndex, setInfoIndex] = useState(null);
   const dispatch = useDispatch();
   const { invInfo, isLoading } = useSelector((state) => state.invite);
   const lookingCard = {
@@ -30,7 +37,13 @@ function Card({ setIsLookingCard, isLookingCard, invId, userId, cardIndex }) {
     cardIn: { scale: 1, opacity: 1 },
     cardOut: { scale: 0.5, opacity: 0 },
   };
+
   async function delHandeling() {
+    if (!delWarning) {
+      setDelWarning(true);
+      return;
+    }
+    setDelWarning(false);
     dispatch(invitePending());
     try {
       await InvDelete({
@@ -59,35 +72,22 @@ function Card({ setIsLookingCard, isLookingCard, invId, userId, cardIndex }) {
     setTimeout(() => setIsCopyed(false), 1200);
   };
 
-  const cardOptionsHandler = (e) => {
-    switch (option) {
-      case "":
-        setOption("open");
-        break;
-      case "open":
-        if (e.target.id === "exit") {
-          setIsLookingCard(false);
-        }
-        if (e.target.id === "del") {
-          setOption("del");
+  useEffect(() => {
+    if (isLookingCard) {
+      async function fetchData() {
+        const invInfo = await InvObj({ _id: invId });
+        if (JSON.stringify(comming) === JSON.stringify(invInfo.comming)) {
           return;
         }
-        setOption("");
-        break;
-      case "del":
-        if (e.target.id === "exit") {
-          setOption("open");
+        setComming(invInfo.comming);
+        if (invInfo) {
+          invInfo.comming.accepted.forEach((arr) => {
+            setCommingNum((commingNum += arr.number));
+          });
         }
-        break;
+      }
     }
-  };
-
-  useEffect(async () => {
-    if (isLookingCard) {
-      const invInfo = await InvObj({ _id: invId });
-      setComming(invInfo.comming);
-    }
-  }, []);
+  }, [comming]);
 
   return (
     <motion.div
@@ -98,220 +98,206 @@ function Card({ setIsLookingCard, isLookingCard, invId, userId, cardIndex }) {
         duration: 2,
       }}
       variants={lookingCard}
-      className="opacity-0 pointer-events-none bg-black bg-opacity-70 w-full h-screen absolute top-0 right-0 z-50 flex flex-col items-center justify-center xl:bg-opacity-20"
+      className="opacity-0 pointer-events-none backdrop-blur-sm bg-yellow-col/90 w-full h-screen absolute top-0 right-0 z-50 flex flex-col items-center justify-evenly text-white 2xl:grid 2xl:grid-cols-2 2xl:bg-gradient-to-l from-white to-yellow-col"
     >
-      <motion.div
-        animate={isLookingCard ? "cardIn" : "cardOut"}
-        transition={{
-          scale: { type: "spring", bounce: 1, stiffness: 50 },
-          opacity: { type: "spring", bounce: 1, stiffness: 50 },
-          duration: 2,
-        }}
-        variants={lookingCard}
-        className="relative bg-white w-5/6 h-4/6 rounded-2xl grid grid-rows-6 xl:w-96 xl:h-2/4 xl:mr-96 xl:mt-32"
-      >
-        <p className="w-full text-center text-xl col-start-1 row-start-1 self-center">
-          {invInfo[cardIndex].names}
-        </p>
-        <p className="w-full text-center text-3xl col-start-1 row-start-1 self-end font-bold underline">
-          {invInfo[cardIndex].invRison === "Bday"
-            ? "חוגג יום הולדת"
-            : invInfo[cardIndex].invRison === "Hatona"
-            ? "אירוע החתונה"
-            : invInfo[cardIndex].invRison === "Hina"
-            ? "אירוע החינה"
-            : invInfo[cardIndex].invRison === "Bar"
-            ? "אירוע בר המצווה"
-            : invInfo[cardIndex].invRison === "Bat"
-            ? "אירוע בת המצווה"
-            : invInfo[cardIndex].invRison === "Brit" && "אירוע הברית"}
-        </p>
-        <div className="text-center col-start-1 row-start-2 self-center justify-self-end pr-10">
-          <p className="font-bold">בתאריך</p>
-          <p>{invInfo[cardIndex].date}</p>
-        </div>
-        <div className="text-center col-start-1 row-start-2 self-center justify-self-start pl-10">
-          <p className="font-bold">מקום האירוע</p>
-          <p>{invInfo[cardIndex].place}</p>
-        </div>
-        <div className="bg-yellow-col p-2 relative w-5/6 h-[120px] col-start-1 row-start-3 row-span-2 self-center justify-self-center rounded-xl flex flex-col">
-          <div className="relative w-full h-full rounded-xl bg-white overflow-hidden px-10 flex items-center justify-center">
-            <p className="w-full break-all text-center pt-4">
-              https://hazmanot.netlify.app/Invite/{invInfo[cardIndex]._id}
-            </p>
-            <motion.div
-              animate={
-                isCopyed
-                  ? { opacity: 1, pointerEvents: "auto" }
-                  : { opacity: 0, pointerEvents: "none" }
-              }
-              className="absolute opacity-0 pointer-events-none w-full h-full bg-white/75 flex items-center justify-center"
-            >
-              <motion.p
-                animate={
-                  isCopyed
-                    ? { scale: 1, pointerEvents: "auto" }
-                    : { scale: 0.7, pointerEvents: "none" }
-                }
-                className="pointer-events-none bg-black text-white px-10 py-2 rounded-md"
-              >
-                הקישור הועתק
-              </motion.p>
-            </motion.div>
-          </div>
-          <p className="bg-yellow-col absolute -top-4 text-xl self-center p-2 rounded-md">
-            הקישור למוזמנים שלכם
+      <div className="space-y-5 w-full 2xl:col-start-2 2xl:row-start-1 2xl:flex 2xl:flex-col 2xl:space-y-32">
+        <div className="w-full text-center font-bold text-[40px] md:text-[72px] 2xl:bg-yellow-col/80 rounded-xl 2xl:w-max 2xl:self-center">
+          <p className="cursor-default 2xl:px-3">
+            {invInfo && invInfo[cardIndex].names}
           </p>
-          <div
-            onClick={() => copyHandler()}
-            className="bg-yellow-col absolute -bottom-3 left-5 w-14 h-8 rounded-md flex items-center justify-center"
-          >
-            <LinkIcon className="w-5 pointer-events-none" />
-          </div>
+          {invInfo && (
+            <p className="cursor-default 2xl:px-3">
+              {invInfo[cardIndex].invRison === "Brit"
+                ? "אירוע הברית"
+                : invInfo[cardIndex].invRison === "Bday"
+                ? "חוגג יום הולדת"
+                : invInfo[cardIndex].invRison === "Bar"
+                ? "עולה למצוות"
+                : invInfo[cardIndex].invRison === "Bat"
+                ? "חוגגת בת מצווה"
+                : invInfo[cardIndex].invRison === "Hatona"
+                ? "מתחתנים"
+                : invInfo[cardIndex].invRison === "Hina"
+                ? "חוגגים חינה"
+                : ""}
+            </p>
+          )}
         </div>
-        <div className="bg-sky-500 p-2 relative w-5/6 h-[120px] col-start-1 row-start-5 row-span-2 self-center justify-self-center rounded-xl grid grid-cols-8 ">
-          <div className="overflow-hidden pt-5 pb-2 px-2 col-start-3 col-span-6 row-start-1 w-full h-full rounded-r-xl bg-sky-200">
-            <div className="w-full h-full overflow-y-auto flex flex-col items-end py-1 px-3">
-              {comming !== null &&
-                comming.names.map((name) => {
-                  return <p key={name}>{name}</p>;
-                })}
-            </div>
+        <div className="w-full text-center flex 2xl:text-black">
+          <div className="w-full flex flex-col items-center">
+            <p className="cursor-default font-bold text-[20px] md:text-[36px]">
+              מקום האירוע
+            </p>
+            <p className="cursor-default text-center w-[104px] md:text-[24px]">
+              {invInfo && invInfo[cardIndex].place}
+            </p>
           </div>
-          <div className="col-start-1 col-span-2 row-start-1 w-full h-full rounded-l-xl bg-white flex items-center justify-center text-xl text-gray-500">
-            <p>{comming !== null && comming.numbers}</p>
-          </div>
-          <div className="absolute w-full -top-4 left-0 flex items-center justify-center">
-            <p className="bg-sky-500 text-xl self-center p-2 rounded-md">
-              מי אישר הגעה
+          <div className="w-full flex flex-col items-center">
+            <p className="cursor-default font-bold text-[20px] md:text-[36px]">
+              תאריך
+            </p>
+            <p className="cursor-default md:text-[24px]">
+              {invInfo && invInfo[cardIndex].date}
             </p>
           </div>
         </div>
-        <motion.div
-          animate={
-            option !== ""
-              ? { opacity: 1, pointerEvents: "auto" }
-              : { opacity: 0, pointerEvents: "none" }
-          }
-          style={
-            option === "del"
-              ? {
-                  background:
-                    "linear-gradient(180deg, rgba(0, 0, 0, 0.59) 0%, rgba(255, 0, 0, 0.59) 73.96%)",
-                }
-              : null
-          }
-          className="absolute w-full h-full bg-white/75 rounded-xl"
-        ></motion.div>
-        <motion.div
-          animate={
-            option === "del"
-              ? { opacity: 1, pointerEvents: "auto" }
-              : { opacity: 0, pointerEvents: "none" }
-          }
-          className="opacity-0 pointer-events-none absolute w-full h-1/2 top-0 right-0 px-2 flex items-end justify-center"
-        >
-          <div className="bg-red-800 w-full h-40 px-3 py-1 shadow-1 relative flex items-center justify-center rounded-xl">
-            <div className="bg-white w-full h-full rounded-xl px-9 flex items-center justify-center">
-              <p className="font-bold text-lg text-center">
-                בטוח שברצונך למחוק את הזמנת{" "}
-                {invInfo[cardIndex].invRison === "Bday"
-                  ? "יום ההולדת"
-                  : invInfo[cardIndex].invRison === "Hatona"
-                  ? "החתונה"
-                  : invInfo[cardIndex].invRison === "Hina"
-                  ? "החינה"
-                  : invInfo[cardIndex].invRison === "Bar"
-                  ? "בר המצווה"
-                  : invInfo[cardIndex].invRison === "Bat"
-                  ? "בת המצווה"
-                  : invInfo[cardIndex].invRison === "Brit" && "הברית"}{" "}
-                של
-                <span>
-                  {invInfo[cardIndex] !== undefined &&
-                  invInfo[cardIndex].invRison === "Brit"
-                    ? null
-                    : " " + invInfo[cardIndex].names}
-                </span>
-              </p>
-            </div>
-            <div
-              style={{ background: "#FF0000" }}
-              onClick={() => delHandeling()}
-              className="absolute -bottom-5 w-1/2 h-10 shadow-1 flex items-center justify-center rounded-md"
-            >
-              <p className="text-white font-bold text-lg pointer-events-none">
-                כן אני בטוח
-              </p>
-            </div>
+      </div>
+      <motion.div
+        animate={
+          showInfo
+            ? { opacity: 1, pointerEvents: "auto" }
+            : { opacity: 0, pointerEvents: "none" }
+        }
+        className="opacity-0 pointer-events-none absolute top-0 right-0 bg-yellow-col/80 backdrop-blur-sm w-full h-full grid grid-rows-6 items-center 2xl:grid-cols-2 2xl:bg-gradient-to-l from-white to-yellow-col"
+      >
+        <div className="w-full h-full row-start-1 row-span-3 flex flex-col items-center justify-center text-white 2xl:col-start-2 2xl:row-span-6 2xl:text-black 2xl:space-y-10">
+          <p className="text-[40px] font-bold md:text-[72px] bg-yellow-col px-10 rounded-xl 2xl:text-white">
+            {invInfo[cardIndex].comming.accepted[infoIndex] !== undefined &&
+              invInfo[cardIndex].comming.accepted[infoIndex].fullName}
+          </p>
+          {invInfo[cardIndex].comming.accepted[infoIndex] !== undefined &&
+            invInfo[cardIndex].comming.accepted[infoIndex].side !== "" && (
+              <div className="text-center  md:text-[24px]">
+                <p className="text-[20px] font-bold  md:text-[36px]">
+                  צד המוזמן
+                </p>
+                <p>{invInfo[cardIndex].comming.accepted[infoIndex].side}</p>
+              </div>
+            )}
+          <div className="text-center  md:text-[24px]">
+            <p className="text-[20px] font-bold  md:text-[36px]">סוג ההגעה</p>
+            <p>
+              {invInfo[cardIndex].comming.accepted[infoIndex] !== undefined &&
+                invInfo[cardIndex].comming.accepted[infoIndex].option}
+            </p>
           </div>
-        </motion.div>
-        <div className="w-16 h-16  absolute -top-5 -left-5 md:opacity-0 md:pointer-events-none">
-          <motion.div
-            animate={
-              option === "open" || option === "del"
-                ? { opacity: 1, x: 20, y: 60, pointerEvents: "auto" }
-                : { opacity: 0, x: 0, y: 0, pointerEvents: "none" }
-            }
-            transition={{ duration: 0.8 }}
-            onClick={(e) => cardOptionsHandler(e)}
-            id="exit"
-            className="bg-white w-10 h-10 absolute top-2 left-2 rounded-full flex items-center justify-center shadow-1"
-          >
-            <XIcon className="pointer-events-none w-6" />
-          </motion.div>
-          <motion.div
-            animate={
-              option === "open"
-                ? { opacity: 1, x: 60, y: 20, pointerEvents: "auto" }
-                : { opacity: 0, x: 0, y: 0, pointerEvents: "none" }
-            }
-            transition={{ duration: 0.8 }}
-            onClick={(e) => cardOptionsHandler(e)}
-            id="del"
-            className="bg-red-500 w-10 h-10 absolute top-2 left-2 rounded-full flex items-center justify-center shadow-1"
-          >
-            <TrashIcon className="pointer-events-none w-6" />
-          </motion.div>
-          <div
-            onClick={(e) => cardOptionsHandler(e)}
-            className={`${
-              option === "del" ? "bg-red-500" : "bg-yellow-col"
-            } shadow-1 rounded-full w-full h-full flex items-center justify-center relative`}
-          >
-            <motion.div
-              animate={option === "" ? { opacity: 1 } : { opacity: 0 }}
-              className="w-10 h-10 absolute"
-            >
-              <CogIcon className="w-10 text-white pointer-events-none" />
-            </motion.div>
-            <motion.div
-              animate={option === "open" ? { opacity: 1 } : { opacity: 0 }}
-              className="w-10 h-10 absolute opacity-0"
-            >
-              <ChevronLeftIcon className="w-10 text-white pointer-events-none" />
-            </motion.div>
-            <motion.div
-              animate={option === "del" ? { opacity: 1 } : { opacity: 0 }}
-              className="w-10 h-10 absolute opacity-0"
-            >
-              <TrashIcon className="w-10 pointer-events-none" />
-            </motion.div>
+          <div className="text-center  md:text-[24px]">
+            <p className="text-[20px] font-bold  md:text-[36px]">
+              מספר המגיעים
+            </p>
+            <p>
+              {invInfo[cardIndex].comming.accepted[infoIndex] !== undefined &&
+                invInfo[cardIndex].comming.accepted[infoIndex].number}
+            </p>
           </div>
-        </div>
-        <div
-          onClick={() => setIsLookingCard(false)}
-          className="opacity-0 pointer-events-none md:opacity-100 md:pointer-events-auto bg-black rounded-l-xl self-end justify-center items-end flex row-start-6 col-start-1 w-4/6 h-1/2"
-        >
-          <XIcon className="pointer-events-none mb-2 w-6 text-white" />
-        </div>
-        <div
-          onClick={() => delHandeling()}
-          className="opacity-0 pointer-events-none md:opacity-100 md:pointer-events-auto bg-orange-700 rounded-r-xl self-end justify-self-end justify-center items-end flex row-start-6 col-start-1 w-2/6 h-1/2"
-        >
-          <TrashIcon className="pointer-events-none mb-2 w-6 text-white" />
         </div>
       </motion.div>
+      <div className="space-y-8 2xl:col-start-1 2xl:row-start-1 2xl:justify-self-center 2xl:self-start 2xl:mt-[150px] 2xl:space-y-12">
+        <div className="w-[320px] h-[80px] text-black flex items-center justify-center relative md:w-[583px]">
+          <div className="w-full h-full text-center bg-white rounded-lg border-2 border-black shadow-1 flex items-center justify-center px-10 overflow-y-auto relative">
+            <p className="break-all md:text-[20px] cursor-default">
+              https://hazmanot.netlify.app/Invite/
+              {invInfo[cardIndex] !== undefined && invInfo[cardIndex]._id}
+            </p>
+
+            <motion.p
+              animate={showInfo ? { opacity: 1 } : { opacity: 0 }}
+              className="opacity-0 bg-white absolute top-0 right-0 w-full h-full pt-3 overflow-y-auto  md:text-[20px]"
+            >
+              {invInfo[cardIndex].comming.accepted[infoIndex] !== undefined &&
+                invInfo[cardIndex].comming.accepted[infoIndex].massage}
+            </motion.p>
+            <motion.div
+              animate={
+                isCopyed ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.7 }
+              }
+              className="opacity-0 cursor-default absolute bg-black/90 w-5/6 h-5/6 rounded-xl flex items-center justify-center text-white font-bold tracking-widest"
+            >
+              <p>הקישור הועתק בהצלחה</p>
+            </motion.div>
+          </div>
+          <p className="absolute cursor-default -top-4 right-3 bg-white px-2 border-2 border-black rounded-lg  md:text-[24px] md:-top-7">
+            {showInfo
+              ? `הודעה מ${invInfo[cardIndex].comming.accepted[infoIndex].fullName}`
+              : "קישור להזמנה"}
+          </p>
+        </div>
+        <div className="w-[320px] h-[141px] text-black flex items-center justify-center relative md:w-[583px] md:h-[141px] 2xl:h-[416px]">
+          <p className="absolute cursor-default -top-4 right-3 bg-white px-2 border-2 border-black rounded-lg md:text-[24px] md:-top-7">
+            אישורי הגעה
+          </p>
+          <div className="w-[230px] cursor-default h-[43px] text-[20px] absolute -bottom-[43px] bg-gray-500 text-white rounded-b-lg flex items-center justify-center md:text-[24px] md:w-[266px]">
+            <p>סך הכל אישורי הגעה: {commingNum}</p>
+          </div>
+          <div className="w-full h-full text-center bg-white rounded-lg border-2 border-black shadow-1 flex flex-col space-y-2 pt-4 px-3 overflow-y-auto">
+            {invInfo &&
+              invInfo[cardIndex].comming.accepted.map((inv, index) => (
+                <div
+                  key={inv._id}
+                  className="cursor-default w-full h-[25px] px-2 rounded-md text-white bg-gray-500 flex items-center justify-between md:text-[24px] 2xl:h-[37px]"
+                >
+                  <div className="flex space-x-4">
+                    <DotsVerticalIcon
+                      onClick={() => (setInfoIndex(index), setShowInfo(true))}
+                      className="w-[20px] cursor-pointer"
+                    />
+                    <p className="text-center w-[50px]">{inv.option}</p>
+                  </div>
+                  <p>{inv.fullName}</p>
+                </div>
+              ))}
+          </div>
+        </div>
+      </div>
+      <div className="w-[250px] h-[40px] relative md:h-[75px] 2xl:w-[680px] 2xl:h-[68px] 2xl:col-start-1 2xl:row-start-1 2xl:self-end 2xl:mb-[100px] 2xl:justify-self-center">
+        <motion.div
+          animate={delWarning ? { y: 0, opacity: 1 } : { y: 40, opacity: 0 }}
+          className="-z-10 w-full absolute -bottom-[41px] bg-[#FF0000] h-[40px] rounded-md flex items-center justify-center tracking-widest font-bold text-black 2xl:-top-[41px]"
+        >
+          <p>לחץ שוב כדי למחוק</p>
+        </motion.div>
+        <div className="bg-white w-full h-full rounded-md text-black flex items-center justify-around shadow-1 ">
+          <div
+            onClick={() =>
+              showInfo
+                ? setShowInfo(false)
+                : delWarning
+                ? setDelWarning(false)
+                : setIsLookingCard(false)
+            }
+            className="cursor-pointer w-full flex flex-col items-center 2xl:w-max 2xl:flex-row-reverse 2xl:justify-center 2xl:text-[24px]"
+          >
+            <XIcon className="pointer-events-none w-[20px] 2xl:w-[24px] 2xl:ml-2" />
+            <p className="pointer-events-none opacity-0 absolute md:opacity-100 md:static">
+              יציאה
+            </p>
+          </div>
+          {!showInfo && (
+            <div
+              onClick={() => copyHandler()}
+              className="cursor-pointer w-full flex flex-col items-center 2xl:w-max 2xl:flex-row-reverse 2xl:justify-center 2xl:text-[24px]"
+            >
+              <LinkIcon className="pointer-events-none w-[20px] 2xl:w-[24px] 2xl:ml-2" />
+              <p className="pointer-events-none opacity-0 absolute md:opacity-100 md:static md:text-center">
+                העתקת קישור
+              </p>
+            </div>
+          )}
+          {!showInfo && (
+            <div className="cursor-pointer w-full flex flex-col items-center 2xl:w-max 2xl:flex-row-reverse 2xl:justify-center 2xl:text-[24px]">
+              <AdjustmentsIcon className="pointer-events-none w-[20px] 2xl:w-[24px] 2xl:ml-2" />
+              <p className="pointer-events-none opacity-0 absolute md:opacity-100 md:static md:text-center">
+                סינון מוזמנים
+              </p>
+            </div>
+          )}
+          {!showInfo && (
+            <div
+              onClick={() => delHandeling()}
+              className="cursor-pointer w-full flex flex-col items-center 2xl:w-max 2xl:flex-row-reverse 2xl:justify-center 2xl:text-[24px]"
+            >
+              <TrashIcon
+                className={`${
+                  delWarning ? "text-red-600" : "text-black"
+                } w-[20px] pointer-events-none 2xl:w-[24px] 2xl:ml-2`}
+              />
+              <p className="pointer-events-none opacity-0 absolute md:opacity-100 md:static md:text-center">
+                מחיקת הזמנה
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
     </motion.div>
   );
 }

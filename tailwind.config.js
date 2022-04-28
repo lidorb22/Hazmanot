@@ -34,7 +34,7 @@ module.exports = {
      },
     extend: {
       colors: {
-        'yellow-col': '#FFA800',
+        'yellow-col': '#D28B02',
       },
       dropShadow: {
         '2xl': '0px 2px 3px rgba(0, 0, 0, 0.5)',

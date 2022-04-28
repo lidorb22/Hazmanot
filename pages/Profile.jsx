@@ -21,6 +21,7 @@ import {
 import Card from "../components/Card";
 import Head from "next/head";
 import { getUserProfile } from "../Slices/userAction";
+import WebLogo from "../vectors/webLogo.svg";
 
 function Profile() {
   const { isAuth, error } = useSelector((state) => state.auth);
@@ -112,7 +113,7 @@ function Profile() {
   }
 
   return (
-    <div className="w-full h-screen">
+    <div className="w-full h-screen bg-gradient-to-b from-white to-yellow-col/80 2xl:bg-gradient-to-l">
       <Head>
         <title>האזור האישי</title>
         <meta name="title" content="האזור האישי" />
@@ -146,27 +147,28 @@ function Profile() {
         />
       </Head>
       <Menu Page="Profile" />
-      <div
-        className="h-1/6 flex flex-col 
-            justify-center align-center text-center
-            "
-      >
-        <motion.div
-          initial={{ scale: 0.5, opacity: 0 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="shadow-try w-5/6 h-20 px-10 flex items-center justify-center bg-yellow-col self-center rounded-2xl md:py-8  "
-        >
-          <p className="font-bold text-2xl tracking-widest">האזור האישי</p>
-        </motion.div>
-      </div>
-      <div className="w-full h-5/6 grid grid-rows-6 xl:grid-cols-2">
-        <div className="row-start-1 col-start-1 justify-self-center self-center w-max text-center xl:col-start-2">
-          <p className="">
-            שלום, <span className="font-bold">{fullName}</span>
-          </p>
-          <p className="">אלו הארועים שפתחת</p>
-        </div>
-        <div className="w-max h-max row-start-1 col-start-1 pb-2 z-10 self-center pl-16 md:justify-self-center md:pl-0 md:pr-80 xl:col-start-2">
+      <img
+        alt=""
+        src={WebLogo}
+        style={{
+          filter: "brightness(0) invert(1)",
+        }}
+        className="w-[80px] absolute bottom-[10px] left-[10px] md:w-[180px] 2xl:opacity-0 pointer-events-none"
+      />
+      <img
+        alt=""
+        src={WebLogo}
+        className="w-[180px] absolute bottom-[10px] right-[10px] opacity-0 pointer-events-none 2xl:opacity-100 2xl:pointer-events-auto"
+      />
+      <div className="w-full h-full grid grid-rows-6 2xl:grid-cols-2">
+        <p className="row-start-1 col-start-1 self-end justify-self-center text-[40px] font-bold md:text-[72px] 2xl:w-[474px] 2xl:h-[113px] 2xl:bg-yellow-col/80 2xl:text-center 2xl:rounded-xl 2xl:col-start-2 2xl:row-start-1 2xl:row-span-5 2xl:self-center">
+          האזור האישי
+        </p>
+        <p className="row-start-2 col-start-1 self-end justify-self-center text-[20px] w-[311px] text-center md:text-[36px] md:w-[633px] 2xl:col-start-2 2xl:row-start-2 2xl:row-span-5 2xl:self-center">
+          {fullName}, כאן תוכל לראות את כל ההזמנות שיצרת ולבדוק מי אישרו את
+          הגעתם לאירועים שלך
+        </p>
+        <div className="row-start-6 justify-self-center col-start-1 bg-white rounded-full shadow-1 w-10 h-10 self-center flex items-center justify-center z-20 2xl:row-start-1 2xl:row-span-6 2xl:mr-16 2xl:justify-self-end">
           <motion.div
             animate={isLoading ? "open" : "closed"}
             transition={{
@@ -176,7 +178,7 @@ function Profile() {
               duration: 2,
             }}
             variants={refresh}
-            className=""
+            className="self-center"
           >
             <RefreshIcon onClick={() => listHandle()} className="w-6" />
           </motion.div>
@@ -187,8 +189,10 @@ function Profile() {
           transition={{
             scale: { type: "spring", bounce: 1, stiffness: 100 },
           }}
-          className={`${invInfo.length > 0 ? "flex-col p-2 " : "flex-row"}
-                    relative space-y-2 overflow-auto flex outline-4 outline-yellow-col/50 outline-dashed w-5/6 rounded-lg h-5/6 row-start-1 row-span-5 self-end col-start-1 justify-self-center z-10 md:w-1/2 xl:col-start-2`}
+          className={`${
+            invInfo.length > 0 ? "flex-col p-[20px] " : "flex-row"
+          } ${invInfo.length >= 5 ? "overflow-auto" : "overflow-hidden"}
+                    relative space-y-[20px] bg-white flex w-[300px] rounded-xl h-[450px] row-start-2 row-span-5 self-center mt-20 self-start col-start-1 justify-self-center z-10 md:w-[538px] 2xl:h-[781px] 2xl:row-start-1 2xl:mt-52`}
         >
           {invInfo.length === 0 && (
             <div className="justify-self-center self-center w-full">
@@ -213,30 +217,31 @@ function Profile() {
           )}
           {invInfo.length > 0 &&
             invInfo.map((item, index) => (
-              <div key={item._id} className="font-bold w-full h-20 min-h-max">
+              <div
+                key={item._id}
+                className="font-bold w-full h-20 min-h-max cursor-pointer"
+              >
                 <div
                   id={item._id}
                   onClick={() => cardHandle(index)}
-                  className={`
-                                ${item.invRison === "Brit" && "bg-yellow-400"} 
-                                ${item.invRison === "Bday" && "bg-orange-400"} 
-                                ${item.invRison === "Bat" && "bg-pink-400"}
-                                ${item.invRison === "Bar" && "bg-green-400"}
-                                ${item.invRison === "Hatona" && "bg-rose-400"}
-                                ${item.invRison === "Hina" && "bg-blue-400"}
-                                h-20 w-full shadow-lg flex flex-col items-center justify-center rounded-xl`}
+                  className={`bg-yellow-col/80 text-[20px] h-20 w-full shadow-lg flex flex-col items-center justify-center rounded-xl`}
                 >
-                  <p>{item.invRison === "Bday" && "יום ההולדת של"}</p>
-                  <p>{item.invRison === "Hatona" && "החתונה של"}</p>
-                  <p>{item.invRison === "Hina" && "החינה של"}</p>
-                  <p>{item.invRison === "Bar" && "הבר מצווה של"}</p>
-                  <p>{item.invRison === "Bat" && "הבת מצווה של"}</p>
-                  <p>{item.invRison === "Brit" && "ברית"}</p>
-                  {item.names !== "" ? (
-                    <p>{item.names}</p>
-                  ) : (
-                    <p>{item.place}</p>
-                  )}
+                  <p>
+                    {item.invRison === "Bday" && `יום ההולדת של ${item.names}`}
+                  </p>
+                  <p>
+                    {item.invRison === "Hatona" && `החתונה של ${item.names}`}
+                  </p>
+                  <p>{item.invRison === "Hina" && `החינה של ${item.names}`}</p>
+                  <p>
+                    {item.invRison === "Bar" && `הבר מצווה של ${item.names}`}
+                  </p>
+                  <p>
+                    {item.invRison === "Bat" && `הבת מצווה של ${item.names}`}
+                  </p>
+                  <p>{item.invRison === "Brit" && `ברית`}</p>
+
+                  <p className="text-[16px] text-black/50">{item.date}</p>
                 </div>
               </div>
             ))}
@@ -246,7 +251,7 @@ function Profile() {
                 ? { opacity: 1, pointerEvents: "auto" }
                 : { opacity: 0, pointerEvents: "none" }
             }
-            className="opacity-0 pointer-events-none absolute -top-2 left-0 w-full h-full flex flex-col items-end justify-end p-2"
+            className="opacity-0 pointer-events-none absolute -top-5 left-0 w-full h-full flex flex-col items-end justify-end p-2"
           >
             <div className="w-max rounded-xl bg-black flex items-center justify-center text-white text-base p-2">
               <p>טוען</p>
@@ -254,16 +259,6 @@ function Profile() {
             </div>
           </motion.div>
         </motion.div>
-        <div className="flex flex-col row-start-6 col-start-1 w-5/6 h-12 bg-yellow-col shadow-try2 rounded-xl border-black self-center justify-self-center xl:col-span-2">
-          <div
-            onClick={() => logOut()}
-            className="self-center h-full w-1/2 flex justify-center"
-          >
-            <p className="pointer-events-none self-center text-center font-bold tracking-widest">
-              יציאה
-            </p>
-          </div>
-        </div>
       </div>
       {isLookingCard && !isLoading && (
         <Card

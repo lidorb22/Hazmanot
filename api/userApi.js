@@ -5,6 +5,7 @@ const registerUrl = 'https://hazmanot-il.herokuapp.com/auth/register';
 const userUrl = 'https://hazmanot-il.herokuapp.com/user/';
 const verifyUrl = 'https://hazmanot-il.herokuapp.com/auth/authorized';
 const reMassageUrl = 'https://hazmanot-il.herokuapp.com/auth/newToken';
+const problemUrl = 'https://hazmanot-il.herokuapp.com/user/problem';
 
 export const userLogin = FrmData =>{
     return new Promise(async(resolve, reject) =>{
@@ -70,6 +71,17 @@ export const sendMassageAgain = FrmData =>{
             if(res.status === 200){
                 resolve(res.data);
             }
+        } catch (error) {
+            reject(error);
+        }
+    })
+};
+
+export const userProblem = FrmData =>{
+    return new Promise(async(resolve, reject) =>{
+        try {
+            const res = await axios.post(problemUrl, FrmData)
+            resolve(res.data);
         } catch (error) {
             reject(error);
         }

@@ -9,6 +9,7 @@ import { motion } from "framer-motion";
 
 function Template({
   closeEvent,
+  windowWidth,
   eventBool,
   pName,
   age,
@@ -159,11 +160,11 @@ function Template({
   return (
     <motion.div
       animate={
-        eventBool
+        eventBool || windowWidth >= 1536
           ? { opacity: 1, pointerEvents: "auto" }
           : { opacity: 0, pointerEvents: "none" }
       }
-      className="opacity-0 absolute top-0 left-0 h-screen w-full bg-black bg-opacity-70 z-50 flex justify-center items-center"
+      className="opacity-0 absolute top-0 left-0 h-screen w-full bg-black bg-opacity-70 z-50 flex justify-center items-center 2xl:bg-transparent 2xl:static"
     >
       <motion.div
         animate={eventBool ? { scale: 1 } : { scale: 0.9 }}
@@ -225,7 +226,9 @@ function Template({
         {date !== undefined && (
           <div className="flex flex-col space-y-3">
             <h1 className="text-4xl font-bold tracking-widest">בתאריך</h1>
-            <p className="tracking-widest w-max self-center text-md">{date}</p>
+            <p className="tracking-widest w-max self-center text-md">
+              {date.split("-").reverse().join("-")}
+            </p>
           </div>
         )}
         {time !== undefined && (
@@ -279,7 +282,9 @@ function Template({
           </motion.div>
           <motion.div
             animate={
-              menuOpen
+              menuOpen && windowWidth < 1536
+                ? { left: "6rem", bottom: "1rem", opacity: 1 }
+                : showPanel && windowWidth >= 1536
                 ? { left: "6rem", bottom: "1rem", opacity: 1 }
                 : { left: "8.4rem", bottom: "0rem", opacity: 0 }
             }

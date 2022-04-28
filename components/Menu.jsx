@@ -1,35 +1,21 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import Auth from "./Auth";
 import { useRouter } from "next/router";
 import {
   MenuIcon,
   XIcon,
   UserIcon,
-  SparklesIcon,
   HomeIcon,
-  ExclamationIcon,
+  PlusCircleIcon,
+  ArrowLeftIcon,
 } from "@heroicons/react/solid";
-import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { getUserLogout } from "../Slices/userSlice";
+import { authLogout } from "../Slices/authSlice";
+import { inviteLogout } from "../Slices/inviteSlice";
 
 function Menu({ Page }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [authAcces, setAuthAcces] = useState(false);
-
-  const { isAuth, isLoading } = useSelector((state) => state.auth);
-
-  const variants = {
-    open: { opacity: 1, pointerEvents: "auto" },
-    closed: { opacity: 0, pointerEvents: "none" },
-  };
-  const variants2 = {
-    open: { y: 0 },
-    closed: { y: -100 },
-  };
-  const variants3 = {
-    open: { scale: 1 },
-    closed: { scale: 0 },
-  };
 
   const router = useRouter();
 
@@ -48,185 +34,131 @@ function Menu({ Page }) {
     }
   }
 
+  const dispatch = useDispatch();
+
+  function logOut() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userID");
+    router.push("/");
+    dispatch(getUserLogout());
+    dispatch(authLogout());
+    dispatch(inviteLogout());
+  }
+
   return (
     <div
       className=" absolute top-0 left-0
         w-full h-screen z-50 pointer-events-none
         "
     >
-      <div
-        onClick={() => setIsOpen(true)}
-        className=" ml-3 mt-3 pointer-events-auto bg-white w-max rounded-full p-2 shadow-try2 sm:ml-8 sm:mt-3 md:opacity-0 md:pointer-events-none"
-      >
-        <MenuIcon className="w-8" />
-      </div>
-      {/* computer */}
-      <div className="opacity-0 pointer-events-none absolute top-0 left-12 w-28 h-48 rounded-b-full grid grid-rows-2 shadow-try2 md:opacity-100 md:pointer-events-auto lg:left-20 xl:left-32">
-        {!isAuth && (
-          <div className="w-full h-full bg-white row-start-1 row-span-2 rounded-b-full shadow-xl flex flex-col">
-            <p className="text-center font-bold text-sm p-3">
-              כדי להגיע למקומות אחרים באתר עלייך להתחבר או להרשם
-            </p>
-            <motion.p
-              initial={{ y: 0 }}
-              animate={
-                isLoading
-                  ? { y: 6, pointerEvents: "none" }
-                  : { y: 6, pointerEvents: "auto" }
-              }
-              transition={{
-                type: "Tween",
-                duration: 0.5,
-                repeat: Infinity,
-                repeatType: "reverse",
-              }}
-              onClick={() => setAuthAcces(true)}
-              className="text-center w-min font-bold text-sm bg-yellow-col px-5 cursor-pointer rounded-md self-center md:pointer-events-auto"
-            >
-              כניסה
-            </motion.p>
-          </div>
-        )}
-        {isAuth && (
-          <div className="w-full h-full bg-yellow-col row-start-1 row-span-2 rounded-b-full shadow-2xl flex flex-col">
-            {Page !== "Main" && (
-              <div
-                onClick={(e) => NavigationHandler(e)}
-                id="home"
-                className="flex flex-col w-full h-1/2 justify-center items-center bg-black"
-              >
-                <HomeIcon className="pointer-events-none w-7 text-yellow-col" />
-                <p className="pointer-events-none text-yellow-col">דף הבית</p>
-              </div>
-            )}
-            {Page !== "Profile" && (
-              <div
-                onClick={(e) => NavigationHandler(e)}
-                id="profile"
-                className={`${
-                  Page === "Invite" ? "bg-transparent" : "bg-black"
-                } flex flex-col w-full h-1/2 justify-center items-center `}
-              >
-                <UserIcon
-                  className={`${
-                    Page === "Invite" ? "text-black" : "text-yellow-col"
-                  } pointer-events-none w-7`}
-                />
-                <p
-                  className={`${
-                    Page === "Invite" ? "text-black" : "text-yellow-col"
-                  } pointer-events-none`}
-                >
-                  האזור האישי
-                </p>
-              </div>
-            )}
-            {Page !== "Invite" && (
-              <div
-                onClick={(e) => NavigationHandler(e)}
-                id="invite"
-                className="flex flex-col w-full h-1/2 justify-center items-center"
-              >
-                <SparklesIcon className="pointer-events-none w-7 text-black" />
-                <p className="pointer-events-none">יצירת הזמנה</p>
-              </div>
-            )}
-          </div>
-        )}
-        {isLoading && (
-          <div className="absolute backdrop-blur rounded-full w-full h-full flex flex-col items-center justify-center">
-            <motion.div
-              initial={{ y: 0, opacity: 0 }}
-              animate={{ y: -20, opacity: 1 }}
-              transition={{
-                scale: { type: "spring", bounce: 1, stiffness: 50 },
-                repeat: Infinity,
-                repeatType: "reverse",
-                duration: 2,
-              }}
-            >
-              <ExclamationIcon className="w-10 text-orange-600" />
-            </motion.div>
-            <p>...מאמת נתונים</p>
-          </div>
-        )}
-      </div>
-      {authAcces && <Auth acces={setAuthAcces} />}
-      {/* mobile */}
-      <motion.div
-        animate={isOpen ? "open" : "closed"}
-        variants={variants}
-        className="opacity-0 absolute top-0 w-full h-16 md:opacity-0 md:pointer-events-none "
-      >
-        {!isAuth && (
-          <motion.div
-            animate={isOpen ? "open" : "closed"}
-            variants={variants2}
-            className="w-full h-16 bg-white shadow-2xl grid grid-cols-2 md:opacity-0 md:pointer-events-none"
+      {/* Mobile and md screens */}
+      <div className="w-full h-full flex pointer-events-none 2xl:opacity-0">
+        <motion.div
+          animate={
+            isOpen
+              ? { x: 215, backgroundColor: "rgb(0 0 0)" }
+              : { x: 0, backgroundColor: "rgb(0 0 0 0.5)" }
+          }
+          className="bg-black/60 h-[59px] w-[54px] rounded-r-xl self-center mb-44 pointer-events-none"
+        >
+          <div
+            onClick={() => setIsOpen(!isOpen)}
+            className="w-full h-full flex items-center justify-center cursor-pointer pointer-events-auto 2xl:pointer-events-none"
           >
-            <XIcon
-              onClick={() => setIsOpen(false)}
-              className="w-8 col-start-1 row-start-1 self-center ml-5"
-            />
+            {!isOpen ? (
+              <MenuIcon className="text-white w-[30px] pointer-events-none" />
+            ) : (
+              <XIcon className="text-white w-[30px] pointer-events-none" />
+            )}
+          </div>
+        </motion.div>
+        <motion.div
+          animate={isOpen ? { x: 0 } : { x: -216 }}
+          className="bg-black h-[670px] text-white w-[216px] absolute self-center rounded-r-[20px] flex flex-col justify-around pointer-events-auto"
+        >
+          {Page !== "Home" && (
             <div
-              onClick={() => setAuthAcces(true)}
-              className="row-start-1 col-start-1 col-span-2 self-center justify-self-center bg-yellow-col w-1/2 h-5/6 text-center flex flex-col justify-center rounded-xl shadow-md"
+              id="home"
+              onClick={(e) => NavigationHandler(e)}
+              className="cursor-pointer flex items-center justify-center space-x-2 2xl:pointer-events-none"
             >
-              <p className="pointer-events-none text-white font-bold tracking-widest">
-                כניסה
-              </p>
+              <p className="text-[24px] pointer-events-none">דף הבית</p>
+              <HomeIcon className="w-[30px] pointer-events-none" />
             </div>
-          </motion.div>
-        )}
-        {isAuth && (
-          <motion.div
-            animate={isOpen ? "open" : "closed"}
-            variants={variants2}
-            className="w-full h-16 justify-around bg-white shadow-2xl flex "
+          )}
+          {Page !== "Profile" && (
+            <div
+              id="profile"
+              onClick={(e) => NavigationHandler(e)}
+              className="cursor-pointer flex items-center justify-center space-x-2 2xl:pointer-events-none"
+            >
+              <p className="text-[24px] pointer-events-none">האזור האישי</p>
+              <UserIcon className="w-[30px] pointer-events-none" />
+            </div>
+          )}
+          {Page !== "Invite" && (
+            <div
+              id="invite"
+              onClick={(e) => NavigationHandler(e)}
+              className="cursor-pointer flex items-center justify-center space-x-2 2xl:pointer-events-none"
+            >
+              <p className="text-[24px] pointer-events-none">יצירת הזמנה</p>
+              <PlusCircleIcon className="w-[30px] pointer-events-none" />
+            </div>
+          )}
+          <div
+            onClick={() => logOut()}
+            className="cursor-pointer flex flex-col items-center justify-center space-x-2 text-white/50 2xl:pointer-events-none"
           >
-            <XIcon onClick={() => setIsOpen(false)} className="w-8 " />
-            {Page !== "Main" && (
-              <motion.div
-                animate={isOpen ? "open" : "closed"}
-                variants={variants3}
-                transition={{ delay: -1 }}
-                onClick={(e) => NavigationHandler(e)}
-                id="home"
-                className="h-5/6 self-center shadow-md rounded-xl w-28 flex flex-col items-center justify-center"
-              >
-                <HomeIcon className="pointer-events-none w-7 text-yellow-col" />
-                <p className="pointer-events-none">דף הבית</p>
-              </motion.div>
-            )}
-            {Page !== "Invite" && (
-              <motion.div
-                animate={isOpen ? "open" : "closed"}
-                variants={variants3}
-                transition={{ delay: -1 }}
-                onClick={(e) => NavigationHandler(e)}
-                id="invite"
-                className="h-5/6 self-center shadow-md rounded-xl w-28 flex flex-col items-center justify-center"
-              >
-                <SparklesIcon className="pointer-events-none w-7 text-yellow-col" />
-                <p className="pointer-events-none">יצירת הזמנה</p>
-              </motion.div>
-            )}
-            {Page !== "Profile" && (
-              <motion.div
-                animate={isOpen ? "open" : "closed"}
-                variants={variants3}
-                transition={{ delay: -1 }}
-                onClick={(e) => NavigationHandler(e)}
-                id="profile"
-                className="h-5/6 self-center shadow-md rounded-xl w-28 flex flex-col items-center justify-center"
-              >
-                <UserIcon className="pointer-events-none w-7 text-yellow-col" />
-                <p className="pointer-events-none">האזור האישי</p>
-              </motion.div>
-            )}
-          </motion.div>
+            <p className="text-[24px] pointer-events-none">התנתק</p>
+            <ArrowLeftIcon className="w-[30px] pointer-events-none" />
+          </div>
+        </motion.div>
+      </div>
+
+      {/*Computer screen */}
+      <div
+        style={{ backgroundColor: "#F9F9F9" }}
+        className="w-[680px] h-[70px] text-black flex flex-row-reverse shadow-1 absolute top-[35px] right-[55px] rounded-lg justify-around pointer-events-none opacity-0 2xl:opacity-100"
+      >
+        {Page !== "Home" && (
+          <div
+            id="home"
+            onClick={(e) => NavigationHandler(e)}
+            className="w-full cursor-pointer flex items-center justify-center space-x-2 pointer-events-none 2xl:pointer-events-auto"
+          >
+            <p className="text-[24px] pointer-events-none">דף הבית</p>
+            <HomeIcon className="w-[30px] pointer-events-none" />
+          </div>
         )}
-      </motion.div>
+        {Page !== "Profile" && (
+          <div
+            id="profile"
+            onClick={(e) => NavigationHandler(e)}
+            className="w-full cursor-pointer flex items-center justify-center space-x-2 pointer-events-none 2xl:pointer-events-auto"
+          >
+            <p className="text-[24px] pointer-events-none">האזור האישי</p>
+            <UserIcon className="w-[30px] pointer-events-none" />
+          </div>
+        )}
+        {Page !== "Invite" && (
+          <div
+            id="invite"
+            onClick={(e) => NavigationHandler(e)}
+            className="w-full cursor-pointer flex items-center justify-center space-x-2 pointer-events-none 2xl:pointer-events-auto"
+          >
+            <p className="text-[24px] pointer-events-none">יצירת הזמנה</p>
+            <PlusCircleIcon className="w-[30px] pointer-events-none" />
+          </div>
+        )}
+        <div
+          onClick={() => logOut()}
+          className="w-full cursor-pointer flex items-center justify-center space-x-2 pointer-events-none 2xl:pointer-events-auto"
+        >
+          <p className="text-[24px] pointer-events-none">התנתק</p>
+          <ArrowLeftIcon className="w-[30px] pointer-events-none" />
+        </div>
+      </div>
     </div>
   );
 }
