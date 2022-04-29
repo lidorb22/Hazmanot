@@ -15,7 +15,7 @@ import Card from "../components/Card";
 import Head from "next/head";
 import { getUserProfile } from "../Slices/userAction";
 import WebLogo from "../vectors/webLogo.svg";
-import { mobileDetect } from "../Slices/mobileAction";
+import { mobileDetect, mobileResize } from "../Slices/mobileAction";
 
 function Profile() {
   const { isAuth, error } = useSelector((state) => state.auth);
@@ -23,6 +23,15 @@ function Profile() {
   const dispatch = useDispatch();
   const router = useRouter();
   const mainDiv = useRef();
+
+  useEffect(() => {
+    if (isMobile) {
+      window.addEventListener("resize", () => {
+        dispatch(mobileResize());
+        mainDiv.current.style.setProperty("--vh", `${mobileInnerHeight}px`);
+      });
+    }
+  }, []);
 
   useEffect(() => {
     if (isMobile == null) {

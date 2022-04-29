@@ -11,7 +11,7 @@ import { getUserProfile } from "../Slices/userAction";
 import WebLogo from "../vectors/webLogo.svg";
 import Template from "../components/Template";
 import Head from "next/head";
-import { mobileDetect } from "../Slices/mobileAction";
+import { mobileDetect, mobileResize } from "../Slices/mobileAction";
 
 function Create() {
   const [windowWidth, setWindowWidth] = useState(500);
@@ -25,6 +25,15 @@ function Create() {
   const handleResize = () => {
     setWindowWidth(window.innerWidth);
   };
+
+  useEffect(() => {
+    if (isMobile) {
+      window.addEventListener("resize", () => {
+        dispatch(mobileResize());
+        mainDiv.current.style.setProperty("--vh", `${mobileInnerHeight}px`);
+      });
+    }
+  }, []);
 
   useEffect(() => {
     if (isMobile == null) {
@@ -508,7 +517,7 @@ function Create() {
                         }
                         value={invRison === "Brit" ? time : place}
                         type={qnaOBJ[invRison].type.s}
-                        className="cursor-pointer focus:outline-none w-full h-full px-2 text-right rounded-lg border-2 border-black shadow-1"
+                        className="cursor-pointer focus:outline-none w-full h-full min-w-full px-2 text-right rounded-lg border-2 border-black shadow-1"
                       />
                       <label className="absolute text-black -top-4 right-3 bg-white px-2 border-2 border-black rounded-lg md:text-[20px]">
                         {qnaOBJ[invRison].second}
@@ -524,7 +533,7 @@ function Create() {
                         }
                         value={invRison === "Brit" ? date : time}
                         type={qnaOBJ[invRison].type.t}
-                        className="cursor-pointer focus:outline-none w-full h-full px-2 text-right rounded-lg border-2 border-black shadow-1"
+                        className="cursor-pointer focus:outline-none w-full h-full min-w-full px-2 text-right rounded-lg border-2 border-black shadow-1"
                       />
                       <label className="absolute text-black -top-4 right-3 bg-white px-2 border-2 border-black rounded-lg md:text-[20px]">
                         {qnaOBJ[invRison].third}
@@ -541,7 +550,7 @@ function Create() {
                           }
                           value={invRison === "Bday" ? age : date}
                           type={qnaOBJ[invRison].type.fo}
-                          className="cursor-pointer focus:outline-none w-full h-full px-2 text-right rounded-lg border-2 border-black shadow-1"
+                          className="cursor-pointer focus:outline-none w-full h-full px-2 min-w-full text-right rounded-lg border-2 border-black shadow-1"
                         />
                         <label className="absolute text-black -top-4 right-3 bg-white px-2 border-2 border-black rounded-lg md:text-[20px]">
                           {qnaOBJ[invRison].forth}
@@ -555,7 +564,7 @@ function Create() {
                           onChange={(e) => setDate(e.target.value)}
                           value={date}
                           type={qnaOBJ[invRison].type.fiv}
-                          className="cursor-pointer focus:outline-none w-full h-full px-2 text-right rounded-lg border-2 border-black shadow-1"
+                          className="cursor-pointer focus:outline-none w-full h-full min-w-full px-2 text-right rounded-lg border-2 border-black shadow-1"
                         />
                         <label className="absolute text-black -top-4 right-3 bg-white px-2 border-2 border-black rounded-lg md:text-[20px]">
                           {qnaOBJ[invRison].five}

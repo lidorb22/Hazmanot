@@ -7,6 +7,7 @@ import { getUserProfile } from "../Slices/userAction";
 import { LinkIcon } from "@heroicons/react/solid";
 import WebLogo from "../vectors/webLogo.svg";
 import { motion } from "framer-motion";
+import { mobileDetect, mobileResize } from "../Slices/mobileAction";
 
 function Links() {
   const [isCopyed, setIsCopyed] = useState(false);
@@ -18,6 +19,15 @@ function Links() {
   const { isMobile, mobileInnerHeight } = useSelector((state) => state.mobile);
 
   const mainDiv = useRef();
+
+  useEffect(() => {
+    if (isMobile) {
+      window.addEventListener("resize", () => {
+        dispatch(mobileResize());
+        mainDiv.current.style.setProperty("--vh", `${mobileInnerHeight}px`);
+      });
+    }
+  }, []);
 
   useEffect(() => {
     if (isMobile == null) {

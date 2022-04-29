@@ -13,7 +13,7 @@ import Head from "next/head";
 import { useEffect, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { getUserProfile } from "../Slices/userAction";
-import { mobileDetect } from "../Slices/mobileAction";
+import { mobileDetect, mobileResize } from "../Slices/mobileAction";
 import Auth from "../components/Auth";
 import { userProblem } from "../api/userApi";
 
@@ -28,6 +28,15 @@ export default function Home() {
   const { isMobile, mobileInnerHeight } = useSelector((state) => state.mobile);
 
   const mainDiv = useRef();
+
+  useEffect(() => {
+    if (isMobile) {
+      window.addEventListener("resize", () => {
+        dispatch(mobileResize());
+        mainDiv.current.style.setProperty("--vh", `${mobileInnerHeight}px`);
+      });
+    }
+  }, [mobileInnerHeight]);
 
   useEffect(() => {
     if (isMobile == null) {

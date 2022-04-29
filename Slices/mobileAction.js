@@ -17,3 +17,9 @@ export const mobileDetect= () => (dispatch) =>{
       dispatch(mobileHeight(null));
     }
 }
+
+export const mobileResize= () => (dispatch) =>{
+  dispatch(mobileCheck());
+    var num = window.innerHeight * 0.01;
+    dispatch(mobileHeight(num.toString()));
+}
