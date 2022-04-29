@@ -47,8 +47,8 @@ function Menu({ Page }) {
 
   return (
     <div
-      className=" absolute top-0 left-0
-        w-full h-screen z-50 pointer-events-none
+      className="absolute top-0 left-0
+        w-full h-full z-50 pointer-events-none
         "
     >
       {/* Mobile and md screens */}
@@ -74,7 +74,7 @@ function Menu({ Page }) {
         </motion.div>
         <motion.div
           animate={isOpen ? { x: 0 } : { x: -216 }}
-          className="bg-black h-[670px] text-white w-[216px] absolute self-center rounded-r-[20px] flex flex-col justify-around pointer-events-auto"
+          className="bg-black h-[500px] text-white w-[216px] absolute self-center rounded-r-[20px] flex flex-col justify-around pointer-events-auto md:h-[670px]"
         >
           {Page !== "Home" && (
             <div

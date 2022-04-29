@@ -66,19 +66,17 @@ function Card({ setIsLookingCard, isLookingCard, invId, userId, cardIndex }) {
     setTimeout(() => setIsCopyed(false), 1200);
   };
 
-  useEffect(() => {
+  useEffect(async () => {
     if (isLookingCard) {
-      async function fetchData() {
-        const invInfo = await InvObj({ _id: invId });
-        if (JSON.stringify(comming) === JSON.stringify(invInfo.comming)) {
-          return;
-        }
-        setComming(invInfo.comming);
-        if (invInfo) {
-          invInfo.comming.accepted.forEach((arr) => {
-            setCommingNum((commingNum += arr.number));
-          });
-        }
+      const invInfo = await InvObj({ _id: invId });
+      if (JSON.stringify(comming) === JSON.stringify(invInfo.comming)) {
+        return;
+      }
+      setComming(invInfo.comming);
+      if (invInfo) {
+        invInfo.comming.accepted.forEach((arr) => {
+          setCommingNum((commingNum += arr.number));
+        });
       }
     }
   }, [comming]);
@@ -92,7 +90,7 @@ function Card({ setIsLookingCard, isLookingCard, invId, userId, cardIndex }) {
         duration: 2,
       }}
       variants={lookingCard}
-      className="opacity-0 pointer-events-none backdrop-blur-sm bg-yellow-col/90 w-full h-screen absolute top-0 right-0 z-50 flex flex-col items-center justify-evenly text-white 2xl:grid 2xl:grid-cols-2 2xl:bg-gradient-to-l from-white to-yellow-col"
+      className="opacity-0 pointer-events-none backdrop-blur-sm bg-yellow-col/90 w-full h-full absolute top-0 right-0 z-50 flex flex-col items-center justify-evenly text-white 2xl:grid 2xl:grid-cols-2 2xl:bg-gradient-to-l from-white to-yellow-col"
     >
       <div className="space-y-5 w-full 2xl:col-start-2 2xl:row-start-1 2xl:flex 2xl:flex-col 2xl:space-y-32">
         <div className="w-full text-center font-bold text-[40px] md:text-[72px] 2xl:bg-yellow-col/80 rounded-xl 2xl:w-max 2xl:self-center">
@@ -211,9 +209,9 @@ function Card({ setIsLookingCard, isLookingCard, invId, userId, cardIndex }) {
             אישורי הגעה
           </p>
           <div className="w-[230px] cursor-default h-[43px] text-[20px] absolute -bottom-[43px] bg-gray-500 text-white rounded-b-lg flex items-center justify-center md:text-[24px] md:w-[266px]">
-            <p>סך הכל אישורי הגעה: {commingNum}</p>
+            <p>סך הכל אישרו הגעה: {commingNum}</p>
           </div>
-          <div className="w-full h-full text-center bg-white rounded-lg border-2 border-black shadow-1 flex flex-col space-y-2 pt-4 px-3 overflow-y-auto">
+          <div className="w-full h-full text-center bg-white rounded-lg border-2 border-black shadow-1 flex flex-col space-y-2 py-4 px-3 overflow-y-auto">
             {invInfo &&
               invInfo[cardIndex].comming.accepted.map((inv, index) => (
                 <div

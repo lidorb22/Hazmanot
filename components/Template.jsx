@@ -164,7 +164,7 @@ function Template({
           ? { opacity: 1, pointerEvents: "auto" }
           : { opacity: 0, pointerEvents: "none" }
       }
-      className="opacity-0 absolute top-0 left-0 h-screen w-full bg-black bg-opacity-70 z-50 flex justify-center items-center 2xl:bg-transparent 2xl:static"
+      className="opacity-0 absolute top-0 left-0 h-full w-full bg-black bg-opacity-70 z-50 flex justify-center items-center 2xl:bg-transparent 2xl:static"
     >
       <motion.div
         animate={eventBool ? { scale: 1 } : { scale: 0.9 }}
@@ -173,7 +173,7 @@ function Template({
           backgroundColor:
             change.color !== undefined && change.color.background,
         }}
-        className={`relative h-[650px] w-[300px] rounded-xl flex flex-col items-center justify-center space-y-4`}
+        className={`relative h-5/6 w-[300px] rounded-xl flex flex-col items-center justify-center space-y-4`}
       >
         <div className="text-md tracking-widest w-5/6">
           <p>{change.text !== undefined && change.text.title}</p>

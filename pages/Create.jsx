@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Menu from "../components/Menu";
 import { motion } from "framer-motion";
 import { useSelector } from "react-redux";
@@ -11,12 +11,15 @@ import { getUserProfile } from "../Slices/userAction";
 import WebLogo from "../vectors/webLogo.svg";
 import Template from "../components/Template";
 import Head from "next/head";
+import { mobileDetect } from "../Slices/mobileAction";
 
 function Create() {
   const [windowWidth, setWindowWidth] = useState(500);
   const { isAuth, error } = useSelector((state) => state.auth);
   const { _id, fullName } = useSelector((state) => state.user.user);
+  const { isMobile, mobileInnerHeight } = useSelector((state) => state.mobile);
   const router = useRouter();
+  const mainDiv = useRef();
   const dispatch = useDispatch();
 
   const handleResize = () => {
@@ -24,6 +27,11 @@ function Create() {
   };
 
   useEffect(() => {
+    if (isMobile == null) {
+      dispatch(mobileDetect());
+    } else if (isMobile && mobileInnerHeight) {
+      mainDiv.current.style.setProperty("--vh", `${mobileInnerHeight}px`);
+    }
     handleResize();
     var localUser = localStorage.getItem("userID");
     var localToken = localStorage.getItem("token");
@@ -335,11 +343,14 @@ function Create() {
 
   return (
     <div
+      ref={mainDiv}
+      style={{ height: "100vh", height: "calc(var(--vh, 1vh) * 100)" }}
       className={`${
         windowWidth >= 1536
           ? "bg-gradient-to-r from-white to-yellow-col/80"
           : "bg-yellow-col"
-      } h-screen w-full relative flex text-white flex-col font-sans overflow-hidden`}
+      }
+        w-full relative flex text-white flex-col font-sans overflow-hidden`}
     >
       <Head>
         <title>יצירת הזמנה</title>
@@ -605,7 +616,7 @@ function Create() {
                 ? { opacity: 1, pointerEvents: "auto" }
                 : { opacity: 0, pointerEvents: "none" }
             }
-            className="opacity-0 absolute top-0 left-0 w-full h-screen bg-black/90 backdrop-blur-sm flex flex-col justify-center items-center z-50 space-y-3"
+            className="opacity-0 absolute top-0 left-0 w-full h-full bg-black/90 backdrop-blur-sm flex flex-col justify-center items-center z-50 space-y-3"
           >
             <motion.div
               animate={errorTrigger ? { scale: 1 } : { scale: 0.7 }}

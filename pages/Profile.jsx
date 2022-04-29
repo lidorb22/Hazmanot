@@ -1,18 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Menu from "../components/Menu";
 import { motion } from "framer-motion";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
-import { getUserLogout } from "../Slices/userSlice";
-import { authLogout } from "../Slices/authSlice";
 import { allInvList, InvObj } from "../api/inviteApi";
-import {
-  inviteLogout,
-  invitePending,
-  inviteInfo,
-  inviteFail,
-} from "../Slices/inviteSlice";
+import { invitePending, inviteInfo, inviteFail } from "../Slices/inviteSlice";
 import {
   ExclamationIcon,
   RefreshIcon,
@@ -22,12 +15,21 @@ import Card from "../components/Card";
 import Head from "next/head";
 import { getUserProfile } from "../Slices/userAction";
 import WebLogo from "../vectors/webLogo.svg";
+import { mobileDetect } from "../Slices/mobileAction";
 
 function Profile() {
   const { isAuth, error } = useSelector((state) => state.auth);
+  const { isMobile, mobileInnerHeight } = useSelector((state) => state.mobile);
+  const dispatch = useDispatch();
   const router = useRouter();
+  const mainDiv = useRef();
 
   useEffect(() => {
+    if (isMobile == null) {
+      dispatch(mobileDetect());
+    } else if (isMobile && mobileInnerHeight) {
+      mainDiv.current.style.setProperty("--vh", `${mobileInnerHeight}px`);
+    }
     var localUser = localStorage.getItem("userID");
     var localToken = localStorage.getItem("token");
     if (isAuth) {
@@ -48,7 +50,6 @@ function Profile() {
 
   const { fullName, _id } = useSelector((state) => state.user.user);
   const { invInfo, isLoading } = useSelector((state) => state.invite);
-  const dispatch = useDispatch();
 
   useEffect(() => {
     if (isAuth) {
@@ -60,15 +61,6 @@ function Profile() {
     open: { rotate: -720 },
     closed: { rotate: 0 },
   };
-
-  function logOut() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("userID");
-    router.push("/");
-    dispatch(getUserLogout());
-    dispatch(authLogout());
-    dispatch(inviteLogout());
-  }
 
   async function listHandle() {
     if (isLoading) {
@@ -113,7 +105,11 @@ function Profile() {
   }
 
   return (
-    <div className="w-full h-screen bg-gradient-to-b from-white to-yellow-col/80 2xl:bg-gradient-to-l">
+    <div
+      ref={mainDiv}
+      style={{ height: "100vh", height: "calc(var(--vh, 1vh) * 100)" }}
+      className={`w-full bg-gradient-to-b from-white to-yellow-col/80 overflow-hidden 2xl:bg-gradient-to-l relative`}
+    >
       <Head>
         <title>האזור האישי</title>
         <meta name="title" content="האזור האישי" />
@@ -147,19 +143,6 @@ function Profile() {
         />
       </Head>
       <Menu Page="Profile" />
-      <img
-        alt=""
-        src={WebLogo}
-        style={{
-          filter: "brightness(0) invert(1)",
-        }}
-        className="w-[80px] absolute bottom-[10px] left-[10px] md:w-[180px] 2xl:opacity-0 pointer-events-none"
-      />
-      <img
-        alt=""
-        src={WebLogo}
-        className="w-[180px] absolute bottom-[10px] right-[10px] opacity-0 pointer-events-none 2xl:opacity-100 2xl:pointer-events-auto"
-      />
       <div className="w-full h-full grid grid-rows-6 2xl:grid-cols-2">
         <p className="row-start-1 col-start-1 self-end justify-self-center text-[40px] font-bold md:text-[72px] 2xl:w-[474px] 2xl:h-[113px] 2xl:bg-yellow-col/80 2xl:text-center 2xl:rounded-xl 2xl:col-start-2 2xl:row-start-1 2xl:row-span-5 2xl:self-center">
           האזור האישי
@@ -260,6 +243,19 @@ function Profile() {
           </motion.div>
         </motion.div>
       </div>
+      <img
+        alt=""
+        src={WebLogo}
+        style={{
+          filter: "brightness(0) invert(1)",
+        }}
+        className="w-[80px] absolute bottom-[10px] left-[10px] md:w-[180px] 2xl:opacity-0 pointer-events-none"
+      />
+      <img
+        alt=""
+        src={WebLogo}
+        className="w-[180px] absolute bottom-[10px] right-[10px] opacity-0 pointer-events-none 2xl:opacity-100 2xl:pointer-events-auto"
+      />
       {isLookingCard && !isLoading && (
         <Card
           setIsLookingCard={setIsLookingCard}

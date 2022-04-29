@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { InvObj } from "../../api/inviteApi";
-import { BadgeCheckIcon, HomeIcon, XIcon } from "@heroicons/react/solid";
+import { BadgeCheckIcon, HomeIcon } from "@heroicons/react/solid";
 import { motion } from "framer-motion";
 import Head from "next/head";
 import TamplateController from "../../components/TamplateController";

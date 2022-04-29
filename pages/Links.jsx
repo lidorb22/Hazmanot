@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from "next/router";
 import { inviteReset } from "../Slices/inviteSlice";
@@ -15,8 +15,16 @@ function Links() {
   const { link } = useSelector((state) => state.invite);
   const router = useRouter();
   const dispatch = useDispatch();
+  const { isMobile, mobileInnerHeight } = useSelector((state) => state.mobile);
+
+  const mainDiv = useRef();
 
   useEffect(() => {
+    if (isMobile == null) {
+      dispatch(mobileDetect());
+    } else if (isMobile && mobileInnerHeight) {
+      mainDiv.current.style.setProperty("--vh", `${mobileInnerHeight}px`);
+    }
     if (isAuth) {
       return;
     }
@@ -44,7 +52,11 @@ function Links() {
   };
 
   return (
-    <div className="w-full h-screen grid grid-rows-6 bg-yellow-col">
+    <div
+      ref={mainDiv}
+      style={{ height: "100vh", height: "calc(var(--vh, 1vh) * 100)" }}
+      className="w-full grid grid-rows-6 bg-yellow-col"
+    >
       <Head>
         <title>קישורים</title>
         <meta name="title" content="קישורים" />
