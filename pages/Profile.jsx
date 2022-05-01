@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import Menu from "../components/Menu";
 import { motion } from "framer-motion";
 import { useSelector } from "react-redux";
@@ -15,30 +15,13 @@ import Card from "../components/Card";
 import Head from "next/head";
 import { getUserProfile } from "../Slices/userAction";
 import WebLogo from "../vectors/webLogo.svg";
-import { mobileDetect, mobileResize } from "../Slices/mobileAction";
 
 function Profile() {
   const { isAuth, error } = useSelector((state) => state.auth);
-  const { isMobile, mobileInnerHeight } = useSelector((state) => state.mobile);
   const dispatch = useDispatch();
   const router = useRouter();
-  const mainDiv = useRef();
 
   useEffect(() => {
-    if (isMobile) {
-      window.addEventListener("resize", () => {
-        dispatch(mobileResize());
-        mainDiv.current.style.setProperty("--vh", `${mobileInnerHeight}px`);
-      });
-    }
-  }, []);
-
-  useEffect(() => {
-    if (isMobile == null) {
-      dispatch(mobileDetect());
-    } else if (isMobile && mobileInnerHeight) {
-      mainDiv.current.style.setProperty("--vh", `${mobileInnerHeight}px`);
-    }
     var localUser = localStorage.getItem("userID");
     var localToken = localStorage.getItem("token");
     if (isAuth) {
@@ -115,9 +98,7 @@ function Profile() {
 
   return (
     <div
-      ref={mainDiv}
-      style={{ height: "100vh", height: "calc(var(--vh, 1vh) * 100)" }}
-      className={`w-full bg-gradient-to-b from-white to-yellow-col/80 overflow-hidden 2xl:bg-gradient-to-l relative`}
+      className={`w-full h-screen bg-gradient-to-b from-white to-yellow-col/80 overflow-y-auto 2xl:bg-gradient-to-l relative`}
     >
       <Head>
         <title>האזור האישי</title>
@@ -152,29 +133,14 @@ function Profile() {
         />
       </Head>
       <Menu Page="Profile" />
-      <div className="w-full h-full grid grid-rows-6 2xl:grid-cols-2">
-        <p className="row-start-1 col-start-1 self-end justify-self-center text-[40px] font-bold md:text-[72px] 2xl:w-[474px] 2xl:h-[113px] 2xl:bg-yellow-col/80 2xl:text-center 2xl:rounded-xl 2xl:col-start-2 2xl:row-start-1 2xl:row-span-5 2xl:self-center">
+      <div className="w-full h-full flex flex-col items-center justify-center md:grid md:grid-rows-6 2xl:grid-cols-2">
+        <p className="md:row-start-1 md:col-start-1 md:self-end md:justify-self-center text-[40px] font-bold md:text-[72px] 2xl:w-[474px] 2xl:h-[113px] 2xl:bg-yellow-col/80 2xl:text-center 2xl:rounded-xl 2xl:col-start-2 2xl:row-start-1 2xl:row-span-5 2xl:self-center">
           האזור האישי
         </p>
-        <p className="row-start-2 col-start-1 self-end justify-self-center text-[20px] w-[311px] text-center md:text-[36px] md:w-[633px] 2xl:col-start-2 2xl:row-start-2 2xl:row-span-5 2xl:self-center">
+        <p className="md:row-start-2 md:col-start-1 md:self-end md:justify-self-center text-[20px] w-[311px] text-center md:text-[36px] md:w-[633px] 2xl:col-start-2 2xl:row-start-2 2xl:row-span-5 2xl:self-center">
           {fullName}, כאן תוכל לראות את כל ההזמנות שיצרת ולבדוק מי אישרו את
           הגעתם לאירועים שלך
         </p>
-        <div className="row-start-6 justify-self-center col-start-1 bg-white rounded-full shadow-1 w-10 h-10 self-center flex items-center justify-center z-20 2xl:row-start-1 2xl:row-span-6 2xl:mr-16 2xl:justify-self-end">
-          <motion.div
-            animate={isLoading ? "open" : "closed"}
-            transition={{
-              rotate: { type: "spring", bounce: 1, stiffness: 50 },
-              repeat: Infinity,
-              repeatType: "mirror",
-              duration: 2,
-            }}
-            variants={refresh}
-            className="self-center"
-          >
-            <RefreshIcon onClick={() => listHandle()} className="w-6" />
-          </motion.div>
-        </div>
         <motion.div
           initial={{ scale: 0.8 }}
           animate={{ scale: 1 }}
@@ -184,7 +150,7 @@ function Profile() {
           className={`${
             invInfo.length > 0 ? "flex-col p-[20px] " : "flex-row"
           } ${invInfo.length >= 5 ? "overflow-auto" : "overflow-hidden"}
-                    relative space-y-[20px] bg-white flex w-[300px] rounded-xl h-[450px] row-start-2 row-span-5 self-center mt-20 self-start col-start-1 justify-self-center z-10 md:w-[538px] 2xl:h-[781px] 2xl:row-start-1 2xl:mt-52`}
+                    relative space-y-[20px] bg-white flex w-[300px] rounded-xl h-[450px] md:row-start-2 md:row-span-5 md:self-center md:mt-20 md:self-start md:col-start-1 md:justify-self-center z-10 md:w-[538px] 2xl:h-[781px] 2xl:row-start-1 2xl:mt-52`}
         >
           {invInfo.length === 0 && (
             <div className="justify-self-center self-center w-full">
@@ -251,6 +217,21 @@ function Profile() {
             </div>
           </motion.div>
         </motion.div>
+        <div className="mt-2 md:row-start-6 md:justify-self-center md:col-start-1 bg-white rounded-full shadow-1 w-10 h-10 self-center flex items-center justify-center z-20 2xl:row-start-1 2xl:row-span-6 2xl:mr-16 2xl:justify-self-end">
+          <motion.div
+            animate={isLoading ? "open" : "closed"}
+            transition={{
+              rotate: { type: "spring", bounce: 1, stiffness: 50 },
+              repeat: Infinity,
+              repeatType: "mirror",
+              duration: 2,
+            }}
+            variants={refresh}
+            className="self-center"
+          >
+            <RefreshIcon onClick={() => listHandle()} className="w-6" />
+          </motion.div>
+        </div>
       </div>
       <img
         alt=""

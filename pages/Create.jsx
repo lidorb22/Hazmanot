@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import Menu from "../components/Menu";
 import { motion } from "framer-motion";
 import { useSelector } from "react-redux";
@@ -11,15 +11,12 @@ import { getUserProfile } from "../Slices/userAction";
 import WebLogo from "../vectors/webLogo.svg";
 import Template from "../components/Template";
 import Head from "next/head";
-import { mobileDetect, mobileResize } from "../Slices/mobileAction";
 
 function Create() {
   const [windowWidth, setWindowWidth] = useState(500);
   const { isAuth, error } = useSelector((state) => state.auth);
   const { _id, fullName } = useSelector((state) => state.user.user);
-  const { isMobile, mobileInnerHeight } = useSelector((state) => state.mobile);
   const router = useRouter();
-  const mainDiv = useRef();
   const dispatch = useDispatch();
 
   const handleResize = () => {
@@ -27,20 +24,6 @@ function Create() {
   };
 
   useEffect(() => {
-    if (isMobile) {
-      window.addEventListener("resize", () => {
-        dispatch(mobileResize());
-        mainDiv.current.style.setProperty("--vh", `${mobileInnerHeight}px`);
-      });
-    }
-  }, []);
-
-  useEffect(() => {
-    if (isMobile == null) {
-      dispatch(mobileDetect());
-    } else if (isMobile && mobileInnerHeight) {
-      mainDiv.current.style.setProperty("--vh", `${mobileInnerHeight}px`);
-    }
     handleResize();
     var localUser = localStorage.getItem("userID");
     var localToken = localStorage.getItem("token");
@@ -82,7 +65,7 @@ function Create() {
   );
 
   const selectionAction = {
-    open: { y: -180 },
+    open: windowWidth < 768 ? { y: -170 } : windowWidth >= 768 && { y: -220 },
     closed: { y: 0 },
   };
 
@@ -352,14 +335,12 @@ function Create() {
 
   return (
     <div
-      ref={mainDiv}
-      style={{ height: "100vh", height: "calc(var(--vh, 1vh) * 100)" }}
       className={`${
         windowWidth >= 1536
           ? "bg-gradient-to-r from-white to-yellow-col/80"
           : "bg-yellow-col"
       }
-        w-full relative flex text-white flex-col font-sans overflow-hidden`}
+        w-full h-screen relative flex text-white flex-col font-sans overflow-hidden`}
     >
       <Head>
         <title>יצירת הזמנה</title>
@@ -438,23 +419,6 @@ function Create() {
             onSubmit={(e) => handleSubmit(e)}
             className="z-20 row-start-2 row-span-5 col-start-1 w-full h-full grid grid-rows-6  2xl:col-start-2"
           >
-            <motion.select
-              animate={isSelected ? "open" : "closed"}
-              variants={selectionAction}
-              transition={{
-                duration: 1,
-              }}
-              onChange={(e) => selectionE(e)}
-              className="text-center text-lg text-black font-bold row-start-3 col-start-1 focus:outline-none shadow-1 bg-white rounded-t-2xl w-[280px] h-[50px] justify-self-center md:w-[538px] md:h-[75px] md:row-start-2 md:self-end 2xl:self-start 2xl:row-start-3"
-            >
-              <option value="default"></option>
-              <option value="Bday">יום הולדת</option>
-              <option value="Hatona">חתונה</option>
-              <option value="Hina">חינה</option>
-              <option value="Bar">בר מצווה</option>
-              <option value="Bat">בת מצווה</option>
-              <option value="Brit">ברית</option>
-            </motion.select>
             <motion.p
               animate={
                 isSelected
@@ -476,7 +440,24 @@ function Create() {
               ולבסוף תקבל מאיתנו קישור להזמנה שלך
             </motion.p>
             {/* QNA */}
-            <div className="pointer-events-none relative row-start-2 row-span-4 col-start-1 w-full h-full py-2 flex flex-col text-black 2xl:mt-8">
+            <div className="pointer-events-none relative row-start-2 row-span-4 col-start-1 w-full h-full py-2 flex flex-col text-black items-center justify-center 2xl:mt-8">
+              <motion.select
+                animate={isSelected ? "open" : "closed"}
+                variants={selectionAction}
+                transition={{
+                  duration: 1,
+                }}
+                onChange={(e) => selectionE(e)}
+                className="absolute text-center mb-28 pointer-events-auto text-lg text-black font-bold focus:outline-none shadow-1 bg-white rounded-t-2xl w-[280px] h-[50px] md:w-[538px] md:h-[75px]"
+              >
+                <option value="default"></option>
+                <option value="Bday">יום הולדת</option>
+                <option value="Hatona">חתונה</option>
+                <option value="Hina">חינה</option>
+                <option value="Bar">בר מצווה</option>
+                <option value="Bat">בת מצווה</option>
+                <option value="Brit">ברית</option>
+              </motion.select>
               <motion.div
                 animate={isRefreshing ? "open" : "closed"}
                 variants={qnaAction}
@@ -582,7 +563,7 @@ function Create() {
                 }
                 type="submit"
                 onClick={(e) => submitButtHandler(e)}
-                className={`w-[162px] pointer-events-none opacity-0 self-center font-bold tracking-widest bg-gray-600 h-[23px] rounded-md text-white shadow-1 md:w-[290px] md:h-[50px] md:text-[32px]`}
+                className={`w-[162px] absolute -bottom-7 pointer-events-none opacity-0 self-center font-bold tracking-widest bg-gray-600 h-[23px] rounded-md text-white shadow-1 md:w-[290px] md:h-[50px] md:text-[32px]`}
               >
                 יצירת הזמנה
               </motion.button>
@@ -594,7 +575,7 @@ function Create() {
                 }
                 id="tamplateButt"
                 onClick={(e) => submitButtHandler(e)}
-                className="w-[145px] h-[20px] text-white pointer-events-none opacity-0 self-center mt-8 flex justify-around items-center md:w-[250px] cursor-pointer"
+                className="w-[145px] h-[20px] absolute -bottom-14 text-white pointer-events-none opacity-0 self-center mt-8 flex justify-around items-center md:w-[250px] cursor-pointer"
               >
                 <p className="pointer-events-none md:text-[24px]">
                   צפייה בהזמנה

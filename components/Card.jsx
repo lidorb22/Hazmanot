@@ -90,7 +90,7 @@ function Card({ setIsLookingCard, isLookingCard, invId, userId, cardIndex }) {
         duration: 2,
       }}
       variants={lookingCard}
-      className="opacity-0 pointer-events-none backdrop-blur-sm bg-yellow-col/90 w-full h-full absolute top-0 right-0 z-50 flex flex-col items-center justify-evenly text-white 2xl:grid 2xl:grid-cols-2 2xl:bg-gradient-to-l from-white to-yellow-col"
+      className="opacity-0 pointer-events-none backdrop-blur-sm bg-yellow-col/90 w-full h-full absolute top-0 right-0 z-50 flex flex-col items-center justify-evenly text-white overflow-hidden 2xl:grid 2xl:grid-cols-2 2xl:bg-gradient-to-l from-white to-yellow-col"
     >
       <div className="space-y-5 w-full 2xl:col-start-2 2xl:row-start-1 2xl:flex 2xl:flex-col 2xl:space-y-32">
         <div className="w-full text-center font-bold text-[40px] md:text-[72px] 2xl:bg-yellow-col/80 rounded-xl 2xl:w-max 2xl:self-center">
@@ -223,7 +223,9 @@ function Card({ setIsLookingCard, isLookingCard, invId, userId, cardIndex }) {
                       onClick={() => (setInfoIndex(index), setShowInfo(true))}
                       className="w-[20px] cursor-pointer"
                     />
-                    <p className="text-center w-[50px]">{inv.option}</p>
+                    <p className="text-center w-[50px] md:w-[100px]">
+                      {inv.option}
+                    </p>
                   </div>
                   <p>{inv.fullName}</p>
                 </div>

@@ -10,41 +10,22 @@ import WebLogo from "../vectors/webLogo.svg";
 import IndexVector from "../vectors/indexVector.svg";
 import Menu from "../components/Menu";
 import Head from "next/head";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { getUserProfile } from "../Slices/userAction";
-import { mobileDetect, mobileResize } from "../Slices/mobileAction";
-import Auth from "../components/Auth";
 import { userProblem } from "../api/userApi";
+import { useRouter } from "next/router";
 
 export default function Home() {
   const dispatch = useDispatch();
-  const [isLogginShow, setIsLogginShow] = useState(false);
+  const router = useRouter();
   const [pSubject, setPSubject] = useState("");
   const [pMassage, setPMassage] = useState("");
   const [pError, setPError] = useState(false);
   const { isAuth, error } = useSelector((state) => state.auth);
   const { fullName, _id } = useSelector((state) => state.user.user);
-  const { isMobile, mobileInnerHeight } = useSelector((state) => state.mobile);
-
-  const mainDiv = useRef();
 
   useEffect(() => {
-    if (isMobile) {
-      window.addEventListener("resize", () => {
-        dispatch(mobileResize());
-        mainDiv.current.style.setProperty("--vh", `${mobileInnerHeight}px`);
-      });
-    }
-  }, [mobileInnerHeight]);
-
-  useEffect(() => {
-    if (isMobile == null) {
-      dispatch(mobileDetect());
-    } else if (isMobile && mobileInnerHeight) {
-      mainDiv.current.style.setProperty("--vh", `${mobileInnerHeight}px`);
-    }
-
     var localUser = localStorage.getItem("userID");
     var localToken = localStorage.getItem("token");
     if (isAuth) {
@@ -82,9 +63,7 @@ export default function Home() {
 
   return (
     <div
-      ref={mainDiv}
-      style={{ height: "100vh", height: "calc(var(--vh, 1vh) * 100)" }}
-      className={`w-full relative flex flex-col font-sans overflow-hidden md:h-screen 2xl:grid 2xl:grid-cols-2 `}
+      className={`w-full h-full relative flex flex-col font-sans overflow-y-auto md:h-screen 2xl:grid 2xl:grid-cols-2 `}
     >
       <Head>
         <title>הזמנות</title>
@@ -119,17 +98,6 @@ export default function Home() {
         />
       </Head>
       {isAuth && <Menu Page="Home" />}
-      <motion.div
-        animate={
-          isLogginShow
-            ? { opacity: 1, pointerEvents: "auto", zIndex: 0 }
-            : { opacity: 0, pointerEvents: "none", zIndex: -1 }
-        }
-        style={{ zIndex: -1 }}
-        className="opacity-0 pointer-events-none absolute top-0 right-0 left-0 bottom-0"
-      >
-        {isLogginShow && <Auth acces={setIsLogginShow} />}
-      </motion.div>
       <img
         alt=""
         src={IndexVector}
@@ -140,23 +108,21 @@ export default function Home() {
         }}
         className="h-full absolute top-0 left-0 opacity-0 pointer-events-none 2xl:opacity-100"
       />
-      {!isLogginShow && (
-        <img
-          alt=""
-          src={WebLogo}
-          style={{
-            filter: "brightness(0) invert(1)",
-          }}
-          className="w-[80px] absolute bottom-[10px] left-[10px] md:w-[180px] 2xl:opacity-0 pointer-events-none"
-        />
-      )}
-      {!isLogginShow && (
-        <img
-          alt=""
-          src={WebLogo}
-          className="w-[180px] absolute bottom-[10px] right-[10px] opacity-0 pointer-events-none 2xl:opacity-100 2xl:pointer-events-auto"
-        />
-      )}
+
+      <img
+        alt=""
+        src={WebLogo}
+        style={{
+          filter: "brightness(0) invert(1)",
+        }}
+        className="w-[80px] absolute bottom-[10px] left-[10px] md:w-[180px] 2xl:opacity-0 pointer-events-none"
+      />
+
+      <img
+        alt=""
+        src={WebLogo}
+        className="w-[180px] absolute bottom-[10px] right-[10px] opacity-0 pointer-events-none 2xl:opacity-100 2xl:pointer-events-auto"
+      />
       <div className="w-full h-4/6 flex flex-col items-center justify-center 2xl:col-start-1 2xl:col-span-2 2xl:row-start-1 2xl:self-center 2xl:w-[770px] 2xl:ml-[670px] 2xl:justify-self-center 2xl:leading-[53px]">
         <div
           className={`${
@@ -229,7 +195,7 @@ export default function Home() {
               <div className="flex flex-col items-center w-1/2">
                 <EmojiHappyIcon className="w-[30px] md:w-[50px]" />
                 <p className="w-24 text-center pt-2 md:text-[24px] md:w-32">
-                  האפליקצייה<span className="font-bold"> נוחה ופשטוה</span> לכל
+                  האפליקצייה<span className="font-bold"> נוחה ופשוטה</span> לכל
                   אדם
                 </p>
               </div>
@@ -240,7 +206,7 @@ export default function Home() {
               </p>
               <p className="text-[16px] md:text-[24px]">אז תלחצו כאן</p>
               <div
-                onClick={() => setIsLogginShow(true)}
+                onClick={() => router.push("/Auth")}
                 className="w-[200px] h-[50px] cursor-pointer bg-white rounded-md shadow-1 flex items-center justify-center space-x-2 md:w-[150px] md:h-[150px] md:rounded-full md:flex-col 2xl:w-[370px] 2xl:h-[60px] 2xl:rounded-lg 2xl:flex-row 2xl:mt-3"
               >
                 <p className="text-[20px] text-black tracking-widest md:text-[36px] md:leading-8 md:w-min md:pt-4 md:text-center 2xl:w-72 2xl:text-[40px] 2xl:self-center 2xl:p-0 pointer-events-none">

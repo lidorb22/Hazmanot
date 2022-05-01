@@ -11,8 +11,10 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import { ArrowLeftIcon } from "@heroicons/react/solid";
 import WebLogo from "../vectors/webLogo.svg";
+import { useRouter } from "next/router";
 
-function Auth({ acces }) {
+function Auth() {
+  const router = useRouter();
   const [windowWidth, setWindowWidth] = useState(500);
   const [userFullName, setFullName] = useState("");
   const [userEmail, setEmail] = useState("");
@@ -99,7 +101,7 @@ function Auth({ acces }) {
         localStorage.setItem("token", verify.accessToken);
         localStorage.setItem("userID", verify._id);
         dispatch(getUserProfile());
-        acces(false);
+        router.push("/");
       } catch (error) {
         dispatch(authFail("הקוד שהזנת שגוי או פג תוקפו"));
         errorFunc(`לחצו על "קוד אימות חדש" ונסו שוב`);
@@ -113,8 +115,17 @@ function Auth({ acces }) {
 
   useEffect(() => {
     handleResize();
+    var localUser = localStorage.getItem("userID");
+    var localToken = localStorage.getItem("token");
     if (isAuth) {
-      acces(false);
+      router.push("/");
+    }
+    if (localUser && localToken) {
+      try {
+        dispatch(getUserProfile());
+      } catch (error) {
+        console.log(error);
+      }
     }
   }, [isAuth]);
 
@@ -130,7 +141,7 @@ function Auth({ acces }) {
       transition={{
         scale: { type: "spring", stiffness: 100 },
       }}
-      className={`z-50 backdrop-blur-sm overflow-hidden absolute top-0 text-center bg-black/60 w-full h-full grid grid-rows-6 grid-cols-1 pointer-events-auto`}
+      className={`z-50 backdrop-blur-sm overflow-hidden absolute top-0 text-center bg-black/60 w-full h-screen grid grid-rows-6 grid-cols-1 pointer-events-auto`}
     >
       <p className="font-bold row-start-2 col-start-1 text-[40px] self-start text-white md:text-[72px] md:row-start-1 md:self-end 2xl:row-start-2 2xl:self-start">
         כניסה לאתר
@@ -247,7 +258,7 @@ function Auth({ acces }) {
           }
           className={`${
             authP ? "z-[50]" : ""
-          } opacity-0 w-[337px] h-[129px] bg-[#FF0000] rounded-xl mb-20 md:w-[477px] 2xl:w-[243px] 2xl:h-[355px] 2xl:mb-0 2xl:ml-44`}
+          } opacity-0 z-10 w-[337px] h-[129px] bg-[#FF0000] rounded-xl mb-20 md:w-[477px] 2xl:w-[243px] 2xl:h-[355px] 2xl:mb-0 2xl:ml-44`}
         >
           <div className="w-full h-full px-3 text-white flex items-center justify-around 2xl:flex-col-reverse 2xl:text-[20px]">
             <motion.p
@@ -377,9 +388,9 @@ function Auth({ acces }) {
           </motion.div>
         </motion.div>
       )}
-      <div className="absolute top-20 left-0 w-[50px] h-[35px] md:w-[115px] 2xl:w-[120px] 2xl:h-[120px] 2xl:left-20">
+      <div className="absolute top-20 left-0 w-[50px] h-[35px] z-10 md:w-[115px] 2xl:w-[120px] 2xl:h-[120px] 2xl:left-20">
         <div
-          onClick={() => acces(false)}
+          onClick={() => router.push("/")}
           className="bg-white w-full h-full rounded-r-lg flex items-center justify-center md:flex-row-reverse md:justify-around md:px-2 2xl:rounded-full 2xl:flex-col 2xl:justify-center"
         >
           <p className="pointer-events-none absolute opacity-0 md:opacity-100 md:static md:font-bold md:text-[24px]">
