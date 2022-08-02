@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import NewMenu from "../components/Menu";
 import { useRouter } from "next/router";
 import createBackground from "../vectors/createBackground.svg";
-import { InformationCircleIcon, MenuIcon } from "@heroicons/react/solid";
+import { InformationCircleIcon } from "@heroicons/react/solid";
 import { useDispatch, useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import NewInviteTamplate from "../components/InviteTamplate";
