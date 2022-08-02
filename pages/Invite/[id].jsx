@@ -1,49 +1,95 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { InvObj } from "../../api/inviteApi";
-import { BadgeCheckIcon, HomeIcon } from "@heroicons/react/solid";
 import { motion } from "framer-motion";
 import Head from "next/head";
-import TamplateController from "../../components/TamplateController";
 import WebLogo from "../../vectors/webLogo.svg";
+import DefaultINV from "../../components/inviteTamplates/DefaultINV";
+import SaveTheDate from "../../components/inviteTamplates/SaveTheDate";
 
 function Invite() {
-  const [change, setData] = useState(undefined);
-  const [errorOrNull, setErrorOrNull] = useState(false);
-  const [isAccepting, setIsAccepting] = useState(false);
-  const [windowWidth, setWindowWidth] = useState(500);
   const router = useRouter();
-
-  console.log(windowWidth);
+  const [data, setData] = useState(null);
+  const [invTemp, setInvTemp] = useState([]);
 
   async function fetchData() {
     try {
       const newList = await InvObj({ _id: router.query.id });
       setData(newList);
-      setErrorOrNull(false);
       if (newList === null || newList.error) {
-        setErrorOrNull(true);
       }
     } catch (error) {
       console.log(error);
     }
   }
 
-  const handleResize = () => {
-    setWindowWidth(window.innerWidth);
-  };
   useEffect(() => {
-    fetchData();
-    handleResize();
-  }, [router.query.id]);
-
-  useEffect(() => {
-    window.addEventListener("resize", handleResize, false);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+    if (!data) {
+      fetchData();
+      return;
+    }
+    if (!data.template) {
+      return;
+    }
+    switch (data.template.invStyle) {
+      case "default":
+        setInvTemp(
+          <DefaultINV
+            info={{
+              fontSize: data.template.fontSize.regular,
+              titleSize: data.template.fontSize.bold,
+              textColor: data.template.textCol,
+              bgColor: data.template.bg,
+              isMale: data.template.isMale,
+              type: data.type,
+              name: data.name,
+              age: data.age,
+              addres: data.addres,
+              date: data.date,
+              time: data.time,
+              _id: router.query.id,
+            }}
+          />
+        );
+        break;
+      case "SaveTheDate":
+        setInvTemp(
+          <SaveTheDate
+            info={{
+              fontSize: data.template.fontSize.regular,
+              titleSize: data.template.fontSize.bold,
+              textColor: data.template.textCol,
+              bgColor: data.template.bg,
+              isMale: data.template.isMale,
+              type: data.type,
+              name: data.name,
+              age: data.age,
+              addres: data.addres,
+              date: data.date,
+              time: data.time,
+              _id: router.query.id,
+            }}
+          />
+        );
+        break;
+    }
+  }, [data, router.query.id]);
 
   return (
-    <div className="w-full h-screen bg-gradient-to-b from-white to-yellow-col/80 flex flex-row items-center justify-center 2xl:bg-gradient-to-l">
+    <div
+      style={{
+        backgroundImage: `${
+          data && data.template
+            ? `linear-gradient(rgba(${data.template.bg.red}, ${data.template.bg.green}, ${data.template.bg.blue}, 0), rgba(${data.template.bg.red}, ${data.template.bg.green}, ${data.template.bg.blue}, 1))`
+            : `linear-gradient(rgba(239, 163, 50, 0.15), rgba(186, 83, 235, 1))`
+        }`,
+      }}
+      className={`${
+        data && data.template
+          ? "justify-around space-y-[10px] py-[10px]"
+          : "justify-end relative pb-[20px]"
+      } w-full min-h-screen h-full bg-white flex flex-col items-center`}
+    >
       <Head>
         <title>הוזמנתם לאירוע</title>
         <meta name="title" content="הוזמנתם לאירוע" />
@@ -76,154 +122,48 @@ function Invite() {
           content="https://i.ibb.co/G2LyfBm/Untitled-1.jpg"
         />
       </Head>
+      {invTemp && (
+        <div className="w-[90%] bg-white rounded-[5px] shadow-25">
+          {invTemp && invTemp}
+        </div>
+      )}
+      {data && data.error && (
+        <motion.div
+          animate={{ opacity: 1 }}
+          transition={{ opacity: { duration: 1 } }}
+          className="absolute w-full h-full top-0 flex items-center justify-center font-rubik opacity-0"
+        >
+          <motion.div
+            animate={{ y: [-50, 0] }}
+            transition={{ y: { duration: 1 } }}
+            className="flex flex-col w-[90%] h-max tracking-[0.3em] space-y-[30px]"
+          >
+            <div className="w-full h-[85px] flex items-center justify-center bg-per rounded-[5px] shadow-25 text-white text-[30px] font-bold">
+              <p>שגיאה מס 01</p>
+            </div>
+            <div className="w-full h-max text-right">
+              <p>:פירוט</p>
+              <p>תקלה בניסיון טעינת ההזמנה המובקשת</p>
+            </div>
+            <div className="w-full h-max text-right">
+              <p>:פיתרונות</p>
+              <p>
+                .נסו לרענן את הדף<br></br> במקרה ושגיאה זו חוזרת ודאו כי הקישור
+                שהעתקתם דומה לקישור שהמזמין שלח לכם <br></br> אם בכל זאת לא עובד
+                וחוזרת שגיאה זו דברו עם המזמין לגבי הקישור
+              </p>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
       <img
         alt=""
         src={WebLogo}
         style={{
           filter: "brightness(0) invert(1)",
         }}
-        className="w-[80px] absolute bottom-[10px] left-[10px] md:w-[180px] 2xl:opacity-0 pointer-events-none"
+        className="w-[100px]"
       />
-      <img
-        alt=""
-        src={WebLogo}
-        className="w-[180px] absolute bottom-[10px] right-[10px] opacity-0 pointer-events-none 2xl:opacity-100 2xl:pointer-events-auto"
-      />
-      <motion.div
-        animate={
-          errorOrNull
-            ? { opacity: 1, pointerEvents: "auto", scale: 1 }
-            : { opacity: 0, pointerEvents: "none", scale: 0 }
-        }
-        className="opacity-0 absolute bg-gray-600 shadow-try2 text-white font-bold h-[100px] w-[300px] rounded-xl flex flex-col items-center justify-center text-center braek-all p-2"
-      >
-        <p>
-          סליחה אבל לא הצלחנו לטעון את ההזמנה כנראה שהיא נמחקה או שטעיתם בקישור
-        </p>
-        <div className="absolute bottom-0 w-full h-10 flex items-center justify-center">
-          <div
-            onClick={() => router.push("/")}
-            className="relative top-6 w-14 h-14 rounded-full bg-white shadow-try2 flex items-center justify-center z-10"
-          >
-            <HomeIcon className="w-8 text-gray-600 pointer-events-none" />
-          </div>
-        </div>
-      </motion.div>
-      {JSON.stringify(change) !== undefined && !errorOrNull && (
-        <div className="overflow-hidden h-full w-full flex items-center justify-center relative">
-          <motion.div
-            animate={
-              windowWidth >= 1536
-                ? {
-                    x: -400,
-                  }
-                : { x: 0 }
-            }
-            style={{
-              color:
-                JSON.stringify(change.template) !== null &&
-                JSON.stringify(change.template) !== undefined
-                  ? change.template.color.text
-                  : "red",
-              backgroundColor:
-                JSON.stringify(change.template) !== undefined &&
-                change.template.color.background,
-            }}
-            className={`relative shadow-try h-[650px] w-[300px] rounded-xl flex flex-col items-center justify-center space-y-4`}
-          >
-            {windowWidth < 1536 && (
-              <motion.div
-                animate={
-                  isAccepting
-                    ? { opacity: 0, pointerEvents: "none" }
-                    : { opacity: 1, pointerEvents: "auto" }
-                }
-                onClick={() => setIsAccepting(true)}
-                className="bg-white shadow-1 w-5/6 h-8 flex items-center justify-center space-x-2 absolute -bottom-16 rounded-lg"
-              >
-                <BadgeCheckIcon className="w-5 pointer-events-none" />
-                <p className="text-lg pointer-events-none">
-                  לחצו כאן לאישור ההגעה
-                </p>
-              </motion.div>
-            )}
-            <div className="text-md tracking-widest w-5/6 text-center">
-              <p>
-                {JSON.stringify(change.template) !== undefined &&
-                  change.template.text.title}
-              </p>
-            </div>
-            <div className="flex flex-col space-y-3">
-              <h1 className="text-4xl font-bold tracking-widest">
-                {change && change.invRison === "Brit"
-                  ? "הברית"
-                  : change && change.invRison === "Bday"
-                  ? "יום ההולדת"
-                  : change && change.invRison === "Hatona"
-                  ? "חתונה"
-                  : change && change.invRison === "Hina"
-                  ? "חינה"
-                  : change && change.invRison === "Bar"
-                  ? "הבר מצווה"
-                  : change && change.invRison === "Bat" && "הבת מצווה"}
-              </h1>
-              {change !== undefined && change.names && (
-                <p
-                  style={{
-                    backgroundColor: change.template.color.fills,
-                  }}
-                  className={`tracking-widest w-max px-2 rounded-md shadow-1 self-center text-md`}
-                >
-                  של <span className="underline">{change.names}</span>
-                </p>
-              )}
-            </div>
-            {change !== undefined && change.age && (
-              <div className="flex flex-col space-y-3">
-                <h1 className="text-4xl font-bold tracking-widest">שחוגג</h1>
-                <div
-                  style={{
-                    backgroundColor: change.template.color.fills,
-                  }}
-                  className={`flex items-center justify-center tracking-widest w-[40px] h-[40px] rounded-full shadow-1 self-center text-md`}
-                >
-                  <p>{change.age}</p>
-                </div>
-              </div>
-            )}
-            {change !== undefined && (
-              <div className="flex flex-col space-y-3">
-                <h1 className="text-4xl font-bold tracking-widest">בתאריך</h1>
-                <p className="tracking-widest w-max self-center text-md">
-                  {change.date}
-                </p>
-              </div>
-            )}
-            {change !== undefined && (
-              <div className="flex flex-col space-y-3">
-                <h1 className="text-4xl font-bold tracking-widest">בשעה</h1>
-                <p className="tracking-widest w-max self-center text-md">
-                  {change.time}
-                </p>
-              </div>
-            )}
-            {change !== undefined && (
-              <div className="flex flex-col space-y-3 text-center">
-                <h1 className="text-4xl font-bold tracking-widest">יש להגיע</h1>
-                <p className="tracking-widest w-[260px] self-center text-md">
-                  ל{change.place}
-                </p>
-              </div>
-            )}
-          </motion.div>
-          <TamplateController
-            info={change && change}
-            setIsAccepting={setIsAccepting}
-            isAccepting={isAccepting}
-            screenWidth={windowWidth}
-          />
-        </div>
-      )}
     </div>
   );
 }

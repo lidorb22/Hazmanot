@@ -1,60 +1,36 @@
 import React, { useEffect, useState } from "react";
-import Menu from "../components/Menu";
-import { motion } from "framer-motion";
-import { useSelector } from "react-redux";
+import NewMenu from "../components/Menu";
+import profileVector from "../vectors/profileVector.svg";
 import { useRouter } from "next/router";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import NewCard from "../components/Card";
 import { allInvList, InvObj } from "../api/inviteApi";
-import { invitePending, inviteInfo, inviteFail } from "../Slices/inviteSlice";
-import {
-  ExclamationIcon,
-  RefreshIcon,
-  XCircleIcon,
-} from "@heroicons/react/solid";
-import Card from "../components/Card";
-import Head from "next/head";
-import { getUserProfile } from "../Slices/userAction";
-import WebLogo from "../vectors/webLogo.svg";
+import { inviteFail, inviteInfo, invitePending } from "../Slices/inviteSlice";
+import NewCardInfo from "../components/CardInfo";
+import { motion } from "framer-motion";
 
 function Profile() {
-  const { isAuth, error } = useSelector((state) => state.auth);
-  const dispatch = useDispatch();
+  const { isAuth } = useSelector((state) => state.auth);
   const router = useRouter();
+  const dispatch = useDispatch();
 
-  useEffect(() => {
-    var localUser = localStorage.getItem("userID");
-    var localToken = localStorage.getItem("token");
-    if (isAuth) {
-      return;
-    }
-    if (error === "invalid token" || (!localUser && !localToken)) {
-      return router.push("/");
-    }
-    try {
-      dispatch(getUserProfile());
-    } catch (error) {
-      console.log(error);
-    }
-  }, [error]);
-
-  const [isLookingCard, setIsLookingCard] = useState(false);
-  const [cardIndex, setCardIndex] = useState(0);
-
-  const { fullName, _id } = useSelector((state) => state.user.user);
+  const { _id } = useSelector((state) => state.user.user);
   const { invInfo, isLoading } = useSelector((state) => state.invite);
 
-  useEffect(() => {
-    if (isAuth) {
-      listHandle();
-    }
-  }, [isAuth]);
+  const [cardIndex, setCardIndex] = useState(undefined);
+  const [isOpen, setIsOpen] = useState(false);
 
-  const refresh = {
-    open: { rotate: -720 },
-    closed: { rotate: 0 },
+  const [windowWidth, setWindowWidth] = useState(0);
+  const handleResize = () => {
+    setWindowWidth(window.innerWidth);
   };
+  useEffect(() => {
+    windowWidth === 0 && handleResize();
+    window.addEventListener("resize", handleResize, false);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
-  async function listHandle() {
+  async function listHandler() {
     if (isLoading) {
       return;
     }
@@ -91,170 +67,110 @@ function Profile() {
     }
   }
 
-  function cardHandle(index) {
-    setIsLookingCard(true);
-    setCardIndex(index);
-  }
+  useEffect(() => {
+    if (isAuth) {
+      listHandler();
+    }
+  }, []);
 
   return (
-    <div
-      className={`w-full h-screen bg-gradient-to-b from-white to-yellow-col/80 overflow-y-auto 2xl:bg-gradient-to-l relative`}
-    >
-      <Head>
-        <title>האזור האישי</title>
-        <meta name="title" content="האזור האישי" />
-        <meta
-          name="description"
-          content="האזור האישי - כאן תוכל לגשת לכל ההזמנות ולדעת מי מגיע אלייך לאירוע"
-        />
+    <div className="w-full h-screen relative bg-[#EFA332] font-rubik">
+      <NewMenu place="profile" />
+      <div className="w-full h-full overflow-hidden grid grid-rows-18 grid-cols-1 justify-center relative">
+        {/* First section */}
 
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://hazmanot.netlify.app/" />
-        <meta property="og:title" content="האזור האישי" />
-        <meta
-          property="og:description"
-          content="האזור האישי - כאן תוכל לגשת לכל ההזמנות ולדעת מי מגיע אלייך לאירוע"
-        />
-        <meta
-          property="og:image"
-          content="https://i.ibb.co/G2LyfBm/Untitled-1.jpg"
-        />
-
-        <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content="https://hazmanot.netlify.app/" />
-        <meta property="twitter:title" content="האזור האישי" />
-        <meta
-          property="twitter:description"
-          content="האזור האישי - כאן תוכל לגשת לכל ההזמנות ולדעת מי מגיע אלייך לאירוע"
-        />
-        <meta
-          property="twitter:image"
-          content="https://i.ibb.co/G2LyfBm/Untitled-1.jpg"
-        />
-      </Head>
-      <Menu Page="Profile" />
-      <div className="w-full h-full flex flex-col items-center justify-center md:grid md:grid-rows-6 2xl:grid-cols-2">
-        <p className="md:row-start-1 md:col-start-1 md:self-end md:justify-self-center text-[40px] font-bold md:text-[72px] 2xl:w-[474px] 2xl:h-[113px] 2xl:bg-yellow-col/80 2xl:text-center 2xl:rounded-xl 2xl:col-start-2 2xl:row-start-1 2xl:row-span-5 2xl:self-center">
-          האזור האישי
-        </p>
-        <p className="md:row-start-2 md:col-start-1 md:self-end md:justify-self-center text-[20px] w-[311px] text-center md:text-[36px] md:w-[633px] 2xl:col-start-2 2xl:row-start-2 2xl:row-span-5 2xl:self-center">
-          {fullName}, כאן תוכל לראות את כל ההזמנות שיצרת ולבדוק מי אישרו את
-          הגעתם לאירועים שלך
-        </p>
-        <motion.div
-          initial={{ scale: 0.8 }}
-          animate={{ scale: 1 }}
-          transition={{
-            scale: { type: "spring", bounce: 1, stiffness: 100 },
-          }}
-          className={`${
-            invInfo.length > 0 ? "flex-col p-[20px] " : "flex-row"
-          } ${invInfo.length >= 5 ? "overflow-auto" : "overflow-hidden"}
-                    relative space-y-[20px] bg-white flex w-[300px] rounded-xl h-[450px] md:row-start-2 md:row-span-5 md:self-center md:mt-20 md:self-start md:col-start-1 md:justify-self-center z-10 md:w-[538px] 2xl:h-[781px] 2xl:row-start-1 2xl:mt-52`}
-        >
-          {invInfo.length === 0 && (
-            <div className="justify-self-center self-center w-full">
-              <div className="w-full flex flex-col items-center">
-                <p className="bg-black text-white font-bold tracking-widest text-center px-10 py-3 rounded-md">
-                  לא נמצאו אירועים
-                </p>
-                <motion.div
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{
-                    scale: { type: "spring", bounce: 1, stiffness: 50 },
-                    repeat: Infinity,
-                    repeatType: "reverse",
-                    duration: 2,
-                  }}
-                >
-                  <XCircleIcon className="w-10 text-black" />
-                </motion.div>
-              </div>
-            </div>
-          )}
-          {invInfo.length > 0 &&
-            invInfo.map((item, index) => (
-              <div
-                key={item._id}
-                className="font-bold w-full h-20 min-h-max cursor-pointer"
-              >
-                <div
-                  id={item._id}
-                  onClick={() => cardHandle(index)}
-                  className={`bg-yellow-col/80 text-[20px] h-20 w-full shadow-lg flex flex-col items-center justify-center rounded-xl`}
-                >
-                  <p>
-                    {item.invRison === "Bday" && `יום ההולדת של ${item.names}`}
-                  </p>
-                  <p>
-                    {item.invRison === "Hatona" && `החתונה של ${item.names}`}
-                  </p>
-                  <p>{item.invRison === "Hina" && `החינה של ${item.names}`}</p>
-                  <p>
-                    {item.invRison === "Bar" && `הבר מצווה של ${item.names}`}
-                  </p>
-                  <p>
-                    {item.invRison === "Bat" && `הבת מצווה של ${item.names}`}
-                  </p>
-                  <p>{item.invRison === "Brit" && `ברית`}</p>
-
-                  <p className="text-[16px] text-black/50">{item.date}</p>
+        {!isAuth ? (
+          <div className="w-full h-full col-start-1 row-start-4 row-span-15 flex flex-col items-center">
+            <div className="w-[92%] h-full flex flex-col items-center space-y-[45px] xl:w-[41vw] xl:self-end xl:mr-[4%]">
+              <p className="text-[30px] text-center md:text-[50px] md:w-full md:text-right xl:text-[70px]">
+                מרכז השליטה
+              </p>
+              <p className="w-[86vw] text-center md:w-full md:text-right xl:self-end">
+                מכאן הכל יתחיל ויגמר.
+                <br></br> תוכלו לראות ולנהל כל אירוע ואירוע שתפתחו, בין אם לסדר
+                את השולחנות או רק בשביל להציץ מי וכמה מגיעים לאותו האירוע.
+                <br></br> בנוסף תוכלו לבטל את ההזמנה שיצרתם במקרה וטעיתם.
+              </p>
+              <div className="bg-per w-[216px] h-[216px] shadow-25 rounded-full relative text-white font-bold flex flex-col items-center justify-center md:hidden">
+                <div className="absolute bg-yel w-[112px] h-[112px] -right-[4px] -top-[4px]">
+                  <div className="w-full h-full absolute -top-3 -right-3 overflow-hidden">
+                    <div className="absolute top-0 right-0 bg-per w-[216px] h-[216px] rounded-full"></div>
+                  </div>
                 </div>
+                <p className="z-10 text-[60px] leading-[50px] mt-4">100%</p>
+                <p className="z-10 text-[40px] leading-[47px]">שליטה</p>
               </div>
-            ))}
-          <motion.div
-            animate={
-              isLoading
-                ? { opacity: 1, pointerEvents: "auto" }
-                : { opacity: 0, pointerEvents: "none" }
-            }
-            className="opacity-0 pointer-events-none absolute -top-5 left-0 w-full h-full flex flex-col items-end justify-end p-2"
-          >
-            <div className="w-max rounded-xl bg-black flex items-center justify-center text-white text-base p-2">
-              <p>טוען</p>
-              <ExclamationIcon className="w-6" />
+              <motion.div
+                onClick={() =>
+                  setTimeout(() => {
+                    router.push("/Login");
+                  }, 800)
+                }
+                whileHover={{ scale: 1.2 }}
+                className="flex shadow-25 items-center justify-center w-full h-[63px] bg-white rounded-[5px] cursor-pointer md:z-10 md:w-[455px] xl:self-start"
+              >
+                <p className="pointer-events-none">
+                  רוצים לשלוט באירועים שלכם? לחצו כאן
+                </p>
+              </motion.div>
             </div>
-          </motion.div>
-        </motion.div>
-        <div className="mt-2 md:row-start-6 md:justify-self-center md:col-start-1 bg-white rounded-full shadow-1 w-10 h-10 self-center flex items-center justify-center z-20 2xl:row-start-1 2xl:row-span-6 2xl:mr-16 2xl:justify-self-end">
-          <motion.div
-            animate={isLoading ? "open" : "closed"}
-            transition={{
-              rotate: { type: "spring", bounce: 1, stiffness: 50 },
-              repeat: Infinity,
-              repeatType: "mirror",
-              duration: 2,
-            }}
-            variants={refresh}
-            className="self-center"
-          >
-            <RefreshIcon onClick={() => listHandle()} className="w-6" />
-          </motion.div>
-        </div>
+            <div className="hidden md:block md:absolute md:w-[572px] md:h-[572px] md:-bottom-4 xl:top-[5vh] xl:left-[2%] xl:w-[750px] xl:h-[750px]">
+              <img src={profileVector} alt="" />
+            </div>
+          </div>
+        ) : (
+          <div className="w-full h-full col-start-1 row-start-4 row-span-15 flex flex-col items-center">
+            <div className="w-[92%] h-full flex flex-col items-center space-y-[45px] xl:w-full xl:pr-[4%]">
+              <p className="text-[30px] text-center md:text-[50px] md:w-full md:text-right xl:text-[70px]">
+                רשימת האירועים שלך
+              </p>
+              <motion.div
+                animate={
+                  windowWidth >= 1280 && !isOpen
+                    ? { width: 10, x: -windowWidth / 2 }
+                    : { width: "50%", x: 0 }
+                }
+                transition={
+                  isOpen
+                    ? { x: { bounce: 0, duration: 1 } }
+                    : { x: { bounce: 0, duration: 0 } }
+                }
+                className="hidden xl:block xl:absolute xl:-top-[45px] xl:right-[62%] xl:w-[50%] xl:h-full xl:bg-per 2xl:right-[52%]"
+              ></motion.div>
+              <motion.div
+                animate={
+                  windowWidth >= 1280 && !isOpen
+                    ? { x: `${windowWidth / 2 - 720 / 2}px` }
+                    : windowWidth >= 1280 && isOpen
+                    ? { x: `${windowWidth - 720 - (windowWidth * 4) / 100}px` }
+                    : { x: 0 }
+                }
+                transition={{ alignSelf: { duration: 8, type: "spring" } }}
+                className="z-10 w-[92%] h-[75%] rounded-[5px] shadow-25 bg-white p-[18px] space-y-[18px] overflow-y-auto xl:w-[720px] xl:self-start"
+              >
+                {invInfo.length > 0 &&
+                  invInfo.map((item, index) => (
+                    <NewCard
+                      key={item._id}
+                      item={item}
+                      index={index}
+                      invInfo={invInfo}
+                      setIsOpen={setIsOpen}
+                      isOpen={isOpen}
+                      setCardIndex={setCardIndex}
+                    />
+                  ))}
+              </motion.div>
+            </div>
+            {isOpen && cardIndex !== undefined && (
+              <NewCardInfo
+                setIsOpen={setIsOpen}
+                selectedInfo={invInfo[cardIndex]}
+              />
+            )}
+          </div>
+        )}
       </div>
-      <img
-        alt=""
-        src={WebLogo}
-        style={{
-          filter: "brightness(0) invert(1)",
-        }}
-        className="w-[80px] absolute bottom-[10px] left-[10px] md:w-[180px] 2xl:opacity-0 pointer-events-none"
-      />
-      <img
-        alt=""
-        src={WebLogo}
-        className="w-[180px] absolute bottom-[10px] right-[10px] opacity-0 pointer-events-none 2xl:opacity-100 2xl:pointer-events-auto"
-      />
-      {isLookingCard && !isLoading && (
-        <Card
-          setIsLookingCard={setIsLookingCard}
-          isLookingCard={isLookingCard}
-          invId={invInfo[cardIndex]._id}
-          userId={invInfo[cardIndex].inviter}
-          cardIndex={cardIndex}
-        />
-      )}
     </div>
   );
 }

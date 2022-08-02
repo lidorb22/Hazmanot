@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState ={
     user:{},
     isLoading:false,
-    error:'',
+    uError:'',
 }
 
 const userSlice = createSlice({
@@ -16,20 +16,23 @@ const userSlice = createSlice({
         getUserSuccess:(state , {payload}) => {
             state.isLoading = false;
             state.user = payload
-            state.error = '';
+            state.uError = '';
         },
         getUserLogout:(state ) => {
             state.isLoading = false;
             state.user = {};
-            state.error = '';
+            state.uError = '';
         },
         getUserFail:(state , {payload}) => {
             state.isLoading = false;
-            state.error = payload;
+            state.uError = payload;
+        },
+        getUserClear:(state) => {
+            state.uError = "";
         },
     }
 });
 
-export const {getUserLogout, getUserPending, getUserSuccess, getUserFail} = userSlice.actions
+export const {getUserLogout, getUserPending, getUserSuccess, getUserFail,getUserClear} = userSlice.actions
 
 export default userSlice.reducer

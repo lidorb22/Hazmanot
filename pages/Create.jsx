@@ -1,653 +1,426 @@
-import React, { useState, useEffect } from "react";
-import Menu from "../components/Menu";
-import { motion } from "framer-motion";
-import { useSelector } from "react-redux";
+import React, { useEffect, useState } from "react";
+import NewMenu from "../components/Menu";
 import { useRouter } from "next/router";
-import { useDispatch } from "react-redux";
+import createBackground from "../vectors/createBackground.svg";
+import { InformationCircleIcon, MenuIcon } from "@heroicons/react/solid";
+import { useDispatch, useSelector } from "react-redux";
+import { motion } from "framer-motion";
+import NewInviteTamplate from "../components/InviteTamplate";
 import { newInvite } from "../api/inviteApi";
-import { invitePending, inviteLink, inviteFail } from "../Slices/inviteSlice";
-import { EyeIcon } from "@heroicons/react/solid";
-import { getUserProfile } from "../Slices/userAction";
-import WebLogo from "../vectors/webLogo.svg";
-import Template from "../components/Template";
-import Head from "next/head";
+import { inviteFail, inviteLink, invitePending } from "../Slices/inviteSlice";
 
 function Create() {
-  const [windowWidth, setWindowWidth] = useState(500);
-  const { isAuth, error } = useSelector((state) => state.auth);
-  const { _id, fullName } = useSelector((state) => state.user.user);
+  const { isAuth } = useSelector((state) => state.auth);
+  const { _id } = useSelector((state) => state.user.user);
   const router = useRouter();
   const dispatch = useDispatch();
 
-  const handleResize = () => {
-    setWindowWidth(window.innerWidth);
-  };
-
-  useEffect(() => {
-    handleResize();
-    var localUser = localStorage.getItem("userID");
-    var localToken = localStorage.getItem("token");
-    if (isAuth) {
-      return;
-    }
-    if (error === "invalid token" || (!localUser && !localToken)) {
-      return router.push("/");
-    }
-    try {
-      dispatch(getUserProfile());
-    } catch (error) {
-      console.log(error);
-    }
-  }, [error]);
-  useEffect(() => {
-    window.addEventListener("resize", handleResize, false);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  const [isSelected, setIsSelected] = useState(false);
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [showTemplate, setShowTemplate] = useState(false);
-  const [isTamplateWatched, setTamplateWatched] = useState(false);
-  const [errorTrigger, setErrorTrigger] = useState(false);
-  const [errorWas, setErrorWas] = useState(false);
-  const [errorMessege, setErrorMessege] = useState("");
-  const [invRison, setQName] = useState("default");
-  const [names, setName] = useState("");
-  const [age, setAge] = useState("");
-  const [place, setPlace] = useState("");
-  const [time, setTime] = useState("");
+  const [eventMenu, setEventMenu] = useState(false);
+  const [rison, setRison] = useState("");
+  const [name, setName] = useState("");
+  const [age, setAge] = useState(0);
+  const [addres, setAddres] = useState("");
   const [date, setDate] = useState("");
-  const [backgroundCol, setBackgroundCol] = useState("#FFA800");
-  const [textCol, setTextCol] = useState("rgb(0 0 0)");
-  const [fillsCol, setFillsCol] = useState("rgb(255 255 255)");
-  const [titleText, setTitleText] = useState(
-    "הנכם מוזמנים לחגוג אימנו את אירוע"
-  );
+  const [time, setTime] = useState("");
+  const [isDesigning, setIsDesigning] = useState(false);
+  const [invStyle, setInvStyle] = useState("default");
 
-  const selectionAction = {
-    open: windowWidth < 768 ? { y: -170 } : windowWidth >= 768 && { y: -220 },
-    closed: { y: 0 },
+  const defaultElementOptions = {
+    bg: { red: 215, green: 213, blue: 219 },
+    bgTemp: { red: 215, green: 213, blue: 219 },
+    textCol: { red: 0, green: 0, blue: 0 },
+    textColTemp: { red: 0, green: 0, blue: 0 },
+    fontSize: {
+      regular: 16,
+      bold: 30,
+    },
+    isMale: true,
   };
 
-  const qnaAction = {
-    open: { opacity: 1, scale: 1, pointerEvents: "auto" },
-    closed: { opacity: 0, scale: 0.7, pointerEvents: "none" },
-  };
-
-  const submitButtHandler = (e) => {
-    switch (invRison) {
-      case "Bday":
-        if (
-          names !== "" &&
-          age !== "" &&
-          place !== "" &&
-          time !== "" &&
-          date !== ""
-        ) {
-          if (e.target.id === "tamplateButt") {
-            setShowTemplate(true);
-            setTamplateWatched(true);
-            return;
-          }
-          if (
-            isTamplateWatched === false &&
-            errorWas === false &&
-            windowWidth < 1536
-          ) {
-            e.preventDefault();
-            setErrorTrigger(true);
-            setErrorWas(true);
-            setErrorMessege(
-              "אתה בטוח שברצונך להמשיך בלי לראות איך ההזמנה נראת"
-            );
-            return;
-          }
-        } else {
-          e.preventDefault();
-        }
-        break;
-      case "Hatona":
-      case "Hina":
-      case "Bar":
-      case "Bat":
-        if (names !== "" && place !== "" && time !== "" && date !== "") {
-          if (e.target.id === "tamplateButt") {
-            setShowTemplate(true);
-            setTamplateWatched(true);
-            return;
-          }
-          if (
-            isTamplateWatched === false &&
-            errorWas === false &&
-            windowWidth < 1536
-          ) {
-            e.preventDefault();
-            setErrorTrigger(true);
-            setErrorWas(true);
-            setErrorMessege(
-              "אתה בטוח שברצונך להמשיך בלי לראות איך ההזמנה נראת"
-            );
-            return;
-          }
-        } else {
-          e.preventDefault();
-        }
-        break;
-      case "Brit":
-        if (place !== "" && time !== "" && date !== "") {
-          if (e.target.id === "tamplateButt") {
-            setShowTemplate(true);
-            setTamplateWatched(true);
-            return;
-          }
-          if (
-            isTamplateWatched === false &&
-            errorWas === false &&
-            windowWidth < 1536
-          ) {
-            e.preventDefault();
-            setErrorTrigger(true);
-            setErrorWas(true);
-            setErrorMessege(
-              "אתה בטוח שברצונך להמשיך בלי לראות איך ההזמנה נראת"
-            );
-            return;
-          }
-        } else {
-          e.preventDefault();
-        }
-        break;
-      default:
-        e.preventDefault();
-        break;
-    }
-  };
-
-  function selectionE(e) {
-    setQName(e.target.value);
-    setName("");
-    setAge("");
-    setDate("");
-    setPlace("");
-    setTime("");
-    if (e.target.value !== "default") {
-      setIsSelected(true);
-      setIsRefreshing(false);
-      setTimeout(() => {
-        setIsRefreshing(true);
-      }, 600);
-      return;
-    }
-    if (isSelected) {
-      setIsSelected(false);
-      setIsRefreshing(false);
-    }
-  }
+  const [elementObj, setElementObj] = useState(defaultElementOptions);
 
   async function handleSubmit(e) {
     e.preventDefault();
+    if (!rison) {
+      return;
+    }
+    switch (rison) {
+      case "יום הולדת":
+        if (!name || !age || !addres || !date || !time) {
+          return;
+        }
+        break;
+      case "חתונה":
+      case "חינה":
+      case "בר מצווה":
+      case "בת מצווה":
+        if (!name || !addres || !date || !time) {
+          return;
+        }
+        break;
+      case "ברית":
+        if (!addres || !date || !time) {
+          return;
+        }
+        break;
+    }
+    if (rison !== "יום הולדת" && age) {
+      setAge(0);
+    }
+    if (!isDesigning) {
+      setIsDesigning(true);
+      return;
+    }
     dispatch(invitePending());
-    var fixedDate = date.split("-").reverse().join("-");
+    var fixedDate = date.split("-").reverse().join("/");
     try {
       const invite = await newInvite({
-        invRison,
-        names,
+        type: rison,
+        name,
         age,
-        place,
+        addres,
         time,
         date: fixedDate,
         _id,
-        background: backgroundCol,
-        text: textCol,
-        fills: fillsCol,
-        title: titleText,
+        bgRed: elementObj.bg.red,
+        bgGreen: elementObj.bg.green,
+        bgBlue: elementObj.bg.blue,
+        textColRed: elementObj.textCol.red,
+        textColGreen: elementObj.textCol.green,
+        textColBlue: elementObj.textCol.blue,
+        regular: elementObj.fontSize.regular,
+        bold: elementObj.fontSize.bold,
+        isMale: elementObj.isMale,
+        invStyle,
       });
       dispatch(inviteLink(invite));
-      router.push("/Links");
+      //router.push("/Links");
     } catch (error) {
       console.log(error);
       dispatch(inviteFail("תקלה ביצירת המודעה"));
     }
   }
 
-  const errorHandler = (e) => {
-    if (e.target.id === "accept" || e.target.id === "accept2") {
-      setErrorTrigger(false);
-      setShowTemplate(true);
-      setTamplateWatched(true);
-    } else if (e.target.id === "exit") {
-      setErrorTrigger(false);
-      handleSubmit(e);
+  useEffect(() => {
+    if (!isDesigning) {
+      setElementObj(defaultElementOptions);
     }
-  };
-
-  const qnaOBJ = {
-    default: "",
-    Bday: {
-      first: ":שם החוגג/ת",
-      second: ":מיקום ושם האולם",
-      third: ":הוספת שעות האירוע",
-      forth: ":גיל החוגג/ת",
-      five: ":תאריך האירוע",
-      type: {
-        f: "text",
-        s: "text",
-        t: "time",
-        fo: "number",
-        fiv: "date",
-      },
-      names: {
-        f: "name",
-        s: "place",
-        t: "time",
-        fo: "age",
-        fiv: "date",
-      },
-    },
-    Hatona: {
-      first: ":שמות הזוג המאושר",
-      second: ":מיקום ושם האולם",
-      third: ":הוספת שעות האירוע",
-      forth: ":תאריך האירוע",
-      type: {
-        f: "text",
-        s: "text",
-        t: "time",
-        fo: "date",
-      },
-      names: {
-        f: "name",
-        s: "place",
-        t: "time",
-        fo: "date",
-      },
-    },
-    Hina: {
-      first: ":שמות הזוג המאושר",
-      second: ":מיקום ושם האולם",
-      third: ":הוספת שעות האירוע",
-      forth: ":תאריך האירוע",
-      type: {
-        f: "text",
-        s: "text",
-        t: "time",
-        fo: "date",
-      },
-      names: {
-        f: "name",
-        s: "place",
-        t: "time",
-        fo: "date",
-      },
-    },
-    Bar: {
-      first: ":שם הבוגר",
-      second: ":מיקום ושם האולם",
-      third: ":הוספת שעות האירוע",
-      forth: ":תאריך האירוע",
-      type: {
-        f: "text",
-        s: "text",
-        t: "time",
-        fo: "date",
-      },
-      names: {
-        f: "name",
-        s: "place",
-        t: "time",
-        fo: "date",
-      },
-    },
-    Bat: {
-      first: ":שם החוגגת",
-      second: ":מיקום ושם האולם",
-      third: ":הוספת שעות האירוע",
-      forth: ":תאריך האירוע",
-      type: {
-        f: "text",
-        s: "text",
-        t: "time",
-        fo: "date",
-      },
-      names: {
-        f: "name",
-        s: "place",
-        t: "time",
-        fo: "date",
-      },
-    },
-    Brit: {
-      first: ":מיקום ושם האולם",
-      second: ":הוספת שעות האירוע",
-      third: ":תאריך האירוע",
-      type: {
-        f: "text",
-        s: "time",
-        t: "date",
-      },
-      names: {
-        f: "place",
-        s: "time",
-        t: "date",
-      },
-    },
-  };
+  }, [isDesigning]);
 
   return (
     <div
       className={`${
-        windowWidth >= 1536
-          ? "bg-gradient-to-r from-white to-yellow-col/80"
-          : "bg-yellow-col"
-      }
-        w-full h-screen relative flex text-white flex-col font-sans overflow-hidden`}
+        isAuth ? "h-screen" : "h-[919px]"
+      } w-full relative bg-yel font-rubik md:h-screen`}
     >
-      <Head>
-        <title>יצירת הזמנה</title>
-        <meta name="title" content="יצירת הזמנה" />
-        <meta
-          name="description"
-          content="יצירת הזמנה יחודית ומעוצבת משלכם ואתם היחידים ששולטים בעיצוב"
+      <NewMenu place="create" />
+      <div
+        className={`w-full h-full overflow-hidden grid grid-rows-18 grid-cols-1 justify-center relative`}
+      >
+        {/* First section */}
+        <img
+          src={createBackground}
+          className="hidden xl:block xl:absolute xl:top-0 xl:left-0 xl:bottom-0 xl:h-full xl:w-full"
+          alt=""
         />
-
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://hazmanot.netlify.app/" />
-        <meta property="og:title" content="יצירת הזמנה" />
-        <meta
-          property="og:description"
-          content="יצירת הזמנה יחודית ומעוצבת משלכם ואתם היחידים ששולטים בעיצוב"
-        />
-        <meta
-          property="og:image"
-          content="https://i.ibb.co/G2LyfBm/Untitled-1.jpg"
-        />
-
-        <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content="https://hazmanot.netlify.app/" />
-        <meta property="twitter:title" content="יצירת הזמנה" />
-        <meta
-          property="twitter:description"
-          content="יצירת הזמנה יחודית ומעוצבת משלכם ואתם היחידים ששולטים בעיצוב"
-        />
-        <meta
-          property="twitter:image"
-          content="https://i.ibb.co/G2LyfBm/Untitled-1.jpg"
-        />
-      </Head>
-      <Menu Page="Invite" />
-      <img
-        alt=""
-        src={WebLogo}
-        style={{
-          filter: "brightness(0) invert(1)",
-        }}
-        className="w-[80px] absolute bottom-[10px] left-[10px] md:w-[180px] 2xl:opacity-0 pointer-events-none"
-      />
-      <img
-        alt=""
-        src={WebLogo}
-        style={{
-          filter: "brightness(0) invert(1)",
-        }}
-        className="w-[180px] absolute bottom-[10px] right-[10px] opacity-0 pointer-events-none 2xl:opacity-100 2xl:pointer-events-auto"
-      />
-      <div className="h-full grid grid-cols-1 grid-rows-1 text-center">
-        <div className="h-full w-full row-start-1 col-start-1 grid grid-rows-6 grid-cols-1 2xl:grid-cols-2">
-          <p className="font-bold text-[40px] col-start-1 row-start-1 row-span-2 self-center md:text-[72px] md:mb-16 2xl:self-end 2xl:col-start-2">
-            יצירת האירוע
-          </p>
-          {/* event selection */}
-          <motion.p
-            animate={
-              isSelected ? { opacity: 0, scale: 0.7 } : { opacity: 1, scale: 1 }
-            }
-            transition={
-              isSelected
-                ? {
-                    duration: 0.8,
-                  }
-                : {
-                    duration: 1.2,
-                  }
-            }
-            className="text-[20px] tracking-widest font-bold col-start-1 row-start-3 self-center pb-4 md:text-[48px] md:self-center md:row-start-2 md:row-span-2 2xl:row-start-3 2xl:self-start 2xl:mt-8 2xl:col-start-2"
-          >
-            ?מהו סוג האירוע
-          </motion.p>
-          <form
-            method="post"
-            onSubmit={(e) => handleSubmit(e)}
-            className="z-20 row-start-2 row-span-5 col-start-1 w-full h-full grid grid-rows-6  2xl:col-start-2"
-          >
-            <motion.p
-              animate={
-                isSelected
-                  ? { opacity: 0, scale: 0.7 }
-                  : { opacity: 1, scale: 1 }
-              }
-              transition={
-                isSelected
-                  ? {
-                      duration: 0.8,
-                    }
-                  : {
-                      duration: 1.2,
-                    }
-              }
-              className="row-start-4 col-start-1 leading-[179.99%] w-[328px] justify-self-center md:text-[40px] md:w-[633px] md:leading-[52px] md:row-start-4 md:row-span-2 md:self-center"
-            >
-              {fullName}, כאן תוכל לראות וליצור את ההזמנה האישית לאירוע שלך
-              ולבסוף תקבל מאיתנו קישור להזמנה שלך
-            </motion.p>
-            {/* QNA */}
-            <div className="pointer-events-none relative row-start-2 row-span-4 col-start-1 w-full h-full py-2 flex flex-col text-black items-center justify-center 2xl:mt-8">
-              <motion.select
-                animate={isSelected ? "open" : "closed"}
-                variants={selectionAction}
-                transition={{
-                  duration: 1,
-                }}
-                onChange={(e) => selectionE(e)}
-                className="absolute text-center mb-28 pointer-events-auto text-lg text-black font-bold focus:outline-none shadow-1 bg-white rounded-t-2xl w-[280px] h-[50px] md:w-[538px] md:h-[75px]"
-              >
-                <option value="default"></option>
-                <option value="Bday">יום הולדת</option>
-                <option value="Hatona">חתונה</option>
-                <option value="Hina">חינה</option>
-                <option value="Bar">בר מצווה</option>
-                <option value="Bat">בת מצווה</option>
-                <option value="Brit">ברית</option>
-              </motion.select>
-              <motion.div
-                animate={isRefreshing ? "open" : "closed"}
-                variants={qnaAction}
-                transition={{
-                  scale: { type: "spring", bounce: 1, stiffness: 30 },
-                  opacity: { type: "spring", bounce: 1, stiffness: 100 },
-                  repeat: Infinity,
-                  repeatType: "reverse",
-                  duration: 2,
-                }}
-                className="pointer-events-none flex flex-col items-center justify-evenly h-full"
-              >
-                {invRison != "default" && (
-                  <>
-                    <div className="w-[320px] h-[40px] flex items-center justify-center relative md:h-[50px] md:w-[557px]">
-                      <input
-                        name={qnaOBJ[invRison].names.f}
-                        onChange={
-                          invRison === "Brit"
-                            ? (e) => setPlace(e.target.value)
-                            : (e) => setName(e.target.value)
-                        }
-                        value={invRison === "Brit" ? place : names}
-                        type={qnaOBJ[invRison].type.f}
-                        className="cursor-pointer focus:outline-none w-full h-full px-2 text-right rounded-lg border-2 border-black shadow-1"
-                      />
-                      <label className="absolute text-black -top-4 right-3 bg-white px-2 border-2 border-black rounded-lg md:text-[20px]">
-                        {qnaOBJ[invRison].first}
-                      </label>
-                    </div>
-                    <div className="w-[320px] h-[40px] flex items-center justify-center relative md:h-[50px] md:w-[557px]">
-                      <input
-                        name={qnaOBJ[invRison].names.s}
-                        onChange={
-                          invRison === "Brit"
-                            ? (e) => setTime(e.target.value)
-                            : (e) => setPlace(e.target.value)
-                        }
-                        value={invRison === "Brit" ? time : place}
-                        type={qnaOBJ[invRison].type.s}
-                        className="cursor-pointer focus:outline-none w-full h-full min-w-full px-2 text-right rounded-lg border-2 border-black shadow-1"
-                      />
-                      <label className="absolute text-black -top-4 right-3 bg-white px-2 border-2 border-black rounded-lg md:text-[20px]">
-                        {qnaOBJ[invRison].second}
-                      </label>
-                    </div>
-                    <div className="w-[320px] h-[40px] flex items-center justify-center relative md:h-[50px] md:w-[557px]">
-                      <input
-                        name={qnaOBJ[invRison].names.t}
-                        onChange={
-                          invRison === "Brit"
-                            ? (e) => setDate(e.target.value)
-                            : (e) => setTime(e.target.value)
-                        }
-                        value={invRison === "Brit" ? date : time}
-                        type={qnaOBJ[invRison].type.t}
-                        className="cursor-pointer focus:outline-none w-full h-full min-w-full px-2 text-right rounded-lg border-2 border-black shadow-1"
-                      />
-                      <label className="absolute text-black -top-4 right-3 bg-white px-2 border-2 border-black rounded-lg md:text-[20px]">
-                        {qnaOBJ[invRison].third}
-                      </label>
-                    </div>
-                    {qnaOBJ[invRison].forth != undefined && (
-                      <div className="w-[320px] h-[40px] flex items-center justify-center relative md:h-[50px] md:w-[557px]">
-                        <input
-                          name={qnaOBJ[invRison].names.fo}
-                          onChange={
-                            invRison === "Bday"
-                              ? (e) => setAge(e.target.value)
-                              : (e) => setDate(e.target.value)
-                          }
-                          value={invRison === "Bday" ? age : date}
-                          type={qnaOBJ[invRison].type.fo}
-                          className="cursor-pointer focus:outline-none w-full h-full px-2 min-w-full text-right rounded-lg border-2 border-black shadow-1"
-                        />
-                        <label className="absolute text-black -top-4 right-3 bg-white px-2 border-2 border-black rounded-lg md:text-[20px]">
-                          {qnaOBJ[invRison].forth}
-                        </label>
-                      </div>
-                    )}
-                    {qnaOBJ[invRison].five != undefined && (
-                      <div className="w-[320px] h-[40px] flex items-center justify-center relative md:h-[50px] md:w-[557px]">
-                        <input
-                          name={qnaOBJ[invRison].names.fiv}
-                          onChange={(e) => setDate(e.target.value)}
-                          value={date}
-                          type={qnaOBJ[invRison].type.fiv}
-                          className="cursor-pointer focus:outline-none w-full h-full min-w-full px-2 text-right rounded-lg border-2 border-black shadow-1"
-                        />
-                        <label className="absolute text-black -top-4 right-3 bg-white px-2 border-2 border-black rounded-lg md:text-[20px]">
-                          {qnaOBJ[invRison].five}
-                        </label>
-                      </div>
-                    )}
-                  </>
-                )}
-              </motion.div>
-              <motion.button
-                animate={
-                  isSelected
-                    ? { opacity: 1, pointerEvents: "auto" }
-                    : { opacity: 0, pointerEvents: "none" }
-                }
-                type="submit"
-                onClick={(e) => submitButtHandler(e)}
-                className={`w-[162px] absolute -bottom-7 pointer-events-none opacity-0 self-center font-bold tracking-widest bg-gray-600 h-[23px] rounded-md text-white shadow-1 md:w-[290px] md:h-[50px] md:text-[32px]`}
-              >
-                יצירת הזמנה
-              </motion.button>
-              <motion.div
-                animate={
-                  isSelected && windowWidth < 1536
-                    ? { opacity: 1, pointerEvents: "auto" }
-                    : { opacity: 0, pointerEvents: "none" }
-                }
-                id="tamplateButt"
-                onClick={(e) => submitButtHandler(e)}
-                className="w-[145px] h-[20px] absolute -bottom-14 text-white pointer-events-none opacity-0 self-center mt-8 flex justify-around items-center md:w-[250px] cursor-pointer"
-              >
-                <p className="pointer-events-none md:text-[24px]">
-                  צפייה בהזמנה
+        {!isAuth ? (
+          <div className="w-full h-5/6 mt-10 col-start-1 row-start-3 row-span-5 flex flex-col items-center space-y-[32px] md:row-start-3 md:row-span-16 md:h-full">
+            <p className="text-[30px] text-center md:text-[50px] md:w-[92%] md:text-right xl:text-[70px] xl:z-10">
+              !אנחנו מובילים
+            </p>
+            <p className="w-[86vw] text-center md:w-[90%] md:text-right xl:z-10 ">
+              אז למה בעצם לבחור בשירות שלנו?
+              <br></br> אנחנו מצטיינים בנתינת שירותים של הזמנות בכך שכל חלק
+              בהזמנה שלכם ניתנת לשינוי ולעיצוב. יש לנו מבחר ענק של דוגמאות
+              לעיצוב ההזמנה האישית שלכם ככה שבקלות, פשטות ויצירתיות יהיה לכם
+              הזמנה שהאורחים שלכם לא ישכחו!
+            </p>
+            <p className="text-[30px] text-center md:text-[50px] md:text-right md:w-[92%] xl:text-[70px] xl:z-10">
+              מותאמים לכל דבר
+            </p>
+            <p className="w-[86vw] text-center md:w-[90%] md:text-right xl:z-10">
+              עבדנו קשה כדי שההזמנה שלכם תראה טוב בכל הפלטפורמות השונות.
+              <br></br> ככה שאתם יכולים ליצור הזמנה מכל מקום בעצם מהמחשב, לפטופ,
+              טלפון, טאבלט וכו...
+              <br></br>ובכך אתם לא מקובעים על אפשרות אחת!
+            </p>
+            <div className="bg-per w-[741px] h-[741px] rounded-full absolute -bottom-[47%] flex justify-center md:pt-10 md:bg-transparent md:static md:w-full md:h-full md:rounded-none xl:absolute xl:-top-[32px] xl:rounded-none xl:w-1/2 xl:left-0 xl:items-end">
+              <div className="flex flex-col w-[92vw] items-center md:w-full md:h-full md:bg-per md:rounded-t-[35px] xl:border-l-4 xl:border-white/60 xl:h-max xl:pl-[33px] xl:mb-[58px] xl:bg-transparent xl:rounded-none xl:w-max">
+                <div className="md:w-[475px] mt-7 xl:mt-0">
+                  <p className="text-[100px] text-white font-bold leading-[118px]">
+                    +35
+                  </p>
+                </div>
+                <p className="text-[50px] text-white font-bold leading-[59px] md:tracking-[0.3em] xl:ml-0">
+                  עיצובים שונים
                 </p>
-                <EyeIcon className="w-[15px] pointer-events-none md:w-[30px]" />
-              </motion.div>
-            </div>
-          </form>
-          <Template
-            closeEvent={setShowTemplate}
-            windowWidth={windowWidth}
-            eventBool={showTemplate}
-            pName={names}
-            age={age}
-            place={place}
-            date={date}
-            time={time}
-            eventName={invRison}
-            setBackgroundCol={setBackgroundCol}
-            setTextCol={setTextCol}
-            setFillsCol={setFillsCol}
-            setTitleText={setTitleText}
-          />
-
-          <motion.div
-            animate={
-              errorTrigger
-                ? { opacity: 1, pointerEvents: "auto" }
-                : { opacity: 0, pointerEvents: "none" }
-            }
-            className="opacity-0 absolute top-0 left-0 w-full h-full bg-black/90 backdrop-blur-sm flex flex-col justify-center items-center z-50 space-y-3"
-          >
-            <motion.div
-              animate={errorTrigger ? { scale: 1 } : { scale: 0.7 }}
-              className="w-4/6 h-[400px] p-3 bg-[#FF0000] shadow-1 rounded-xl flex flex-col items-center md:w-[251px]"
-            >
-              <p className="font-bold underline text-[40px]">אזהרה</p>
-              <p className="text-[20px] w-[200px] leading-[39px]">
-                אתה בטוח שברצונך להמשיך לשלב הסופי של יצירת ההזמנה בלי לראות איך
-                היא נראת? אם תלחץ על “המשך” לא יהיה ניתן לשנות אותה אחר כך{" "}
-              </p>
-              <div className="w-full h-full flex relative">
-                <div
-                  onClick={(e) => errorHandler(e)}
-                  id="accept"
-                  className="w-[56px] z-10 h-[56px] bg-[#AC0000] rounded-full self-end shadow-1 flex items-center justify-center"
+                <motion.div
+                  onClick={() =>
+                    setTimeout(() => {
+                      router.push("/Login");
+                    }, 800)
+                  }
+                  whileHover={{ scale: 1.2 }}
+                  className="bg-white rounded-[5px] cursor-pointer px-12 py-3 mt-5 md:py-0 md:px-0 md:h-[63px] md:flex md:items-center md:w-[475px] md:justify-center md:tracking-[0.3em] md:w-full"
                 >
-                  <EyeIcon className="w-[30px] pointer-events-none" />
-                </div>
-                <div
-                  onClick={(e) => errorHandler(e)}
-                  id="accept2"
-                  className="w-[157px] h-[26px] text-[20px] bg-[#AC0000] rounded-r-md bottom-0 left-9 absolute"
-                >
-                  <p className="pointer-events-none">צפייה בהזמנה</p>
-                </div>
+                  <p className="pointer-events-none">
+                    רוצים ליצור אחד? לחצו כאן
+                  </p>
+                </motion.div>
               </div>
-            </motion.div>
-            <motion.div
-              animate={errorTrigger ? { scale: 1 } : { scale: 0.7 }}
-              className="pt-20"
-            >
-              <p
-                onClick={(e) => errorHandler(e)}
-                id="exit"
-                className="text-[40px]"
+            </div>
+          </div>
+        ) : (
+          <div
+            className={`${
+              isDesigning ? "z-50" : "z-10"
+            } w-full h-full mt-10 col-start-1 row-start-3 row-span-16 flex flex-col items-center space-y-[32px] md:row-start-3 md:mt-0 md:row-span-16 md:h-full`}
+          >
+            <p className="text-[30px] text-center md:text-[50px] md:w-[92%] md:text-right xl:text-[70px] xl:z-10 xl:mt-10">
+              !זמן יצירה
+            </p>
+            <form className="w-[92%] h-max flex flex-col space-y-[18px] md:space-y-[30px] xl:w-[720px] xl:self-end xl:mr-[4%]">
+              <div className="relative z-10">
+                <input
+                  type="text"
+                  placeholder="....סוג האירוע"
+                  readOnly
+                  onClick={() => !isDesigning && setEventMenu(!eventMenu)}
+                  value={rison}
+                  className="w-full h-[65px] placeholder-black/60 text-right px-3 rounded-[5px] focus:outline-none"
+                />
+                <motion.div
+                  animate={
+                    eventMenu
+                      ? { height: "214px", bottom: "-210px", display: "flex" }
+                      : { height: 0, bottom: 0, display: "none" }
+                  }
+                  className="absolute w-full h-[214px] bg-per -bottom-[210px] -z-10 rounded-b-[5px] overflow-y-auto flex flex-col items-center space-y-[20px] pt-[20px] pb-[10px] text-white"
+                >
+                  <p
+                    onClick={(e) => {
+                      setRison(e.target.id);
+                      setEventMenu(false);
+                    }}
+                    id="יום הולדת"
+                    className="h-full border-white/60 border-b w-[90%] flex items-center justify-end cursor-pointer"
+                  >
+                    יום-הולדת#
+                  </p>
+                  <p
+                    onClick={(e) => {
+                      setRison(e.target.id);
+                      setEventMenu(false);
+                    }}
+                    id="בר מצווה"
+                    className="h-full border-white/60 border-b w-[90%] flex items-center justify-end cursor-pointer"
+                  >
+                    בר מצווה#
+                  </p>
+                  <p
+                    onClick={(e) => {
+                      setRison(e.target.id);
+                      setEventMenu(false);
+                    }}
+                    id="בת מצווה"
+                    className="h-full border-white/60 border-b w-[90%] flex items-center justify-end cursor-pointer"
+                  >
+                    בת מצווה#
+                  </p>
+                  <p
+                    onClick={(e) => {
+                      setRison(e.target.id);
+                      setEventMenu(false);
+                    }}
+                    id="חתונה"
+                    className="h-full border-white/60 border-b w-[90%] flex items-center justify-end cursor-pointer"
+                  >
+                    חתונה#
+                  </p>
+                  <p
+                    onClick={(e) => {
+                      setRison(e.target.id);
+                      setEventMenu(false);
+                    }}
+                    id="חינה"
+                    className="h-full border-white/60 border-b w-[90%] flex items-center justify-end cursor-pointer"
+                  >
+                    חינה#
+                  </p>
+                  <p
+                    onClick={(e) => {
+                      setRison(e.target.id);
+                      setEventMenu(false);
+                    }}
+                    id="ברית"
+                    className="h-full w-[90%] flex items-center justify-end cursor-pointer"
+                  >
+                    ברית#
+                  </p>
+                </motion.div>
+              </div>
+              <motion.div
+                animate={
+                  rison === "ברית" ? { display: "none" } : { display: "flex" }
+                }
+                className="flex justify-between w-full h-[65px]"
               >
-                המשך
+                <motion.input
+                  animate={
+                    rison === "יום הולדת" && isDesigning
+                      ? {
+                          width: "47%",
+                          display: "block",
+                          backgroundColor: "rgb(203 155 255)",
+                        }
+                      : rison === "יום הולדת" && !isDesigning
+                      ? {
+                          width: "47%",
+                          display: "block",
+                          backgroundColor: "rgb(255 255 255)",
+                        }
+                      : { width: 0, display: "none" }
+                  }
+                  type="number"
+                  placeholder="....גיל החוגג"
+                  onChange={(e) => !isDesigning && setAge(e.target.value)}
+                  value={age}
+                  className="w-0 hidden h-full placeholder-black/60 text-right px-3 rounded-[5px] focus:outline-none md:w-[48.5%]"
+                />
+                <motion.input
+                  animate={
+                    rison === "יום הולדת" && isDesigning
+                      ? {
+                          width: "47%",
+                          display: "block",
+                          backgroundColor: "rgb(203 155 255)",
+                        }
+                      : rison === "יום הולדת" && !isDesigning
+                      ? {
+                          width: "47%",
+                          display: "block",
+                          backgroundColor: "rgb(255 255 255)",
+                        }
+                      : rison !== "ברית" && rison !== "יום הולדת" && isDesigning
+                      ? {
+                          width: "100%",
+                          display: "block",
+                          backgroundColor: "rgb(203 155 255)",
+                        }
+                      : rison !== "ברית" &&
+                        rison !== "יום הולדת" &&
+                        !isDesigning
+                      ? {
+                          width: "100%",
+                          display: "block",
+                          backgroundColor: "rgb(255 255 255)",
+                        }
+                      : { width: 0, display: "none" }
+                  }
+                  type="text"
+                  placeholder={
+                    rison === "יום הולדת" || rison === "בר מצווה"
+                      ? "....שם החוגג"
+                      : rison === "בת מצווה"
+                      ? "....שם החוגגת"
+                      : rison === "חתונה" || rison === "חינה"
+                      ? "....שמות הזוג המאושר"
+                      : "....בחר סוג אירוע"
+                  }
+                  onChange={(e) =>
+                    !isDesigning && rison && setName(e.target.value)
+                  }
+                  value={name}
+                  className="w-full h-full placeholder-black/60 text-right px-3 rounded-[5px] focus:outline-none md:w-[48.5%]"
+                />
+              </motion.div>
+              <motion.input
+                animate={
+                  isDesigning
+                    ? { backgroundColor: "rgb(203 155 255)" }
+                    : { backgroundColor: "rgb(255 255 255)" }
+                }
+                type="text"
+                placeholder="....מיקום ושם האירוע"
+                onChange={(e) =>
+                  !isDesigning && rison && setAddres(e.target.value)
+                }
+                value={addres}
+                className="w-full h-[65px] placeholder-black/60 text-right px-3 rounded-[5px] focus:outline-none"
+              />
+              <div className="flex justify-between w-full h-[65px]">
+                <motion.input
+                  animate={
+                    isDesigning
+                      ? { backgroundColor: "rgb(203 155 255)" }
+                      : { backgroundColor: "rgb(255 255 255)" }
+                  }
+                  type="time"
+                  placeholder="....שעות האירוע"
+                  onChange={(e) =>
+                    !isDesigning && rison && setTime(e.target.value)
+                  }
+                  value={time}
+                  className="w-[47%] h-full placeholder-black/60 text-center px-3 rounded-[5px] focus:outline-none md:w-[48.5%]"
+                />
+                <motion.input
+                  animate={
+                    isDesigning
+                      ? { backgroundColor: "rgb(203 155 255)" }
+                      : { backgroundColor: "rgb(255 255 255)" }
+                  }
+                  type="date"
+                  placeholder="....תאריך האירוע"
+                  onChange={(e) =>
+                    !isDesigning && rison && setDate(e.target.value)
+                  }
+                  value={date}
+                  className="w-[47%] h-full placeholder-black/60 text-center px-3 rounded-[5px] focus:outline-none md:w-[48.5%]"
+                />
+              </div>
+              <div className="flex justify-center md:justify-start md:flex-row-reverse">
+                <motion.div
+                  whileHover={{ scale: 1.2 }}
+                  onClick={(e) => handleSubmit(e)}
+                  className="bg-per cursor-pointer shadow-25 text-white flex items-center tracking-[0.3em] justify-center rounded-[5px] w-max px-3 self-center h-[65px] md:px-[0] md:self-end md:w-[250px]"
+                >
+                  <p className="pointer-events-none">
+                    {isDesigning ? "יצירת הזמנה" : "המשך לעיצוב ההזמנה"}
+                  </p>
+                </motion.div>
+                {isDesigning && (
+                  <motion.div
+                    whileHover={{ scale: 1.2 }}
+                    onClick={() => setIsDesigning(false)}
+                    className="hidden 2xl:cursor-pointer 2xl:mr-[30px] 2xl:bg-white 2xl:shadow-25 2xl:flex 2xl:items-center 2xl:tracking-[0.3em] 2xl:justify-center 2xl:rounded-[5px] 2xl:h-[65px] 2xl:self-end 2xl:w-[250px]"
+                  >
+                    <p className="pointer-events-none">שינוי הפרטים</p>
+                  </motion.div>
+                )}
+              </div>
+            </form>
+            <div className="w-full h-full flex justify-center md:bg-per md:rounded-t-[35px] md:justify-evenly md:flex-col md:items-center xl:bg-transparent xl:h-max xl:w-[520px] xl:right-[60%] xl:top-[30%] xl:absolute">
+              <p className="hidden md:block md:w-full md:text-center md:text-[50px] md:text-white xl:text-[70px]">
+                עצות לדרך פשוטה
               </p>
-            </motion.div>
-          </motion.div>
-        </div>
+              <div className="w-[50px] h-[50px] bg-white rounded-full flex items-center justify-center shadow-25 md:w-[215px] md:h-[70px] md:rounded-[5px] md:justify-evenly xl:h-[215px] xl:flex-col-reverse xl:rounded-full xl:justify-center">
+                <InformationCircleIcon className="h-[40px] text-per xl:h-[100px]" />
+                <p className="hidden xk:block xl:text-[20px]">לחצו כאן למידע</p>
+              </div>
+            </div>
+            {isDesigning && (
+              <NewInviteTamplate
+                setIsDesigning={setIsDesigning}
+                infoObj={{ type: rison, name, age, addres, date, time }}
+                elementObj={elementObj}
+                setElementObj={setElementObj}
+                handleSubmit={handleSubmit}
+                invStyle={invStyle}
+                setInvStyle={setInvStyle}
+              />
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

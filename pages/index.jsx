@@ -1,33 +1,34 @@
-import { motion } from "framer-motion";
-import {
-  ArrowLeftIcon,
-  ChartSquareBarIcon,
-  CurrencyDollarIcon,
-  EmojiHappyIcon,
-  PaperAirplaneIcon,
-} from "@heroicons/react/solid";
-import WebLogo from "../vectors/webLogo.svg";
-import IndexVector from "../vectors/indexVector.svg";
-import Menu from "../components/Menu";
-import Head from "next/head";
-import { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { getUserProfile } from "../Slices/userAction";
-import { userProblem } from "../api/userApi";
+import { PlusSmIcon } from "@heroicons/react/solid";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import NewMenu from "../components/Menu";
+import indexDownArrowMobile from "../vectors/indexDownArrowMobile.svg";
+import indexMegaphone from "../vectors/indexMegaphone.svg";
+import indexMegaphoneBackground from "../vectors/indexMegaphoneBackground.svg";
+import indexSecondBackground from "../vectors/indexSecondBackground.svg";
+import { useDispatch, useSelector } from "react-redux";
+import { getUserProfile } from "../Slices/userAction";
+import { motion } from "framer-motion";
+import { numberOfEvents } from "../api/inviteApi";
 
-export default function Home() {
-  const dispatch = useDispatch();
+function Index() {
   const router = useRouter();
-  const [pSubject, setPSubject] = useState("");
-  const [pMassage, setPMassage] = useState("");
-  const [pError, setPError] = useState(false);
+  const dispatch = useDispatch();
   const { isAuth, error } = useSelector((state) => state.auth);
-  const { fullName, _id } = useSelector((state) => state.user.user);
 
-  useEffect(() => {
+  const [eventsNum, setEventsNum] = useState(0);
+
+  useEffect(async () => {
     var localUser = localStorage.getItem("userID");
     var localToken = localStorage.getItem("token");
+    if (!eventsNum) {
+      try {
+        const num = await numberOfEvents();
+        setEventsNum(num);
+      } catch (error) {
+        console.log(error);
+      }
+    }
     if (isAuth) {
       return;
     }
@@ -48,233 +49,134 @@ export default function Home() {
       return;
     }
   }, [error]);
-
-  const submitHandler = async (e) => {
-    e.preventDefault();
-    if (pSubject === "" && pMassage === "") {
-      e.preventDefault();
-      setPError(true);
-      setTimeout(() => setPError(false), 2000);
-    } else {
-      e.preventDefault();
-      await userProblem({ id: _id, problem: pMassage });
-    }
-  };
-
   return (
-    <div
-      className={`w-full h-full relative flex flex-col font-sans overflow-y-auto md:h-screen 2xl:grid 2xl:grid-cols-2 `}
-    >
-      <Head>
-        <title>הזמנות</title>
-        <meta name="title" content="הזמנות" />
-        <meta
-          name="description"
-          content="אתר הזמנות מציע לכם ליצור ולעצב הזמנה בדרך הכי פשוטה שיש"
-        />
+    <div className="w-full h-[2047px] relative bg-[#EFA332] font-rubik md:h-[1897px] xl:h-max">
+      <NewMenu place="home" />
 
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://hazmanot.netlify.app/" />
-        <meta property="og:title" content="הזמנות" />
-        <meta
-          property="og:description"
-          content="אתר הזמנות מציע לכם ליצור ולעצב הזמנה בדרך הכי פשוטה שיש"
-        />
-        <meta
-          property="og:image"
-          content="https://i.ibb.co/G2LyfBm/Untitled-1.jpg"
-        />
+      {/* Content For Not Logged In Accounts */}
 
-        <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content="https://hazmanot.netlify.app/" />
-        <meta property="twitter:title" content="הזמנות" />
-        <meta
-          property="twitter:description"
-          content="אתר הזמנות מציע לכם ליצור ולעצב הזמנה בדרך הכי פשוטה שיש"
-        />
-        <meta
-          property="twitter:image"
-          content="https://i.ibb.co/G2LyfBm/Untitled-1.jpg"
-        />
-      </Head>
-      {isAuth && <Menu Page="Home" />}
-      <img
-        alt=""
-        src={IndexVector}
-        style={{
-          zIndex: -1,
-          filter:
-            "invert(49%) sepia(14%) saturate(5068%) hue-rotate(17deg) brightness(104%) contrast(99%)",
-        }}
-        className="h-full absolute top-0 left-0 opacity-0 pointer-events-none 2xl:opacity-100"
-      />
+      <div className="w-full h-full grid grid-rows-18 grid-cols-1 justify-center">
+        {/* First section */}
 
-      <img
-        alt=""
-        src={WebLogo}
-        style={{
-          filter: "brightness(0) invert(1)",
-        }}
-        className="w-[80px] absolute bottom-[10px] left-[10px] md:w-[180px] 2xl:opacity-0 pointer-events-none"
-      />
-
-      <img
-        alt=""
-        src={WebLogo}
-        className="w-[180px] absolute bottom-[10px] right-[10px] opacity-0 pointer-events-none 2xl:opacity-100 2xl:pointer-events-auto"
-      />
-      <div className="w-full h-4/6 flex flex-col items-center justify-center 2xl:col-start-1 2xl:col-span-2 2xl:row-start-1 2xl:self-center 2xl:w-[770px] 2xl:ml-[670px] 2xl:justify-self-center 2xl:leading-[53px]">
-        <div
-          className={`${
-            isAuth
-              ? "w-[340px] md:w-[600px] md:h-[110px] md:text-[72px] 2xl:w-[610px]"
-              : "w-[250px] 2xl:w-[474px]"
-          } bg-yellow-col/80 text-[40px] font-bold  rounded-xl flex items-center justify-center 2xl:h-[110px] 2xl:text-[72px]`}
-        >
-          <p>{isAuth ? "תודה שבחרתם בנו" : "ברוכים הבאים"}</p>
-        </div>
-        {!isAuth && (
-          <div className="text-center w-80 md:w-5/6">
-            <p className="w-full pt-4 md:text-[24px] 2xl:text-[32px]">
-              אם אתם מתכוונים לתכנן אירוע הגעתם למקום הנכון. האתר מציע פתרון
-              לחלק הבלתי צפוי של ארגון ותכנון האירוע והופך אותו לגלוי ואתכם
-              ליודעי כל
-            </p>
-            <p className="font-bold pt-4 md:text-[24px] 2xl:text-[32px]">
-              ?אז איך בעצם
-            </p>
-            <p className="text-center w-full md:text-[24px] 2xl:text-[32px]">
-              למזמין (את/ה) יש את היכולת לראות את האנשים שאישרו את הגעתם לאירוע
-              ובכך תשלטו על ההוצאות שלכם על סידורי השולחנות והכל במעוד מועד
-            </p>
+        <div className="w-full h-full col-start-1 row-start-2 row-span-5 flex flex-col items-center space-y-[32px]">
+          <p className="text-[30px] text-center md:text-[50px] md:w-[92%] md:text-right xl:text-[70px] xl:z-10">
+            !הדרך החדשה לתכנן אירוע
+          </p>
+          <p className="w-[86vw] text-center md:w-[581px] md:text-right md:self-end md:mr-[4%] md:z-10 xl:w-[766px]">
+            בימים אלו אנחנו מפתחים את הדור החדש של תכנון האירועים שיתאים לכל אחד
+            בקלות ובפשטות.
+            <br></br> מהי הדרך החדשה? אתם שואלים, התשובה היא האתר שלנו
+            <br></br>
+            האתר מציע לכל אחד ליצור, לשתף, להזמין ולחגוג אירוע מכל מקום בפשטות
+            ובקלות וכל מה שתצטרכו זה את הנייד שלכם! אז תעזבו את הדרך הישנה של
+            מכתבים בדואר ותעברו לדרך החדשה של נוחות ופשטות בלי לצאת מהבית.
+          </p>
+          <div className="hidden md:block md:absolute md:left-0 md:top-[180px] lg:top-[70px] 2xl:hidden">
+            <img src={indexMegaphoneBackground} alt="" />
           </div>
-        )}
-        {isAuth && (
-          <div className="flex flex-col items-center text-center w-5/6 mt-5 md:text-[20px] 2xl:text-[32px] 2xl:w-full">
-            <p className="">
-              אנחנו כאן כדי לספק לך, {fullName && fullName} , את שירות ההזמנות
-              שלנו בחינם ללא עלות כדי שתיהיה לכם חוויה יוצאת דופן בכל אחד
-              מהאירועים שלכם.
-            </p>
-            <p className="">
-              אנחנו תמיד שואפים להגיע גבוהה ולהצליח להביא את כל היכולות שיעזרו
-              לכם
-            </p>
-          </div>
-        )}
-      </div>
-      <div className="w-full h-full bg-yellow-col 2xl:col-start-1 2xl:row-start-1 2xl:flex 2xl:justify-center 2xl:bg-transparent">
-        {!isAuth && (
-          <div className="w-full h-full flex flex-col items-center md:grid md:grid-cols-2 md:justify-items-center 2xl:col-start-1 2xl:row-start-1 2xl:w-4/6 2xl:flex 2xl:mr-[30%]">
-            <h2 className="text-white text-3xl w-36 text-center font-bold md:col-start-2 md:row-start-1 md:self-start md:text-[72px] md:w-80 md:leading-[70px] 2xl:pt-10 2xl:self-center 2xl:h-1/5">
-              כמה סיבות לבחור בנו
-            </h2>
-            <div className="w-5/6 -mt-2 text-white text-[16px] flex flex-wrap space-y-6 md:col-start-2 md:row-start-1 md:self-center md:w-full md:pt-28 2xl:p-0 2xl:h-1/2 2xl:p-5 2xl:text-[32px]">
-              <div className="flex flex-col items-center w-1/2 pt-6">
-                <PaperAirplaneIcon className="w-[30px] md:w-[50px]" />
-                <p className="w-28 text-center pt-2 md:text-[24px] md:w-40">
-                  אפשר להזמין
-                  <span className="font-bold"> אנשים מחו&quot;ל </span>
-                  בלחיצת כפתור
-                </p>
-              </div>
-              <div className="flex flex-col items-center w-1/2">
-                <CurrencyDollarIcon className="w-[30px] md:w-[50px]" />
-                <p className="w-20 text-center pt-2 md:text-[24px] md:w-[120px]">
-                  אנחנו<span className="font-bold"> חוסכים לכם</span> נסיעות
-                  ודלק
-                </p>
-              </div>
-              <div className="flex flex-col items-center w-1/2">
-                <ChartSquareBarIcon className="w-[30px] md:w-[50px]" />
-                <p className="w-28 text-center pt-2 md:text-[24px] md:w-40">
-                  אפשרות<span className="font-bold"> לדעת מראש</span> את כמות
-                  המוזמנים
-                </p>
-              </div>
-              <div className="flex flex-col items-center w-1/2">
-                <EmojiHappyIcon className="w-[30px] md:w-[50px]" />
-                <p className="w-24 text-center pt-2 md:text-[24px] md:w-32">
-                  האפליקצייה<span className="font-bold"> נוחה ופשוטה</span> לכל
-                  אדם
-                </p>
+          <img
+            className="hidden 2xl:block 2xl:absolute 2xl:-top-[32px] 2xl:left-0"
+            src={indexSecondBackground}
+            alt=""
+          />
+          <img
+            src={indexMegaphone}
+            alt=""
+            className="hidden md:block md:absolute md:top-[300px] md:-rotate-[40deg] md:left-12 md:w-[347px] md:h-[376px] lg:top-[230px] lg:left-20 2xl:w-[647px] 2xl:h-[647px] 2xl:top-[70px] 2xl:left-[15%]"
+          />
+          <div className="bg-per w-[92%] h-[148px] rounded-[5px] relative shadow-25 md:w-[331px] md:self-end md:mr-[4%] lg:bg-transparent lg:shadow-none">
+            <div className="absolute top-0 bg-white cursor-default pointer-events-none z-10 w-full h-[63px] rounded-t-[5px] shadow-25 md:shadow-none lg:rounded-none lg:rounded-l-[5px] lg:shadow-25">
+              <div className="w-full h-full relative flex justify-center">
+                <div className="flex self-center justify-center tracking-[0.3em] space-x-2 ">
+                  <p className="text-center">אירועים פתוחים כרגע</p>
+                  <div className="bg-per px-1 rounded-[5px] self-center flex items-center justify-center">
+                    <p className="text-white">{eventsNum}</p>
+                  </div>
+                </div>
+                <div className="absolute bg-white cursor-default pointer-events-none w-[26px] h-[26px] rotate-45 -bottom-[13px] flex items-center justify-center lg:bg-transparent lg:rotate-0 lg:top-[19px] lg:-left-[83px]">
+                  <PlusSmIcon className="w-[25px] rotate-45 lg:rotate-0" />
+                </div>
               </div>
             </div>
-            <div className="w-full h-full text-white flex flex-col items-center font-bold pt-3 md:col-start-1 md:row-start-1 md:justify-center md:pt-0 2xl:h-min ">
-              <p className="text-[32px] tracking-widest md:text-[36px] 2xl:text-[64px]">
-                ?בחרתם בנו
-              </p>
-              <p className="text-[16px] md:text-[24px]">אז תלחצו כאן</p>
-              <div
-                onClick={() => router.push("/Auth")}
-                className="w-[200px] h-[50px] cursor-pointer bg-white rounded-md shadow-1 flex items-center justify-center space-x-2 md:w-[150px] md:h-[150px] md:rounded-full md:flex-col 2xl:w-[370px] 2xl:h-[60px] 2xl:rounded-lg 2xl:flex-row 2xl:mt-3"
-              >
-                <p className="text-[20px] text-black tracking-widest md:text-[36px] md:leading-8 md:w-min md:pt-4 md:text-center 2xl:w-72 2xl:text-[40px] 2xl:self-center 2xl:p-0 pointer-events-none">
-                  כניסה לאתר
-                </p>
-                <ArrowLeftIcon className="w-[20px] text-black md:w-[24px] 2xl:self-center 2xl:w-[25px] pointer-events-none" />
-              </div>
-              <p className="w-44 text-center pt-1 md:text-[24px] md:w-80 2xl:w-full 2xl:pt-3">
-                ותתחילו להזמין לכל אירוע ושכולם יפגשו בשמחות
-              </p>
-            </div>
-          </div>
-        )}
-        {isAuth && (
-          <div className="w-full h-full p-4 flex flex-col items-center 2xl:w-5/6 2xl:col-start-1 2xl:row-start-1 2xl:mr-[27%] justify-center">
-            <p className="text-white text-[32px] font-bold md:text-[72px] 2xl:w-[591px]">
-              אנחנו כאן לשירותכם
-            </p>
-            <p className="mt-3 text-white font-bold w-5/6 text-center md:m-0 md:text-[24px] md:pb-4 2xl:text-[32px] 2xl:w-[590px] 2xl:p-0 ">
-              {fullName}, אנחנו כאן לתת לך מענה לכל בעיה באתר
-            </p>
-            <form
-              onSubmit={(e) => submitHandler(e)}
-              className="relative w-[330px] h-full flex flex-col items-center justify-center space-y-7 md:w-[560px] 2xl:w-[550px] 2xl:h-max 2xl:pt-20"
+            <motion.div
+              whileHover={{ scale: 1.2 }}
+              className="absolute top-0 w-full h-full grid grid-rows-5 lg:flex lg:w-[120px] lg:h-[120px] lg:bg-per lg:rounded-full lg:z-10 lg:-top-[25px] lg:-left-[261px] lg:shadow-25"
             >
-              <motion.div
-                animate={pError ? { opacity: 1 } : { opacity: 0 }}
-                className="pointer-events-none opacity-0 absolute w-5/6 h-[100px] md:h-[150px] bg-black/80 z-20 rounded-xl flex items-center justify-center"
+              <div
+                onClick={() =>
+                  setTimeout(() => {
+                    router.push("/Login");
+                  }, 800)
+                }
+                className="w-full h-full cursor-pointer row-start-3 row-span-3 tracking-[0.3em] text-white text-center flex items-center justify-center lg:tracking-[0px]"
               >
-                <p className="text-white font-bold md:text-[24px] pointer-events-none">
-                  אתם חייבים למלא את כל שדות המילוי
+                <p className="mt-3 pointer-events-none lg:mt-0 lg:w-[73px] lg:font-bold">
+                  בואו ונוסיף עוד אירוע לאירועים הפתוחים
                 </p>
-              </motion.div>
-              <div className="w-full h-[40px] flex items-center justify-center relative md:h-[50px]">
-                <input
-                  value={pSubject}
-                  onChange={(e) => setPSubject(e.target.value)}
-                  type="text"
-                  className="focus:outline-none w-full h-full px-2 text-right rounded-lg border-2 border-black shadow-1"
-                />
-                <label className="absolute -top-4 right-3 bg-white px-2 border-2 border-black rounded-lg md:text-[20px]">
-                  כותרת של הבעיה
-                </label>
               </div>
-              <div className="w-full h-[120px] flex items-center justify-center relative md:h-[200px] md:mt-3 md:h-[190px] 2xl:h-[370px]">
-                <textarea
-                  value={pMassage}
-                  onChange={(e) => setPMassage(e.target.value)}
-                  type="text"
-                  className="resize-none focus:outline-none w-full h-full p-2 text-right rounded-lg border-2 border-black shadow-1"
-                />
-                <label className="absolute -top-4 right-3 bg-white px-2 border-2 border-black rounded-lg md:text-[20px]">
-                  תוכן הבעיה
-                </label>
-              </div>
-              <button
-                type="submit"
-                className={`w-[210px] self-center font-bold tracking-widest text-[20px] bg-gray-600 h-[50px] rounded-lg text-white shadow-1 md:w-[290px] md:text-[32px]`}
-              >
-                שליחת הבעיה
-              </button>
-              <p className="text-white text-center font-bold text-[14px] tracking-widest pr-[10px] w-44 md:w-max md:text-[16px] 2xl:text-[20px]">
-                מענה להודעות לא יעלה על 24 שעות
-              </p>
-            </form>
+            </motion.div>
           </div>
-        )}
+        </div>
+
+        {/* Second section */}
+
+        <div className="w-full h-5/6 col-start-1 row-start-6 row-span-9 self-start mt-14 flex flex-col items-center space-y-[32px] lg:mt-[0px]">
+          <p className="text-[30px] mt-4 md:text-right md:text-[50px] md:w-[92%] md:z-10 xl:text-[70px]">
+            יצירת אירוע
+          </p>
+          <p className="w-[86vw]  text-center md:text-right md:w-[92%] md:z-10">
+            הטבלה פה למטה מציגה את השלבים ליצירת אירוע עם תאורים איך לבצע כל
+            שלב.
+          </p>
+          <div className="w-full h-[688px] grid grid-rows-5 grid-cols-1">
+            <div className="w-[75%] h-[536px] text-center text-white relative bg-per row-start-1 row-span-5 col-start-1 self-center justify-self-center border-[4px] border-black rounded-[5px] shadow-25 grid grid-rows-6 grid-cols-1 md:w-[272px]">
+              <p className="text-[36px] row-start-2 col-start-1">
+                הרשמה / כניסה
+              </p>
+              <p className="w-[250px] row-start-3 self-end col-start-1 justify-self-center">
+                כדי להתחיל ליצור הזמנה ולהנות מכל הטוב שהאתר שלנו מציע חייב
+                להיות לכם משתמש
+              </p>
+              <p className="w-[250px] row-start-4 row-span-3 mb-10 self-center col-start-1 justify-self-center">
+                מה שתצטרכו כדי ליצור משתמש הוא רק כמה פרטים אישיים על עצמכם כמו:
+                שם מלא, מין, תאריך לידה כתובת המייל שלכם וזהו אתם רשומים. באתר
+                שלנו לא צריך לזכור ססמאות!
+              </p>
+              <img
+                alt=""
+                src={indexDownArrowMobile}
+                className="w-full absolute -bottom-[90px]"
+              />
+            </div>
+            <div className="w-[133px] h-[133px] z-10 shadow-25 bg-yel rounded-full border-[4px] border-black flex items-center justify-center row-start-1 col-start-1 justify-self-center">
+              <p className="text-[40px] font-bold">1</p>
+            </div>
+          </div>
+          <p className="w-[86vw]  text-center pt-8 md:text-right md:w-[92%]">
+            אחרי שתסיימו את השלבים של יצירת האירוע שלכם, האירוע יופיע באיזור
+            האישי שלכם!
+            <br></br> ושם תוכלו לראות אותו בכל זמן עד למועד האירוע.
+          </p>
+        </div>
+
+        {/* Third section*/}
+
+        <div className="row-start-15 row-span-4 col-start-1 w-full h-5/6 self-center mt-7 flex flex-col items-center space-y-[32px] xl:mt-[0px]">
+          <p className="text-[30px] md:text-[50px] md:w-[92%] md:text-right md:mt-[56px] xl:mt-0">
+            האיזור האישי
+          </p>
+          <p className="w-[86vw]  text-center md:text-right md:w-[92%]">
+            לאחר שתירשמו / תתחברו לאתר יהיה לכם גישה לאיזור אישי משלכם שבוא
+            תוכלו למצוא את כל האירועים שיצרתם.
+            <br></br> איזור זה כולל הרבה מידע אותו תקבלו מאותם אנשים שהזמנתם
+            לאירוע, למשל אם המוזמן מתכוון להגיע לבד ואם לא אז עם מי,
+            <br></br> כמות האנשים שמתכוונים להגיע ולבסוף תוכלו לראות הודעות אותם
+            שלחו לכם המוזמנים שלכם.
+          </p>
+        </div>
       </div>
     </div>
   );
 }
+
+export default Index;

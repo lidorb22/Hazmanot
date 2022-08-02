@@ -4,7 +4,7 @@ const initialState ={
     link:{},
     invInfo:[],
     isLoading: false,
-    error:"",
+    iError:"",
 };
 
 const inviteSlice = createSlice({
@@ -14,42 +14,45 @@ const inviteSlice = createSlice({
         invitePending:(state) => {
             state.isFirstTime= false;
             state.isLoading = true;
-            state.error ="";
+            state.iError ="";
         },
         inviteReset:(state) => {
             state.isLoading = false;
             state.link ={};
-            state.error ="";
+            state.iError ="";
         },
         inviteResetList:(state, {payload}) => {
             state.isLoading = false;
             state.invInfo = payload;
-            state.error ="";
+            state.iError ="";
         },
         inviteLogout:(state) => {
             state.isLoading = false;
             state.link ={};
             state.invInfo=[];
-            state.error ="";
+            state.iError ="";
         },
         inviteLink:(state , {payload}) => {
             state.isLoading = false;
             state.link = payload;
-            state.error = '';
+            state.iError = '';
         },
         inviteInfo:(state , {payload}) => {
             state.isLoading = false;
             state.invInfo = [...state.invInfo, payload];
-            state.error = '';
+            state.iError = '';
         },
         inviteFail:(state, {payload}) => {
             state.isLoading = false;
-            state.error = payload;
+            state.iError = payload;
+        },
+        inviteClear:(state) => {
+            state.iError = "";
         },
     }
 });
 
 const {reducer, actions} = inviteSlice
 
-export const {inviteResetList,inviteLogout, inviteInfo,inviteReset,invitePending , inviteLink , inviteFail} = actions;
+export const {inviteResetList,inviteLogout, inviteInfo,inviteReset,invitePending , inviteLink , inviteFail, inviteClear} = actions;
 export default reducer;

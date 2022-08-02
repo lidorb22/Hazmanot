@@ -1,3 +1,37 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+    font-family: 'David Libre';
+    src: url("./fonts/DavidLibre-Regular.ttf");
+}
+@font-face {
+    font-family: 'Rubik';
+    src: url("./fonts/Rubik-VariableFont_wght.ttf");
+}
+
+input[type="range"] {
+    
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    color: rgba(255, 255, 255, 0.6);
+    border-radius: 5px;
+    height:10px;
+    width:100%;
+  }
+input[type='range']::-webkit-slider-thumb {
+    -webkit-appearance: none !important;
+    background:#EFA332;
+    border-radius: 5px;
+    height:18px;
+    width:20px;
+}
+input[type='range']::-moz-range-thumb {
+    -moz-appearance: none !important;
+    background:#EFA332;
+    border-radius: 5px;
+    border: none;
+    height:18px;
+    width:20px;
+}
