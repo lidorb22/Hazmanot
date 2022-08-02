@@ -28,7 +28,7 @@ function NewValid({ userEmail, setIsValid, setIsError, isError }) {
         localStorage.setItem("token", verify.accessToken);
         localStorage.setItem("userID", verify._id);
         dispatch(getUserProfile());
-        router.push("/NewIndex");
+        router.push("/");
       } catch (error) {
         dispatch(authFail("הקוד שהזנת שגוי או פג תוקפו"));
         setIsError(true);
