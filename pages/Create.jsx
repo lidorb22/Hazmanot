@@ -42,11 +42,13 @@ function Create() {
   async function handleSubmit(e) {
     e.preventDefault();
     if (!rison) {
+      dispatch(inviteFail("חסרים פרטים לשלב הבא"));
       return;
     }
     switch (rison) {
       case "יום הולדת":
-        if (!name || !age || !addres || !date || !time) {
+        if (!name && !age && !addres && !date && !time) {
+          dispatch(inviteFail("חסרים פרטים לשלב הבא"));
           return;
         }
         break;
@@ -54,12 +56,14 @@ function Create() {
       case "חינה":
       case "בר מצווה":
       case "בת מצווה":
-        if (!name || !addres || !date || !time) {
+        if (!name && !addres && !date && !time) {
+          dispatch(inviteFail("חסרים פרטים לשלב הבא"));
           return;
         }
         break;
       case "ברית":
-        if (!addres || !date || !time) {
+        if (!addres && !date && !time) {
+          dispatch(inviteFail("חסרים פרטים לשלב הבא"));
           return;
         }
         break;
@@ -285,7 +289,7 @@ function Create() {
                   placeholder="....גיל החוגג"
                   onChange={(e) => !isDesigning && setAge(e.target.value)}
                   value={age}
-                  className="w-0 hidden h-full placeholder-black/60 text-right px-3 rounded-[5px] focus:outline-none md:w-[48.5%]"
+                  className="w-0 hidden h-full placeholder-black/60 text-right px-3 rounded-[5px] focus:outline-none"
                 />
                 <motion.input
                   animate={
@@ -309,13 +313,11 @@ function Create() {
                         }
                       : rison !== "ברית" &&
                         rison !== "יום הולדת" &&
-                        !isDesigning
-                      ? {
+                        !isDesigning && {
                           width: "100%",
                           display: "block",
                           backgroundColor: "rgb(255 255 255)",
                         }
-                      : { width: 0, display: "none" }
                   }
                   type="text"
                   placeholder={
@@ -331,7 +333,7 @@ function Create() {
                     !isDesigning && rison && setName(e.target.value)
                   }
                   value={name}
-                  className="w-full h-full placeholder-black/60 text-right px-3 rounded-[5px] focus:outline-none md:w-[48.5%]"
+                  className="w-full h-full placeholder-black/60 text-right px-3 rounded-[5px] focus:outline-none"
                 />
               </motion.div>
               <motion.input

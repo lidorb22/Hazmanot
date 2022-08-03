@@ -121,19 +121,20 @@ function Login() {
               {isRegister ? "הרשמה" : "התחברות"}
             </p>
             <form
+              onSubmit={(e) => handleSubmit(e)}
               className={`${
                 isRegister ? "xl:space-y-[30px]" : "md:space-y-[51px]"
               } w-full h-full space-y-[18px] flex flex-col items-center`}
             >
-              <div className="w-[92%] h-[63px] flex justify-between md:w-[75%]">
+              <div
+                className={`flex ${
+                  isRegister ? "flex-row-reverse" : "flex-row"
+                } w-[92%] h-[63px] justify-between md:w-[75%]`}
+              >
                 <input
                   type="text"
-                  placeholder={isRegister ? "....שם משפחה" : "....שם מלא"}
-                  onChange={(e) =>
-                    isRegister
-                      ? setLastName(e.target.value)
-                      : setName(e.target.value)
-                  }
+                  placeholder={isRegister ? "....שם פרטי" : "....שם מלא"}
+                  onChange={(e) => setName(e.target.value)}
                   value={isRegister ? lastName : name}
                   className={`${
                     isRegister ? "w-[48%]" : "w-full"
@@ -141,15 +142,19 @@ function Login() {
                 />
                 <input
                   type="text"
-                  placeholder="....שם פרטי"
-                  onChange={(e) => setName(e.target.value)}
+                  placeholder="....שם משפחה"
+                  onChange={(e) => setLastName(e.target.value)}
                   value={name}
                   className={`${
                     isRegister ? "block" : "hidden"
                   }  w-[48%] h-full rounded-[5px] text-right px-3 placeholder-black/60 shadow-25`}
                 />
               </div>
-              <div className="w-[92%] h-[63px] flex justify-between md:w-[75%]">
+              <div
+                className={`flex ${
+                  isRegister ? "flex-row-reverse" : "flex-row"
+                } w-[92%] h-[63px] justify-between md:w-[75%]`}
+              >
                 <div
                   className={`${
                     isRegister ? "w-[48%] relative" : "w-full"
@@ -166,7 +171,7 @@ function Login() {
                     onFocus={() => isRegister && setSowInput(true)}
                     onBlur={() => !birthDate && setSowInput(false)}
                     value={isRegister ? birthDate : email}
-                    className={`w-full h-full rounded-[5px] text-right px-3 placeholder-black/60 shadow-25`}
+                    className={`w-full h-full min-w-full rounded-[5px] text-right px-3 placeholder-black/60 shadow-25`}
                   />
                   <motion.div
                     animate={showInput ? { opacity: 0 } : { opacity: 1 }}
@@ -237,13 +242,14 @@ function Login() {
                   isRegister ? "block" : "hidden"
                 }  w-[92%] h-[63px] rounded-[5px] text-right px-3 placeholder-black/60 shadow-25 md:w-[75%]`}
               />
-              <motion.div
+              <motion.button
                 onClick={(e) => handleSubmit(e)}
+                type="submit"
                 whileHover={{ scale: 1.2 }}
                 className="cursor-pointer w-[211px] h-[63px] self-start ml-[4%] flex items-center justify-center bg-per text-white shadow-25 rounded-[5px] tracking-[0.3em] md:ml-[12.5%]"
               >
-                <p>{isRegister ? "הרשמה" : "כניסה"}</p>
-              </motion.div>
+                {isRegister ? "הרשמה" : "כניסה"}
+              </motion.button>
             </form>
           </div>
           <div

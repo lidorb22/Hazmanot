@@ -1,14 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import NewMenu from "../components/Menu";
 import { motion } from "framer-motion";
+import { useSelector } from "react-redux";
+import { userProblem } from "../api/userApi";
 
 function Problem() {
+  const { fullName } = useSelector((state) => state.user.user);
+  const [name, setName] = useState(fullName ? fullName : "");
+  const [title, setTitle] = useState("");
+  const [problem, setProblem] = useState("");
   return (
     <div className="w-full h-[923px] relative bg-yel font-rubik md:h-screen">
       <NewMenu place="problem" />
       <div className="w-full h-full overflow-hidden grid grid-rows-18 grid-cols-1 justify-center relative">
         {/* First section */}
-        <div className="hidden xl:block xl:w-[800px] xl:h-[1200px] xl:bg-per xl:absolute xl:-rotate-[13deg] xl:right-[65%]"></div>
+        <div className="hidden xl:block xl:w-[800px] xl:h-[1200px] xl:bg-per xl:absolute xl:-rotate-[13deg] xl:right-[65%] xl:-mt-[100px]"></div>
         <div className="hidden xl:block xl:absolute xl:cursor-default xl:w-[28%] xl:text-white xl:h-full xl:top-0 xl:left-0 xl:text-[500px] xl:flex xl:items-center xl:justify-center">
           <div className="relative">
             <p className="rotate-[5deg] mt-[20px] text-white/60 absolute left-[12px] top-[6px]">
@@ -32,24 +38,35 @@ function Problem() {
               <input
                 type="text"
                 placeholder="שם מלא שלכם"
-                className="w-full rounded-t-[5px] h-[63px] text-right px-3 placeholder-black/60 md:w-[25%] md:rounded-bl-[5px]"
+                onChange={(e) =>
+                  fullName ? e.preventDefault : setName(e.target.value)
+                }
+                value={name}
+                className={`${
+                  fullName ? "pointer-events-none" : ""
+                } w-full rounded-t-[5px] h-[63px] text-right px-3 placeholder-black/60 md:w-[25%] md:rounded-bl-[5px]`}
               />
               <input
                 type="text"
+                onChange={(e) => setTitle(e.target.value)}
+                value={title}
                 placeholder="כותרת לבעיה שנתקלתם"
                 className="w-full h-[63px] text-right px-3 placeholder-black/60 md:w-[70%] md:rounded-t-[5px] md:rounded-br-[5px]"
               />
             </div>
             <textarea
               placeholder="....פירוט מלא של הבעיה"
+              onChange={(e) => setProblem(e.target.value)}
+              value={problem}
               className="w-[92%] rounded-b-[5px] h-[258px] text-right p-3 placeholder-black/60 md:w-[75%] xl:self-end xl:mr-[4%] xl:w-[55%]"
             />
-            <motion.div
+            <motion.button
+              type="submit"
               whileHover={{ scale: 1.2 }}
               className="w-[211px] h-[63px] cursor-pointer flex items-center justify-center bg-white rounded-[5px] md:self-start ml-[4%] md:ml-[12.5%] xl:ml-[41%] xl:absolute xl:-bottom-[99px]"
             >
-              <p className="pointer-events-none">שליחת פירוט התקלה</p>
-            </motion.div>
+              שליחת פירוט התקלה
+            </motion.button>
           </form>
           <div className="bg-per w-[741px] h-[741px] rounded-full absolute -bottom-[530px] flex flex-col items-center text-white md:w-full md:h-full md:rounded-none md:static md:rounded-t-[35px] md:justify-center xl:bg-transparent xl:justify-start">
             <p className="w-[86vw] text-center mt-6 md:mt-0 xl:w-[425px] xl:self-end xl:mr-[4%]">

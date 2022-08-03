@@ -21,6 +21,16 @@ function ErrorSystem() {
 
         dispatch(authClear());
       }
+      if (iError) {
+        setErrorArr([...errorArr, iError]);
+
+        dispatch(inviteClear());
+      }
+      if (uError) {
+        setErrorArr([...errorArr, uError]);
+
+        dispatch(getUserClear());
+      }
     }
   }, [aError, iError, uError]);
 
@@ -29,12 +39,15 @@ function ErrorSystem() {
   return (
     <motion.div
       layout="position"
-      className="absolute pointer-events-none bottom-[30px] z-[100] flex flex-col w-full h-max flex items-center gap-[10px] md:top-0 md:flex-col-reverse md:w-[450px] md:max-h-screen md:overflow-hidden md:pt-[100px]"
+      className="absolute pointer-events-none bottom-[30px] z-[100] flex flex-col w-full h-max flex items-center gap-[10px] md:top-0 md:w-[450px] overflow-hidden md:pt-[100px] md:pl-[10px]"
     >
       {errorArr.map((error, index) => (
         <motion.div
-          animate={{ opacity: 0 }}
-          transition={{ delay: 2, duration: 2.5 }}
+          animate={{ opacity: 0, display: "none" }}
+          transition={{
+            opacity: { delay: 2, duration: 2.5 },
+            display: { delay: 4 },
+          }}
           key={index}
           className="bg-[#E42B2B] text-center text-white rounded-[5px] shadow-25 w-[92%] h-max break-word tracking-[0.3em] flex flex-col items-center justify-center py-[10px] md:w-full"
         >

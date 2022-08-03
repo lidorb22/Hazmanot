@@ -1,8 +1,6 @@
 import {
   ChevronDownIcon,
   CogIcon,
-  ExclamationCircleIcon,
-  ExclamationIcon,
   LoginIcon,
   UserIcon,
 } from "@heroicons/react/solid";
@@ -16,7 +14,7 @@ import { authLogout } from "../Slices/authSlice";
 import { inviteLogout } from "../Slices/inviteSlice";
 
 function NewMenu({ place, isError }) {
-  const { isAuth, error } = useSelector((state) => state.auth);
+  const { isAuth } = useSelector((state) => state.auth);
   const [windowWidth, setWindowWidth] = useState(500);
   const [firstLoad, setFirstLoad] = useState(false);
   const router = useRouter();
@@ -288,7 +286,9 @@ function NewMenu({ place, isError }) {
             }
             className="w-[97px] cursor-pointer"
           />
-          <CogIcon className="w-[25px] md:w-[20px] cursor-pointer" />
+          {isAuth && (
+            <CogIcon className="w-[25px] md:w-[20px] cursor-pointer" />
+          )}
           <motion.div
             animate={
               place === "user" ? { color: "#EFA332" } : { color: "rgb(0,0,0)" }
